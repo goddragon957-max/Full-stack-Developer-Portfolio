@@ -26,8 +26,10 @@ Interaction checks:
 
 1. Click a project category filter and confirm visible project cards change.
 2. Click `Search Router` project card and confirm `[data-selected-project="search-router"]`.
-3. Click `/goal` and `/ralph` buttons and confirm `[data-mode-card]` changes.
-4. Confirm console has zero JavaScript errors.
+3. Confirm the selected project panel shows `Problem`, `Loop`, `Harness / Evidence`, `Next Step`, and `Repo / Workspace Note`.
+4. Confirm the Ralph Evidence strip shows `Built`, `Verified`, and `User-validated`.
+5. Click `/goal` and `/ralph` buttons and confirm `[data-mode-card]` changes.
+6. Confirm console has zero JavaScript errors.
 
 ## Visual QA
 

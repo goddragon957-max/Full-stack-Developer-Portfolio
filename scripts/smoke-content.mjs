@@ -16,6 +16,10 @@ const required = [
   '댕댕이',
   '멍멍이',
   '/goal vs /ralph',
+  'Ralph Evidence',
+  'Harness / Evidence',
+  'Repo / Workspace Note',
+  'User-validated',
 ];
 
 const joined = `${app}\n${data}\n${modeSwitch}\n${mascots}\n${css}`;

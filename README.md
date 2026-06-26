@@ -57,6 +57,7 @@ Deploy with Vercel after connecting the GitHub repo or by running Vercel CLI in 
 - Harness Engineering
 - `/goal` vs `/ralph` operator mode comparison
 - DengDeng & MeongMeong characters
-- Featured side projects
+- Featured side projects with selected-project case study evidence
+- Ralph completion evidence strip: Built / Verified / User-validated
 - Stack
 - Contact/footer

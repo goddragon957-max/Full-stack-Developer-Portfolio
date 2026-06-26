@@ -32,6 +32,14 @@ export type Project = {
   tags: string[];
   impact: string;
   stack: string;
+  caseStudy: {
+    problem: string;
+    loop: string;
+    evidence: string;
+    nextStep: string;
+    workspaceNote: string;
+    completionLevel: 'built' | 'verified' | 'validated';
+  };
   icon: LucideIcon;
 };
 
@@ -47,6 +55,14 @@ export const projects: Project[] = [
     tags: ['AI Voice', 'Family App', 'Storybook', 'MVP'],
     impact: '예창패 후보 아이템 / 가족 음성 타임캡슐',
     stack: 'React Native · Vite · R2 · TTS',
+    caseStudy: {
+      problem: '가족 기록 앱은 “언젠가 정리해야지”에서 멈추기 쉽고, 음성·사진·텍스트가 흩어져 다음 사용자 행동으로 이어지지 않습니다.',
+      loop: '모바일 수집 → 음성/텍스트 카드 생성 → 가족별 스토리북 확인 → 다음 질문 추천으로 다시 기록을 받는 루프를 설계합니다.',
+      evidence: '앱, 웹 대시보드, lab을 분리해 프로토타입별 빌드와 콘텐츠 흐름을 확인하며 예창패 후보 아이템으로 정리했습니다.',
+      nextStep: '가족 1팀을 기준으로 온보딩, 첫 음성 보관, 공유 화면까지 사용자 검증 루프를 닫습니다.',
+      workspaceNote: 'repo/workspace: MOM Voice, Nestory, mom-voice-lab 계열을 제품·실험·운영면으로 분리',
+      completionLevel: 'validated',
+    },
     icon: HeartHandshake,
   },
   {
@@ -60,6 +76,14 @@ export const projects: Project[] = [
     tags: ['AI Research', 'Paper Trading', 'Briefing', 'Risk'],
     impact: '리서치 기반 의사결정 루프 실험',
     stack: 'Next/Vite · Automation · Market Data',
+    caseStudy: {
+      problem: '시장 리서치는 뉴스, 차트, 리스크 메모가 따로 놀아 사람이 매번 같은 판단 프레임을 다시 만들어야 합니다.',
+      loop: '종목 후보 → AI 투자 회의 → 반대 의견 → paper trading 메모 → 다음 리서치 질문으로 이어지는 회의형 루프입니다.',
+      evidence: '리서치 브리핑, 리스크 체크, paper trading 실험을 하나의 반복 워크플로로 묶는 방향을 검증했습니다.',
+      nextStep: '거래 실행보다 먼저 회의록 품질과 리스크 반론 누락 여부를 점검하는 harness를 붙입니다.',
+      workspaceNote: 'repo/workspace: Dragon Trader Lab 자동화와 시장 데이터 실험 공간',
+      completionLevel: 'built',
+    },
     icon: ChartCandlestick,
   },
   {
@@ -73,6 +97,14 @@ export const projects: Project[] = [
     tags: ['SearXNG', 'FastAPI', 'Docker', 'Tavily', 'Exa'],
     impact: '검색 비용 절감과 품질 검색 fallback',
     stack: 'FastAPI · Docker Compose · SearXNG',
+    caseStudy: {
+      problem: '에이전트가 모든 검색을 유료 API로 보내면 비용이 빨리 늘고, 로컬 검색만 쓰면 실패 시 품질 회복 경로가 약합니다.',
+      loop: '로컬 SearXNG 우선 → 품질/실패 조건 감지 → Tavily·Exa·Serper fallback → 결과와 비용을 기록하는 라우팅 루프입니다.',
+      evidence: 'FastAPI 게이트웨이와 Docker Compose 기반 로컬 검색 스택으로 Hermes/OpenClaw 검색 경로를 분리했습니다.',
+      nextStep: '쿼리 유형별 성공률, fallback 비율, 비용 로그를 대시보드 카드로 노출합니다.',
+      workspaceNote: 'repo/workspace: search-router infra, agent 검색 하네스와 연결',
+      completionLevel: 'verified',
+    },
     icon: FileSearch,
   },
   {
@@ -86,6 +118,14 @@ export const projects: Project[] = [
     tags: ['AI Coding', 'Vite', 'React', 'StyleSeed'],
     impact: '아이디어 → 검증 가능한 웹앱 루프',
     stack: 'Vite · React · Codex · StyleSeed',
+    caseStudy: {
+      problem: '빠른 프로토타입은 자주 만들어지지만 README, 검증 명령, 배포 기준이 없으면 다음 세션에서 다시 해석해야 합니다.',
+      loop: '아이디어 수집 → Vite 스캐폴드 → AGENT/VERIFY 작성 → UI 구현 → test/lint/build로 한 번 닫는 제작 루프입니다.',
+      evidence: '여러 개인 웹앱을 같은 작업 규약과 smoke gate로 만들며 재사용 가능한 제작 라인을 정리했습니다.',
+      nextStep: '새 프로토타입 생성 시 자동으로 체크리스트와 첫 smoke marker를 심는 템플릿을 고정합니다.',
+      workspaceNote: 'repo/workspace: prototype factory, StyleSeed 적용 Vite 작업실',
+      completionLevel: 'verified',
+    },
     icon: Rocket,
   },
   {
@@ -99,6 +139,14 @@ export const projects: Project[] = [
     tags: ['Content Ops', 'Commerce', 'Automation', 'SEO'],
     impact: '반복 콘텐츠 업무를 AI 루프로 전환',
     stack: 'Markdown · Search · Commerce Links',
+    caseStudy: {
+      problem: '콘텐츠 부업은 조사, 초안, 링크, 검수, 발행이 반복되지만 품질 기준이 없으면 자동화가 곧 저품질이 됩니다.',
+      loop: '키워드 → 검색 → 초안 → 링크 삽입 → 검수 → 발행 후보로 이어지는 운영 루프를 만듭니다.',
+      evidence: '콘텐츠 운영 단계를 분리하고 commerce link 흐름과 연결할 수 있는 실험 항목을 정리했습니다.',
+      nextStep: '사람 검수 전용 체크리스트와 “발행 보류” 상태를 추가해 품질 게이트를 먼저 세웁니다.',
+      workspaceNote: 'repo/workspace: side-hustle-factory 운영 실험',
+      completionLevel: 'built',
+    },
     icon: Store,
   },
   {
@@ -112,6 +160,14 @@ export const projects: Project[] = [
     tags: ['Safety', 'Family', 'Scam Detection', 'Consumer'],
     impact: '고령층·가족방 보안 체크리스트',
     stack: 'Static App · Rules · Mobile Export',
+    caseStudy: {
+      problem: '가족 대상 사기 신호는 전문 용어로 설명되면 행동으로 이어지지 않고, 대화방 안에서 바로 확인하기 어렵습니다.',
+      loop: '의심 문구 입력 → 위험 신호 분해 → 쉬운 설명 → 가족에게 보낼 대응 문장으로 이어지는 안전 루프입니다.',
+      evidence: '피싱 링크, 리딩방, 계좌 유도 같은 사례를 규칙 기반 체크리스트로 묶는 프로토타입 방향을 잡았습니다.',
+      nextStep: '실제 가족 대화 예시로 설명 톤과 경고 강도를 조정합니다.',
+      workspaceNote: 'repo/workspace: static safety prototype, mobile export 후보',
+      completionLevel: 'built',
+    },
     icon: ShieldCheck,
   },
   {
@@ -125,6 +181,14 @@ export const projects: Project[] = [
     tags: ['Three.js', 'Focus App', 'Gamification', 'Zustand'],
     impact: '집중 행동을 수집형 보상 루프로 변환',
     stack: 'Vite · React · Three.js · Zustand',
+    caseStudy: {
+      problem: '집중 앱은 타이머만 있으면 오래 쓰기 어렵고, 사용자가 돌아올 시각적 이유가 약합니다.',
+      loop: '집중 세션 → 행성 성장 → 은하 수집 → 다음 집중 목표로 돌아오는 보상 루프입니다.',
+      evidence: 'Three.js 모바일 웹 프로토타입으로 집중 상태와 시각 보상 연결을 실험했습니다.',
+      nextStep: '세션 저장과 실패 상태를 추가해 장기 루프의 감정선을 확인합니다.',
+      workspaceNote: 'repo/workspace: Orbit Bloom WebGL focus prototype',
+      completionLevel: 'built',
+    },
     icon: Sparkles,
   },
   {
@@ -138,6 +202,14 @@ export const projects: Project[] = [
     tags: ['Three.js', 'WebGL', 'RTS', 'Boids', 'Motion'],
     impact: '브라우저에서 돌아가는 플레이 가능 실험',
     stack: 'Three.js · Canvas · Browser QA',
+    caseStudy: {
+      problem: '게임 아이디어는 데모 영상보다 실제 조작감과 프레임 안정성이 먼저 검증되어야 합니다.',
+      loop: '작은 mechanic → playable canvas → 브라우저 smoke → 모바일/데스크톱 프레임 확인으로 반복합니다.',
+      evidence: 'RTS, 보드게임형 전투, 보트 물리, 보이드, 3D HUD를 브라우저 실험으로 쪼개 확인했습니다.',
+      nextStep: '재사용 가능한 input, camera, HUD harness를 분리해 다음 게임 실험 시간을 줄입니다.',
+      workspaceNote: 'repo/workspace: game-motion-lab, Three.js/canvas 실험 묶음',
+      completionLevel: 'verified',
+    },
     icon: Gamepad2,
   },
   {
@@ -151,6 +223,14 @@ export const projects: Project[] = [
     tags: ['Affiliate', 'Commerce', 'Content', 'Automation'],
     impact: '콘텐츠 수익화 작업의 반복 비용 절감',
     stack: 'Vite · Link Ops · Content Pipeline',
+    caseStudy: {
+      problem: '커머스 링크 운영은 링크 생성보다 검수, 교체, 문맥 적합성 확인이 더 많은 시간을 씁니다.',
+      loop: '콘텐츠 문맥 → 후보 링크 → 정책/품질 검수 → 발행 → 전환 메모로 이어지는 링크 운영 루프입니다.',
+      evidence: '콘텐츠 파이프라인과 링크 운영을 별도 엔진으로 떼어 반복 작업 단위를 정의했습니다.',
+      nextStep: '상품 후보의 교체 사유와 금지어를 기록하는 검수 로그를 추가합니다.',
+      workspaceNote: 'repo/workspace: commerce-link-engine 수익형 링크 운영 실험',
+      completionLevel: 'built',
+    },
     icon: ExternalLink,
   },
   {
@@ -164,6 +244,14 @@ export const projects: Project[] = [
     tags: ['Travel', 'Price Watch', 'CLI', 'Alert'],
     impact: '반복 검색을 가격 감시 루프로 전환',
     stack: 'Node · CLI · Scheduler-ready',
+    caseStudy: {
+      problem: '항공권 가격 확인은 짧고 반복적인 검색이라 자동화 이득이 크지만, 알림 기준이 흐리면 소음이 됩니다.',
+      loop: '노선 조건 → 가격 체크 → 변화 감지 → 알림 후보 → 사용자가 기준을 조정하는 감시 루프입니다.',
+      evidence: '개인 조건 중심의 CLI/scheduler-ready 형태로 반복 검색을 자동화 대상으로 정리했습니다.',
+      nextStep: '가격 변화폭, 날짜 유연성, 항공사 제외 조건을 사용자가 조정할 수 있게 만듭니다.',
+      workspaceNote: 'repo/workspace: flight-price-watch personal automation',
+      completionLevel: 'built',
+    },
     icon: Plane,
   },
   {
@@ -177,6 +265,14 @@ export const projects: Project[] = [
     tags: ['Mobile Web', 'Event', 'Vercel', 'Story'],
     impact: '개인 이벤트를 배포 가능한 웹 경험으로 전환',
     stack: 'React · Mobile Web · Vercel',
+    caseStudy: {
+      problem: '개인 이벤트 페이지는 예쁘게 만드는 것만큼 모바일 공유, 로딩, 배포 안정성이 중요합니다.',
+      loop: '스토리 구성 → 모바일 화면 → 초대 흐름 → Vercel 배포 → 실제 공유 피드백으로 닫습니다.',
+      evidence: '모바일 청첩장 웹앱 형태로 감성 UI와 빠른 배포 흐름을 실험했습니다.',
+      nextStep: '사진 로딩, 지도/일정 링크, 공유 메시지를 실제 이벤트 기준으로 다듬습니다.',
+      workspaceNote: 'repo/workspace: marry1 mobile event web app',
+      completionLevel: 'built',
+    },
     icon: Compass,
   },
   {
@@ -190,9 +286,35 @@ export const projects: Project[] = [
     tags: ['Dashboard', 'Wiki', 'Workroom', 'Ops'],
     impact: '프로젝트 운영과 지식 관리를 중앙화',
     stack: 'React · Docs · Agent Ops',
+    caseStudy: {
+      problem: '여러 AI 작업이 늘어나면 상태, 문서, 검증 결과가 흩어져 다음 액션을 결정하기 어렵습니다.',
+      loop: '작업 수집 → 상태판 → 내부 위키 → 다음 command → 검증 기록으로 이어지는 운영 루프입니다.',
+      evidence: '대시보드, 위키, 공장장형 운영자 컨셉을 묶어 agent ops 화면의 정보 구조를 실험했습니다.',
+      nextStep: '프로젝트별 fresh evidence와 마지막 검증 명령을 자동으로 노출합니다.',
+      workspaceNote: 'repo/workspace: factory dashboard, wiki, chief lab 내부 도구 묶음',
+      completionLevel: 'verified',
+    },
     icon: Building2,
   },
 ];
+
+export const completionLevels = [
+  {
+    level: 'built',
+    label: 'Built',
+    body: '작동하는 프로토타입이나 운영 단위로 만든 단계',
+  },
+  {
+    level: 'verified',
+    label: 'Verified',
+    body: '테스트, 빌드, 브라우저 smoke 같은 하네스로 확인한 단계',
+  },
+  {
+    level: 'validated',
+    label: 'User-validated',
+    body: '실제 사용자·사업 맥락에서 다음 의사결정까지 받은 단계',
+  },
+] as const;
 
 export const categories: Array<'All' | ProjectCategory> = [
   'All',

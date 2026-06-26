@@ -2,11 +2,11 @@ import {
   ArrowDown,
   ArrowRight,
   Bot,
-  BrainCircuit,
   CheckCircle2,
   GitBranch,
   Globe2,
   Mail,
+  ShieldCheck,
   Sparkles,
   Workflow,
 } from 'lucide-react';
@@ -15,7 +15,7 @@ import { ModeSwitch } from './components/ModeSwitch';
 import { ProjectCard } from './components/ProjectCard';
 import { Button } from './components/ui/button';
 import { Card } from './components/ui/card';
-import { categories, loopSteps, projects, stackGroups } from './data/portfolio';
+import { categories, completionLevels, loopSteps, projects, stackGroups } from './data/portfolio';
 import { usePortfolioStore } from './store/portfolioStore';
 
 export function App() {
@@ -155,7 +155,26 @@ export function App() {
         <div className="section-heading centered">
           <p className="eyebrow">Side Projects</p>
           <h2>아이디어 노트가 아니라, 실제 코드와 검증 흐름을 가진 프로젝트들.</h2>
-          <p>프로젝트 카드를 눌러 핵심 설명과 stack을 확인할 수 있습니다.</p>
+          <p>프로젝트 카드를 누르면 문제, 작업 루프, 검증 근거, 다음 단계까지 한 번에 바뀝니다.</p>
+        </div>
+        <Card className="completion-strip" aria-label="Ralph completion evidence levels">
+          <div className="completion-strip-copy">
+            <p className="eyebrow"><ShieldCheck size={14} /> Ralph Evidence</p>
+            <h3>완료는 세 단계로 기록합니다.</h3>
+          </div>
+          <div className="completion-levels">
+            {completionLevels.map((item) => (
+              <div className={`completion-level ${item.level}`} key={item.level}>
+                <strong>{item.label}</strong>
+                <span>{item.body}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <div className="selected-project-summary" aria-live="polite">
+          <span>Now studying</span>
+          <strong>{selectedProject.title}</strong>
+          <em>{selectedProject.caseStudy.completionLevel}</em>
         </div>
         <div className="filter-row" role="tablist" aria-label="project categories">
           {categories.map((item) => (
@@ -182,6 +201,13 @@ export function App() {
             <p>{selectedProject.description}</p>
             <div className="detail-block"><span>Impact</span><strong>{selectedProject.impact}</strong></div>
             <div className="detail-block"><span>Stack</span><strong>{selectedProject.stack}</strong></div>
+            <div className="case-study-grid" aria-label={`${selectedProject.title} case study evidence`}>
+              <div className="case-study-block"><span>Problem</span><p>{selectedProject.caseStudy.problem}</p></div>
+              <div className="case-study-block"><span>Loop</span><p>{selectedProject.caseStudy.loop}</p></div>
+              <div className="case-study-block"><span>Harness / Evidence</span><p>{selectedProject.caseStudy.evidence}</p></div>
+              <div className="case-study-block"><span>Next Step</span><p>{selectedProject.caseStudy.nextStep}</p></div>
+              <div className="case-study-block workspace"><span>Repo / Workspace Note</span><p>{selectedProject.caseStudy.workspaceNote}</p></div>
+            </div>
             <div className="tag-row large">
               {selectedProject.tags.map((tag) => <span key={tag}>{tag}</span>)}
             </div>
