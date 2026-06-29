@@ -7,7 +7,10 @@ Build and maintain a Vercel-ready portfolio website that positions the owner as 
 ## Non-negotiables
 
 - Do not turn the portfolio into a generic resume template.
-- Preserve the central narrative: **AI 작업 루프 + 검증 하네스 + 댕댕이/멍멍이 캐릭터**.
+- Preserve the central narrative: **AI 작업 루프 + 검증 하네스 + 댕댕이/멍멍이 역할 분리**.
+- Treat this as Marketing UI / personal portfolio design, not a dashboard or generic shadcn showcase.
+- Follow `DESIGN-BRIEF.md`: Rauno card rhythm, Brittany rail structure, Paco restraint, Josh-style small playful details.
+- Keep mascots small and role-driven; do not make a giant character illustration the hero.
 - Keep the page deployable as a static Vite app on Vercel.
 - Every visible filter/toggle should be wired to state, not decorative only.
 - Run `npm run test`, `npm run lint`, and `npm run build` before reporting complete.
@@ -30,11 +33,11 @@ Apply StyleSeed rules to every section, card, empty state, responsive state, and
 Golden rules:
 
 - Keep content inside cards/surfaces, not bare page backgrounds.
-- Use one warm puppy-gold accent system with blue/mint/violet as support only.
-- Avoid pure black and random hardcoded palettes in future additions; use project tokens in `src/styles.css`.
+- Use one signal-green accent system on warm grayscale; avoid rainbow gradients and random hardcoded palettes in future additions.
 - Keep radius, shadows, icon treatment, spacing, and typography coherent.
 - Touch targets should be at least 44×44px when interactive.
 - Build real UI state: filters, selected project detail, and mode switch should visibly change.
+- For rejected visual work, write/read a design direction first, then implement. Do not start another cosmetic pass from the same failed screen.
 
 ## `/goal` Prompt for Future Codex Work
 

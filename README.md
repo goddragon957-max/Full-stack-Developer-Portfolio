@@ -8,7 +8,14 @@ Vercel-ready web portfolio for AI loop engineering, harness engineering, OpenCla
 
 Core message:
 
-> AI가 답만 하는 시대를 넘어, 일을 맡고 검증하고 배포하는 루프를 설계합니다.
+> AI에게 일을 맡기고, 끝까지 검증되는 루프를 만듭니다.
+
+Design direction:
+
+- Marketing UI / personal portfolio, not dashboard UI.
+- Reference mix: Rauno Freiberg card rhythm, Brittany Chiang rail structure, Paco Coursey restraint, Josh Comeau-level small playful detail.
+- Mascots are small role markers, not the hero illustration.
+- One signal-green accent on warm grayscale.
 
 Mascots:
 
@@ -51,12 +58,12 @@ Deploy with Vercel after connecting the GitHub repo or by running Vercel CLI in 
 
 ## Included Sections
 
-- Hero
-- About
+- Hero / sticky identity rail
+- Design reset / marketing UI direction
 - Loop Engineering
 - Harness Engineering
 - `/goal` vs `/ralph` operator mode comparison
-- DengDeng & MeongMeong characters
+- DengDeng & MeongMeong small operating-role markers
 - Featured side projects with selected-project case study evidence
 - Ralph completion evidence strip: Built / Verified / User-validated
 - Stack

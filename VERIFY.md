@@ -35,7 +35,8 @@ Interaction checks:
 
 First screen should read as:
 
-- premium AI product lab, not generic resume;
-- cute puppy mascot identity;
+- polished design-engineer portfolio / AI product lab, not generic resume or SaaS template;
+- sticky identity rail, strong Korean thesis, restrained card rhythm;
+- mascots as small role markers, not a giant hero illustration;
 - loop/harness engineering concept;
-- clear route to side projects.
+- clear route to side-project evidence.
