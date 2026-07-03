@@ -1,38 +1,71 @@
-# Loop Dog Lab Design Brief
+# Portfolio Design Brief
 
-## Rebuild Direction
+## Current Direction
 
-This portfolio is a **marketing / personal portfolio site**, not a dashboard. It should sell one product narrative: the owner designs AI work loops that do real work, verify the result, and keep improving.
+This portfolio is a **source-grounded full-stack developer portfolio** with a flashy Magic UI-inspired technical visual layer.
 
-## References
+The public page should introduce 엄신용 as:
 
-- **Rauno Freiberg** — large editorial cards, bold whitespace, design-engineer confidence.
-- **Brittany Chiang** — sticky identity rail + content rail, developer portfolio clarity, restrained dark theme.
-- **Paco Coursey** — concise copy, no decorative noise, work/writing/projects as proof.
-- **Josh Comeau** — playful details only when they are crafted; no mascot takeover.
-- **Tech Bridge / Claude design skill video** — choose the UI class before coding; this is Marketing UI / `break the default`, not a shadcn dashboard.
+> 운영 웹을 이해하고 확장하는 풀스택 개발자입니다.
 
-## Non-negotiable Taste Rules
+## Content Source
 
-1. Do not make a generic AI SaaS landing page.
-2. Do not make mascots the hero image. 댕댕이/멍멍이 are small operating-role details.
-3. Use one accent system: signal green on warm grayscale. No random rainbow gradients.
-4. Lead with a strong Korean thesis, not a buzzword stack.
-5. Project cards must read as evidence: problem → loop → verification → next move.
-6. Motion should be sparse: hover lift, focus ring, tiny glow. No repeated scroll-reveal gimmicks.
-7. The first screen should feel like a design-engineer portfolio / AI product lab, not a toy character site.
+Use only resume-grounded and user-approved public content:
 
-## First Screen Thesis
+- `060703.pdf` extraction
+- `docs/content-map.md`
+- `docs/copy/hero.md`
+- `DESIGN.md`
 
-> AI에게 일을 맡기고, 끝까지 검증되는 루프를 만듭니다.
+Do not publish private resume details: phone, address, salary, military details, or full resume tables.
 
-Supporting line:
+## Must Communicate
 
-> 아이디어를 던지는 사람보다, 실행·검증·배포까지 닫히는 작업 시스템을 설계하는 사람으로 보이게 한다.
+- PHP/CodeIgniter maintenance roots
+- Java/Spring Boot, Next.js/React, TypeScript full-stack growth
+- screen/API/DB/server/deployment flow understanding
+- AWP business systems and 3D/BIM viewer validation
+- AI-assisted development workflow: GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompts, subagent/workflow
 
-## Layout Contract
+## Visual System
 
-- Desktop: fixed/sticky identity rail on the left, editorial content rail on the right.
-- Mobile: identity rail stacks first, then content sections.
-- Core sections: thesis, loop system, /goal vs /ralph, selected project evidence, project atlas, stack, contact.
-- Interactions required: category filter, selected project detail, /goal vs /ralph toggle.
+Use Magic UI-style effects without depending on external package installation:
+
+- particle field
+- animated perspective grid
+- border beams
+- shimmer text
+- glowing glass cards
+- CSS/DOM 3D full-stack/BIM/AI engine hero
+- dark premium technical palette: cyan, violet, muted amber accents
+
+## Public UI Forbidden Patterns
+
+Do not show:
+
+- “Marketing UI rebuild”
+- “귀여운 척을 빼고”
+- reference-site names in the public page
+- Loop Dog Lab mascot-led identity
+- 댕댕이/멍멍이 character section
+- invented side-project atlas above career evidence
+- fake metrics
+
+## Verification
+
+Before completion:
+
+```bash
+npm run test
+npm run lint
+npm run build
+```
+
+Browser QA:
+
+- `[data-ui-pass="magic-resume-portfolio"]`
+- `[data-source="060703-resume"]`
+- capability cards change `[data-active-capability]`
+- experience filters change `[data-selected-experience]`
+- zero console errors
+- first screen reads as a flashy technical portfolio, not a generic resume and not a mascot site

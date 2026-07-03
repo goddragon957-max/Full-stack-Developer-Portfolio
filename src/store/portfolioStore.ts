@@ -1,22 +1,20 @@
 import { create } from 'zustand';
-import type { ProjectCategory } from '../data/portfolio';
-
-type BuildMode = 'goal' | 'ralph';
+import type { ExperienceCategory } from '../data/portfolio';
 
 type PortfolioState = {
-  category: 'All' | ProjectCategory;
-  selectedProjectId: string;
-  buildMode: BuildMode;
-  setCategory: (category: 'All' | ProjectCategory) => void;
-  setSelectedProjectId: (id: string) => void;
-  setBuildMode: (mode: BuildMode) => void;
+  category: 'All' | ExperienceCategory;
+  selectedExperienceId: string;
+  activeCapabilityId: string;
+  setCategory: (category: 'All' | ExperienceCategory) => void;
+  setSelectedExperienceId: (id: string) => void;
+  setActiveCapabilityId: (id: string) => void;
 };
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({
   category: 'All',
-  selectedProjectId: 'mom-voice',
-  buildMode: 'ralph',
+  selectedExperienceId: 'awp-bim-viewer',
+  activeCapabilityId: 'fullstack',
   setCategory: (category) => set({ category }),
-  setSelectedProjectId: (selectedProjectId) => set({ selectedProjectId }),
-  setBuildMode: (buildMode) => set({ buildMode }),
+  setSelectedExperienceId: (selectedExperienceId) => set({ selectedExperienceId }),
+  setActiveCapabilityId: (activeCapabilityId) => set({ activeCapabilityId }),
 }));

@@ -1,35 +1,60 @@
-# Loop Dog Lab
+# 엄신용 Full-stack Portfolio
 
-Vercel-ready web portfolio for AI loop engineering, harness engineering, OpenClaw/Hermes workflows, and side projects.
+Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Tailwind CSS, Zustand, local shadcn-style primitives, and Magic UI-inspired visual effects.
 
-## Concept
+## Content Rule
 
-**Loop Dog Lab** presents the portfolio as an AI product lab rather than a static project list.
+This site is source-grounded. Public copy comes from `060703.pdf` resume extraction and the approved planning docs:
 
-Core message:
+- `docs/content-map.md`
+- `docs/copy/hero.md`
+- `DESIGN.md`
 
-> AI에게 일을 맡기고, 끝까지 검증되는 루프를 만듭니다.
+Do not fill empty space with invented marketing copy. If copy is not approved, define the section function only.
 
-Design direction:
+Private/sensitive resume data is excluded by default: phone number, personal address, salary, military details, and full resume tables.
 
-- Marketing UI / personal portfolio, not dashboard UI.
-- Reference mix: Rauno Freiberg card rhythm, Brittany Chiang rail structure, Paco Coursey restraint, Josh Comeau-level small playful detail.
-- Mascots are small role markers, not the hero illustration.
-- One signal-green accent on warm grayscale.
+## Public Positioning
 
-Mascots:
+> 운영 웹을 이해하고 확장하는 풀스택 개발자입니다.
 
-- **댕댕이 / DengDeng** — execution agent, OpenClaw-style worker that starts implementation loops.
-- **멍멍이 / MeongMeong** — orchestration/verification agent, Hermes-style operator that verifies, records, and reports.
+The portfolio presents:
+
+- PHP/CodeIgniter maintenance roots;
+- Java/Spring Boot, Next.js/React, TypeScript full-stack growth;
+- screen/API/DB/server/deployment flow understanding;
+- AWP business systems and 3D/BIM viewer validation;
+- AI-assisted development workflow using GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, and subagent/workflow patterns.
+
+## Visual Direction
+
+The current version is a flashy Magic UI-inspired technical portfolio:
+
+- animated particle field;
+- animated perspective grid;
+- border-beam cards;
+- shimmer label text;
+- CSS/DOM 3D full-stack/BIM/AI engine hero;
+- dark premium technical palette with cyan/violet/amber glow.
+
+## Included Sections
+
+- Hero / introduction
+- Portfolio summary stats
+- Core capabilities
+- Career evidence cards
+- AI-assisted workflow
+- Functional skill groups
+- Footer links
 
 ## Stack
 
 - Vite + React + TypeScript
 - Tailwind CSS v4 via `@tailwindcss/vite`
-- Zustand for project filter / selected project / mode switch state
+- Zustand for capability/experience filter state
 - Lucide Icons
-- Local shadcn/ui-style `Button` and `Card` components
-- StyleSeed-inspired dark product-lab UI
+- Local shadcn/ui-style `Button` and `Card`
+- Local Magic UI-style components in `src/components/magic/`
 
 ## Run
 
@@ -38,7 +63,7 @@ npm install
 npm run test
 npm run lint
 npm run build
-npm run dev
+npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
 ```
 
 ## Vercel
@@ -55,16 +80,3 @@ This project includes `vercel.json`:
 ```
 
 Deploy with Vercel after connecting the GitHub repo or by running Vercel CLI in this directory.
-
-## Included Sections
-
-- Hero / sticky identity rail
-- Design reset / marketing UI direction
-- Loop Engineering
-- Harness Engineering
-- `/goal` vs `/ralph` operator mode comparison
-- DengDeng & MeongMeong small operating-role markers
-- Featured side projects with selected-project case study evidence
-- Ralph completion evidence strip: Built / Verified / User-validated
-- Stack
-- Contact/footer
