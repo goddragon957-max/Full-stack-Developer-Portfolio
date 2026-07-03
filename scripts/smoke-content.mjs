@@ -10,7 +10,9 @@ const heroCopy = readFileSync('docs/copy/hero.md', 'utf8');
 const joined = `${app}\n${data}\n${css}\n${design}\n${contentMap}\n${heroCopy}`;
 
 const required = [
-  'magic-resume-portfolio',
+  'gianluca-clean-portfolio',
+  'data-font="pretendard"',
+  'Pretendard',
   '060703-resume',
   '운영 웹을 이해하고 확장하는 풀스택 개발자입니다',
   'PHP/CodeIgniter',
@@ -26,30 +28,33 @@ const required = [
   'pgvector',
   'Codex',
   'MCP',
-  'Particles',
-  'BorderBeam',
-  'TechEngine3D',
+  'PortfolioDoodle',
+  'word-break: keep-all',
 ];
 
 const forbiddenPublic = [
+  'magic-resume-portfolio',
   'Marketing UI rebuild',
   '귀여운 척을 빼고',
   'Rauno card rhythm',
   '댕댕이는 실행하고',
+  'Particles',
+  'BorderBeam',
+  'TechEngine3D',
   'mailto:cvb7412@naver.com',
   'hidden phone',
 ];
 
 const missing = required.filter((item) => !joined.includes(item));
 if (missing.length) {
-  console.error(`Missing required source-grounded portfolio markers: ${missing.join(', ')}`);
+  console.error(`Missing required clean portfolio markers: ${missing.join(', ')}`);
   process.exit(1);
 }
 
 const publicJoined = `${app}\n${data}`;
 const forbidden = forbiddenPublic.filter((item) => publicJoined.includes(item));
 if (forbidden.length) {
-  console.error(`Forbidden public filler/private markers found: ${forbidden.join(', ')}`);
+  console.error(`Forbidden public filler/private/effect markers found: ${forbidden.join(', ')}`);
   process.exit(1);
 }
 

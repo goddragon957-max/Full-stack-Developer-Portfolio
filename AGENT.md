@@ -2,7 +2,7 @@
 
 ## Product Goal
 
-Build and maintain a Vercel-ready personal developer portfolio for 엄신용. The public page must introduce the owner as a full-stack developer grounded in real resume content, with a flashy Magic UI-inspired technical visual layer.
+Build and maintain a Vercel-ready personal developer portfolio for 엄신용. The public page must introduce the owner as a full-stack developer grounded in real resume content, using a clean Gianluca Patti / Lapa-inspired illustrated portfolio style.
 
 ## Source-Grounded Content Rules
 
@@ -30,16 +30,24 @@ Core evidence:
 
 ## Visual Direction
 
-Use a flashy technical portfolio treatment inspired by Magic UI:
+The current visual direction is **clean readable illustrated portfolio**, not dark Magic UI.
 
-- particles;
-- animated perspective grid;
-- border-beam cards;
-- shimmer text;
-- cyan/violet glow;
-- CSS/DOM 3D full-stack/BIM/AI engine hero.
+Use:
 
-High energy is allowed, but readability and source-grounded content win.
+- Pretendard as the primary font.
+- warm paper / cream background.
+- dark brown ink.
+- lavender and sand accent palette.
+- large hand-drawn line-art hero illustration.
+- thick outlined rounded intro card.
+- simple uppercase navigation and round pills.
+- generous spacing and readable Korean paragraphs.
+
+Avoid:
+
+- particles, border beams, shimmer text, aurora backgrounds, or glow-heavy dark UI as the main style.
+- cramped/condensed Korean typography.
+- giant negative letter spacing that makes Korean unreadable.
 
 ## Stack
 
@@ -48,7 +56,7 @@ High energy is allowed, but readability and source-grounded content win.
 - Zustand
 - Lucide Icons
 - Local shadcn/ui-style components in `src/components/ui`
-- Local Magic UI-style components in `src/components/magic`
+- Local `PortfolioDoodle` SVG illustration
 
 ## Required Verification
 
@@ -63,9 +71,10 @@ npm run build
 Browser smoke:
 
 - Start preview on a strict port.
-- Confirm `[data-ui-pass="magic-resume-portfolio"]`.
+- Confirm `[data-ui-pass="gianluca-clean-portfolio"]`.
+- Confirm `[data-font="pretendard"]`.
 - Confirm `[data-source="060703-resume"]`.
 - Click a capability card and confirm `[data-active-capability]` changes.
 - Click an experience category and confirm visible cards / `[data-selected-experience]` changes.
 - Confirm console has zero JavaScript errors.
-- Visually inspect the first screen for Magic UI / 3D technical portfolio feel.
+- Visually inspect first screen for readable Pretendard Korean, warm illustrated style, and no particle/glow clutter.

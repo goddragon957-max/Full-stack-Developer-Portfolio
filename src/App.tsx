@@ -8,9 +8,7 @@ import {
   Layers3,
   Sparkles,
 } from 'lucide-react';
-import { TechEngine3D } from './components/TechEngine3D';
-import { AnimatedGrid, BorderBeam, ShimmerText } from './components/magic/effects';
-import { Particles } from './components/magic/Particles';
+import { PortfolioDoodle } from './components/PortfolioDoodle';
 import { Button } from './components/ui/button';
 import { Card } from './components/ui/card';
 import {
@@ -45,60 +43,44 @@ export function App() {
   };
 
   return (
-    <main data-app="loop-dog-lab" data-ui-pass="magic-resume-portfolio" data-source="060703-resume">
-      <Particles quantity={118} color="#7dd3fc" />
-      <AnimatedGrid />
-      <div className="aurora aurora-one" aria-hidden="true" />
-      <div className="aurora aurora-two" aria-hidden="true" />
-
+    <main data-app="loop-dog-lab" data-ui-pass="gianluca-clean-portfolio" data-font="pretendard" data-source="060703-resume">
       <nav className="site-nav" aria-label="primary">
         <a href="#top" className="brand-lockup" aria-label="portfolio home">
           <span className="brand-mark">USY</span>
-          <span>
-            <strong>엄신용</strong>
-            <em>Full-stack · AI workflow</em>
-          </span>
         </a>
         <div className="nav-links">
-          <a href="#capabilities">역량</a>
-          <a href="#experience">경력 증거</a>
-          <a href="#workflow">AI 활용</a>
-          <a href="#skills">스택</a>
+          <a href="#featured">FEATURED</a>
+          <a href="#capabilities">CAPABILITY</a>
+          <a href="#experience">WORK</a>
+          <a href="#skills">STACK</a>
+        </div>
+        <div className="nav-pills" aria-label="profile links">
+          <a href="https://github.com/SoSyn2ne" target="_blank" rel="noreferrer">GH</a>
+          <a href="#workflow">AI</a>
+          <a href="#contact" className="nav-cta">Contact</a>
         </div>
       </nav>
 
       <section className="hero-section" id="top">
-        <div className="hero-copy">
-          <div className="magic-pill"><Sparkles size={16} /><ShimmerText>{hero.label}</ShimmerText></div>
-          <h1>
-            <span>{hero.headline[0]}</span>
-            <span className="gradient-line">{hero.headline[1]}</span>
-            <span>{hero.headline[2]}</span>
-          </h1>
+        <div className="hero-art-card" aria-label="portfolio illustration">
+          <PortfolioDoodle />
+          <div className="featured-word" id="featured">Featured</div>
+        </div>
+
+        <Card className="intro-card">
+          <div className="intro-avatar" aria-hidden="true">USY</div>
+          <div className="intro-kicker">{hero.label}</div>
+          <h1>엄신용</h1>
+          <p className="intro-title">{hero.headline.join(' ')}</p>
           <p className="hero-subcopy">{hero.subcopy}</p>
           <p className="hero-ai-line">{hero.aiLine}</p>
           <div className="hero-actions">
             <Button size="lg" onClick={() => document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' })}>
-              경력 기반 프로젝트 보기 <ArrowRight size={18} />
+              경력 보기 <ArrowRight size={18} />
             </Button>
             <Button size="lg" variant="secondary" onClick={() => document.getElementById('workflow')?.scrollIntoView({ behavior: 'smooth' })}>
-              AI 활용 방식 보기 <Sparkles size={18} />
+              AI 활용 <Sparkles size={18} />
             </Button>
-          </div>
-        </div>
-
-        <Card className="hero-stage magic-card">
-          <BorderBeam />
-          <BorderBeam delay={3.2} reverse className="beam-violet" />
-          <div className="stage-header">
-            <span>Resume-grounded portfolio</span>
-            <strong>AWP / BIM / Full-stack</strong>
-          </div>
-          <TechEngine3D />
-          <div className="stage-terminal" aria-label="portfolio technical stack flow">
-            <span><b>frontend</b> Next.js · React · TypeScript · AG Grid</span>
-            <span><b>backend</b> Spring Boot · Java · PostgreSQL · MyBatis</span>
-            <span><b>viewer</b> xeokit · XKT · Three.js · BIM workflow</span>
           </div>
         </Card>
       </section>
@@ -113,10 +95,10 @@ export function App() {
       </section>
 
       <section className="section capabilities-section" id="capabilities">
-        <div className="section-heading">
+        <div className="section-heading split-heading">
           <p className="eyebrow"><Layers3 size={15} /> 핵심 역량</p>
-          <h2>기능을 만드는 사람보다, 운영 중인 흐름을 이해하고 확장하는 개발자.</h2>
-          <p>이력서 기반 공개 내용만 사용했습니다. 쓸데없는 제작 과정 문구 대신 실제 경력에서 증명되는 역량만 묶었습니다.</p>
+          <h2>실제 운영 경험에서 나온 네 가지 개발 축.</h2>
+          <p>화려한 이펙트 대신 읽히는 구조로 정리했습니다. 각 카드를 누르면 오른쪽 요약이 바뀝니다.</p>
         </div>
 
         <div className="capability-layout">
@@ -140,13 +122,12 @@ export function App() {
             })}
           </div>
 
-          <Card className="capability-detail magic-card" data-active-capability={activeCapability.id}>
-            <BorderBeam delay={1.6} />
+          <Card className="capability-detail" data-active-capability={activeCapability.id}>
             <div className="detail-icon"><ActiveCapabilityIcon size={28} /></div>
             <p className="eyebrow">Selected capability</p>
             <h3>{activeCapability.title}</h3>
             <p>{activeCapability.body}</p>
-            <div className="glow-list">
+            <div className="tag-row large-tags">
               {activeCapability.points.map((point) => <span key={point}>{point}</span>)}
             </div>
           </Card>
@@ -155,9 +136,9 @@ export function App() {
 
       <section className="section experience-section" id="experience">
         <div className="section-heading wide">
-          <p className="eyebrow"><BriefcaseBusiness size={15} /> 경력 기반 프로젝트</p>
-          <h2>포트폴리오 카드는 사이드 프로젝트가 아니라, 실제 경력에서 나온 증거로 구성합니다.</h2>
-          <p>AWP/BIM, 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰·웹뷰 유지보수, AI-assisted workflow만 공개용 주요 카드로 사용합니다.</p>
+          <p className="eyebrow"><BriefcaseBusiness size={15} /> 경력 기반 작업</p>
+          <h2>프로젝트 카드는 실제 이력서에서 나온 증거만 남겼습니다.</h2>
+          <p>AWP/BIM, 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰·웹뷰 유지보수, AI-assisted workflow를 중심으로 구성합니다.</p>
         </div>
 
         <div className="filter-row" role="tablist" aria-label="experience categories">
@@ -190,8 +171,7 @@ export function App() {
             })}
           </div>
 
-          <Card className="experience-detail magic-card" data-selected-experience={selectedExperience.id}>
-            <BorderBeam />
+          <Card className="experience-detail" data-selected-experience={selectedExperience.id}>
             <div className="detail-topline">
               <span className="detail-icon"><SelectedIcon size={28} /></span>
               <div>
@@ -222,8 +202,8 @@ export function App() {
       <section className="section workflow-section" id="workflow">
         <div className="section-heading centered">
           <p className="eyebrow"><Sparkles size={15} /> AI 활용 방식</p>
-          <h2>AI를 “답변기”가 아니라 개발 흐름을 빠르게 굴리는 작업 하네스로 씁니다.</h2>
-          <p>코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증을 분리해서 자동화 가능한 작업 단위로 다룹니다.</p>
+          <h2>AI는 답변기가 아니라 개발 흐름을 정리하는 도구입니다.</h2>
+          <p>코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증을 작은 단계로 나눠 빠르게 굴립니다.</p>
         </div>
         <div className="workflow-grid">
           {workflowSteps.map((step, index) => {
@@ -243,7 +223,7 @@ export function App() {
       <section className="section skills-section" id="skills">
         <div className="section-heading wide">
           <p className="eyebrow"><FileText size={15} /> 기술 스택</p>
-          <h2>키워드 나열 대신 기능별로 묶은 실무 스택.</h2>
+          <h2>키워드를 기능별로 묶어 한 번에 읽히게.</h2>
         </div>
         <div className="skill-grid">
           {skillGroups.map((group) => {
@@ -261,11 +241,11 @@ export function App() {
         </div>
       </section>
 
-      <footer className="site-footer">
+      <footer className="site-footer" id="contact">
         <div>
           <p className="eyebrow">Portfolio</p>
-          <h2>풀스택 개발, AWP/BIM, AI-assisted workflow를 한 화면에 정리했습니다.</h2>
-          <p>이력서 기반 소개, 핵심 역량, 경력 증거, 기술 스택만 간결하게 보여줍니다.</p>
+          <h2>읽히는 이력서 기반 포트폴리오로 다시 정리했습니다.</h2>
+          <p>풀스택 개발, AWP/BIM, AI-assisted workflow를 과장 없이 보여줍니다.</p>
         </div>
         <div className="footer-actions">
           <a href="https://github.com/SoSyn2ne" target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</a>

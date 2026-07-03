@@ -1,4 +1,4 @@
-# DESIGN.md — Loop Dog Lab Portfolio
+# DESIGN.md — 엄신용 Portfolio
 
 ## Product Type
 
@@ -19,34 +19,51 @@ A full-stack developer who started from PHP/CodeIgniter service maintenance and 
 
 ## Visual Direction
 
-The user requested a flashy rebuild inspired by Magic UI and allowed 3D effects.
+The user rejected the dark Magic UI pass because it was not readable. The approved direction is now **Gianluca Patti / Lapa-style clean portfolio**:
 
-Use:
+- light warm paper background;
+- readable Pretendard typography;
+- dark brown ink color;
+- soft lavender/sand accent palette;
+- large hand-drawn line-art hero illustration;
+- rounded lavender intro card;
+- simple uppercase nav;
+- generous spacing and low visual noise.
 
-- Magic UI-style visual effects: particles, animated grid, border beams, shimmer text, glowing cards.
-- A CSS/DOM 3D hero object representing a full-stack/AWP/BIM/AI workflow engine.
-- Dark premium technical palette with electric cyan, violet, and warm amber accents.
-- Strong Korean headline, concise resume-grounded body copy.
-- High visual energy, but content must stay professional and readable.
+Reference traits to preserve:
 
-Avoid:
+- big illustration first, text card second;
+- minimal top navigation with round pills;
+- cream/off-white surfaces;
+- thick brown outlines on key cards;
+- playful but controlled line art, not particle/aurora/glow effects.
 
-- Exposing design-process phrases like “Marketing UI rebuild”, “귀여운 척을 빼고”, or reference-site names in public UI.
-- Making Loop Dog Lab, mascots, 댕댕이/멍멍이, or internal agent jargon the first-screen identity.
-- Publishing private details from the PDF: phone, personal email, address, salary, military information.
-- Generic fake metrics or unrelated side-project cards above career evidence.
+## Avoid
+
+- unreadable oversized condensed Korean typography;
+- dark glow-heavy Magic UI effects;
+- particles, animated grids, border beams, shimmer text;
+- public design-process phrases like “Marketing UI rebuild”, “귀여운 척을 빼고”, or reference-site names;
+- making Loop Dog Lab, mascots, 댕댕이/멍멍이, or internal agent jargon the first-screen identity;
+- publishing private details from the PDF: phone, personal email, address, salary, military information;
+- fake metrics or unrelated side-project cards above career evidence.
 
 ## Layout
 
-1. Full-screen hero with animated background, 3D engine/cube, and resume-grounded introduction.
-2. Four capability cards: full-stack, operations/maintenance, AWP/BIM/3D viewer, AI-assisted workflow.
-3. Experience evidence cards from real career projects.
-4. Skills grouped by function.
-5. AI workflow section as a professional differentiator, not the whole identity.
+1. Top nav with USY mark, centered links, small rounded action pills.
+2. Hero split:
+   - left: large line-art portfolio doodle;
+   - right: lavender introduction card with resume-grounded copy.
+3. Four source-grounded stats.
+4. Four capability cards with a selected detail panel.
+5. Experience evidence cards from real career projects.
+6. AI workflow section as a professional differentiator.
+7. Skills grouped by function.
 
 ## Implementation Notes
 
-- Use existing React/Vite/Tailwind setup and local CSS. Do not require Magic UI package install unless needed.
-- Local Magic UI-inspired components can live under `src/components/magic/`.
-- Add markers for smoke tests: `data-ui-pass="magic-resume-portfolio"` and `data-source="060703-resume"`.
+- Use existing React/Vite/Tailwind setup and local CSS.
+- Use Pretendard as the primary font.
+- Add markers for smoke tests: `data-ui-pass="gianluca-clean-portfolio"`, `data-font="pretendard"`, and `data-source="060703-resume"`.
 - All visible interactions must be wired to state.
+- Browser QA should judge readability before visual novelty.

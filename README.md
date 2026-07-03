@@ -1,6 +1,6 @@
 # 엄신용 Full-stack Portfolio
 
-Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Tailwind CSS, Zustand, local shadcn-style primitives, and Magic UI-inspired visual effects.
+Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Tailwind CSS, Zustand, local shadcn-style primitives, and a clean Gianluca Patti / Lapa-inspired illustrated visual direction.
 
 ## Content Rule
 
@@ -28,14 +28,16 @@ The portfolio presents:
 
 ## Visual Direction
 
-The current version is a flashy Magic UI-inspired technical portfolio:
+The current version is a clean readable illustrated portfolio:
 
-- animated particle field;
-- animated perspective grid;
-- border-beam cards;
-- shimmer label text;
-- CSS/DOM 3D full-stack/BIM/AI engine hero;
-- dark premium technical palette with cyan/violet/amber glow.
+- Pretendard primary font;
+- warm paper background;
+- dark brown ink;
+- lavender/sand accents;
+- hand-drawn line-art hero illustration;
+- thick outlined rounded intro card;
+- simple uppercase nav and round pills;
+- generous spacing, no glow-heavy clutter.
 
 ## Included Sections
 
@@ -54,7 +56,7 @@ The current version is a flashy Magic UI-inspired technical portfolio:
 - Zustand for capability/experience filter state
 - Lucide Icons
 - Local shadcn/ui-style `Button` and `Card`
-- Local Magic UI-style components in `src/components/magic/`
+- Local SVG illustration component: `src/components/PortfolioDoodle.tsx`
 
 ## Run
 

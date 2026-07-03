@@ -26,7 +26,8 @@ Verify in browser:
 
 ```js
 document.querySelector('[data-app="loop-dog-lab"]') !== null
-document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'magic-resume-portfolio'
+document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'gianluca-clean-portfolio'
+document.querySelector('[data-font]')?.getAttribute('data-font') === 'pretendard'
 document.querySelector('[data-source]')?.getAttribute('data-source') === '060703-resume'
 ```
 
@@ -41,10 +42,12 @@ Interaction checks:
 
 First screen should read as:
 
-- flashy Magic UI-inspired technical portfolio;
-- dark premium cyan/violet glow system;
+- clean Gianluca Patti / Lapa-inspired illustrated portfolio;
+- Pretendard Korean typography that is readable at first glance;
+- warm cream paper, brown ink, lavender/sand accents;
+- large line-art portfolio illustration;
 - strong Korean full-stack developer introduction;
-- 3D full-stack/BIM/AI engine visual on the right;
+- no dark particle/glow-heavy Magic UI clutter;
 - no mascot-led identity;
 - no public design-process phrases;
 - no private resume data.
