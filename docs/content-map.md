@@ -26,7 +26,7 @@ PHP/CodeIgniter 유지보수에서 시작해 Java/Spring Boot, Next.js/React, Ty
 
 **AI-assisted coding을 판단 대체가 아니라 반복 제거에 쓰는 개발자.**
 
-GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompt, subagent/workflow 구성을 코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증에 활용한다. 자동화는 일을 덜 생각하기 위한 장치가 아니라 더 중요한 판단에 시간을 남기기 위한 장치로 설명한다.
+GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompt, subagent/workflow 구성을 코드 탐색, 구현안 비교, 리팩터링 후보 정리, 문서화, 반복 검증에 활용한다. AI는 판단을 대신하지 않고 검색, 초안, 검증 반복을 줄여 최종 판단에 시간을 남기는 장치로 설명한다.
 
 ### Strongest current work
 
@@ -83,7 +83,7 @@ Use 4 capability blocks only:
 4. **AI-assisted Development Workflow**
    - GPT/Cursor/Codex/OpenCode
    - AGENTS.md, Skills, MCP
-   - 코드 탐색, 구현 초안, 문서화, 반복 검증 자동화
+   - 코드 탐색, 구현안 비교, 문서화, 검증 반복 축소
 
 ### 3. Experience Evidence
 

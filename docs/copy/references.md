@@ -122,8 +122,12 @@ Adapted for this portfolio:
 
 ### Support copy
 
-새 프로젝트를 처음부터 예쁘게 만드는 일보다 더 많이 해온 것은, 이미 운영 중인 서비스 안에서 무엇이 깨졌고 어디까지 바꿀 수 있는지 읽어내는 일이었습니다. PHP/CodeIgniter 쇼핑몰 유지보수에서 시작해 Spring Boot API, React/TypeScript 화면, DB와 서버 운영, 배포 흐름까지 옮겨 다니며 한 기능이 실제 운영 환경에서 어떻게 살아남는지 배웠습니다.
+> 처음부터 새로 짜는 일보다 어려운 건, 이미 운영 중인 서비스 안에서 변경 가능한 선을 찾는 일입니다. PHP/CodeIgniter 쇼핑몰 유지보수에서 시작해 문자 발송 서버, 앱 API와 관리자 페이지, AWP 업무 시스템과 3D/BIM 뷰어까지 다뤘습니다. 화면을 고칠 때 API 응답, DB 구조, 권한, 서버와 배포 이후 영향을 같이 봅니다.
 
 ### AI line
 
-AI는 판단을 대신하지 않습니다. 대신 낯선 코드를 읽고, 구현 초안을 만들고, 리팩터링 후보를 정리하고, 검증 체크리스트를 반복하는 시간을 줄여줍니다. Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP를 쓰는 이유도 거기에 있습니다. 자동화는 일을 덜 생각하게 만드는 장치가 아니라, 더 중요한 판단에 시간을 남기는 장치여야 합니다.
+> AI는 판단을 대신하지 않습니다. Cursor, Codex, OpenCode는 낯선 코드의 흐름을 따라가고, 구현안을 비교하고, 검증 목록을 반복하는 시간을 줄이는 도구입니다. 최종 책임은 여전히 사람이 져야 합니다.
+
+## Second-pass tightening
+
+After the first deeper rewrite, remove any sentence that still talks about the redesign process instead of the developer. In particular, avoid public phrases like `새 프로젝트를 처음부터 예쁘게 만드는 일보다`; that sounds defensive. Use the cleaner tension instead: `처음부터 새로 짜는 일보다 어려운 건, 이미 운영 중인 서비스 안에서 변경 가능한 선을 찾는 일입니다.`

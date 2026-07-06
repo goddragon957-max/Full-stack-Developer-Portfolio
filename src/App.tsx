@@ -98,7 +98,7 @@ export function App() {
         <div className="section-heading split-heading">
           <p className="eyebrow"><Layers3 size={15} /> 핵심 역량</p>
           <h2>실제 운영 경험에서 나온 네 가지 개발 축.</h2>
-          <p>제 경력은 새로 만드는 일보다 이미 돌아가는 것을 이해하고 바꾸는 일에 더 가까웠습니다. 화면, API, 운영, 도메인, AI 활용을 분리해 보여줍니다.</p>
+          <p>새 기능을 붙이는 기술보다, 기존 시스템이 어떻게 버티고 있는지 읽는 기술이 먼저였습니다. 네 축은 그 경험을 화면, 운영, 도메인, AI 활용으로 나눈 것입니다.</p>
         </div>
 
         <div className="capability-layout">
@@ -138,7 +138,7 @@ export function App() {
         <div className="section-heading wide">
           <p className="eyebrow"><BriefcaseBusiness size={15} /> 경력 기반 작업</p>
           <h2>업무는 달랐지만 계속 같은 문제를 다뤘습니다.</h2>
-          <p>이미 운영 중인 시스템에서 변경 범위를 찾고, 화면과 API를 연결하고, 장애 가능성을 줄이는 일. AWP/BIM, 문자 발송 서버, 앱 API, 쇼핑몰 유지보수는 그 문제를 다른 환경에서 반복한 기록입니다.</p>
+          <p>이 변경은 어디까지 영향을 주는가. 실패하면 누가 먼저 아는가. 다시 고칠 때 어디서 시작할 수 있는가. AWP/BIM, 문자 발송 서버, 앱 API, 쇼핑몰 유지보수는 그 질문을 다른 환경에서 반복한 기록입니다.</p>
         </div>
 
         <div className="filter-row" role="tablist" aria-label="experience categories">
@@ -203,7 +203,7 @@ export function App() {
         <div className="section-heading centered">
           <p className="eyebrow"><Sparkles size={15} /> AI 활용 방식</p>
           <h2>AI는 판단을 대신하지 않습니다. 반복을 줄여 판단할 시간을 만듭니다.</h2>
-          <p>코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증을 작은 단계로 나눕니다. 자동화는 일을 덜 생각하기 위한 장치가 아니라, 더 중요한 부분을 직접 보기 위한 장치입니다.</p>
+          <p>AI 도구를 쓰는 이유는 개발자를 덜 책임지게 만들기 위해서가 아닙니다. 낯선 코드의 검색 비용, 구현안 비교, 검증 반복을 줄이고, 변경 범위와 책임을 사람이 더 오래 보게 하기 위해서입니다.</p>
         </div>
         <div className="workflow-grid">
           {workflowSteps.map((step, index) => {
@@ -244,8 +244,8 @@ export function App() {
       <footer className="site-footer" id="contact">
         <div>
           <p className="eyebrow">Portfolio</p>
-          <h2>운영 환경에서 배운 개발과, 그 반복을 줄이는 AI 활용 방식.</h2>
-          <p>풀스택 개발, AWP/BIM, AI-assisted workflow를 경력의 흐름 안에서 보여줍니다.</p>
+          <h2>운영 중인 시스템을 읽는 힘과, 반복을 줄이는 AI 활용 방식.</h2>
+          <p>이 포트폴리오는 기술 키워드보다 변경 범위, 검증, 운영 맥락을 먼저 보여줍니다.</p>
         </div>
         <div className="footer-actions">
           <a href="https://github.com/SoSyn2ne" target="_blank" rel="noreferrer"><GitBranch size={18} /> GitHub</a>

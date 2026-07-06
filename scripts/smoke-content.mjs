@@ -17,6 +17,8 @@ const required = [
   '060703-resume',
   '이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다',
   'AI는 판단을 대신하지 않습니다',
+  '처음부터 새로 짜는 일보다 어려운 건',
+  '최종 책임은 여전히 사람이 져야 합니다',
   'PHP/CodeIgniter',
   'Java/Spring Boot',
   'Next.js/React',
@@ -48,6 +50,7 @@ const forbiddenPublic = [
   '누구에게 따뜻함',
   '따뜻한 개발자',
   '어린왕자',
+  '처음부터 예쁘게',
   'mailto:cvb7412@naver.com',
   'hidden phone',
 ];
