@@ -1,6 +1,6 @@
 # Verification — 엄신용 Full-stack Portfolio
 
-## Static Gates
+## Static gates
 
 ```bash
 npm run test
@@ -10,11 +10,11 @@ npm run build
 
 Expected:
 
-- content smoke passes required resume-grounded markers;
+- content smoke passes Spline/Magic dark markers;
 - TypeScript passes;
 - Vite production build succeeds.
 
-## Browser Smoke
+## Browser smoke
 
 Start preview:
 
@@ -26,30 +26,30 @@ Verify in browser:
 
 ```js
 document.querySelector('[data-app="loop-dog-lab"]') !== null
-document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'gianluca-clean-portfolio'
+document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'spline-dark-stack-portfolio'
 document.querySelector('[data-font]')?.getAttribute('data-font') === 'pretendard'
 document.querySelector('[data-source]')?.getAttribute('data-source') === '060703-resume'
+document.querySelector('[data-hero-3d]')?.getAttribute('data-hero-3d') === 'spline-inspired'
+document.querySelector('[data-hero-3d] canvas') !== null
 ```
 
 Interaction checks:
 
-1. Click the `AWP / BIM / 3D Viewer Work` capability card and confirm `[data-active-capability="bim"]`.
-2. Click the `AI Workflow` experience filter and confirm `[data-selected-experience="ai-assisted-workflow"]`.
-3. Confirm only real resume-grounded experience cards appear above personal/side-project material.
-4. Confirm console has zero JavaScript errors.
+1. Move the pointer over the 3D scene and confirm the scene reacts subtly.
+2. Click the `AWP / BIM / 3D Viewer` capability card and confirm `[data-active-capability="bim"]`.
+3. Click the `Backend/API` experience filter and confirm `[data-selected-experience="message-server"]`.
+4. Confirm no generated hero image is rendered and `public/assets/portfolio-hero-gpt.webp` does not exist.
+5. Confirm console has zero JavaScript errors.
 
 ## Visual QA
 
 First screen should read as:
 
-- clean Gianluca Patti / Lapa-inspired illustrated portfolio;
-- Pretendard Korean typography that is readable at first glance;
-- deeper operational copy, not sentimental warmth/어린왕자-style prose;
-- warm cream paper, brown ink, lavender/sand accents;
-- large GPT-generated abstract systems/BIM blueprint hero image at `public/assets/portfolio-hero-gpt.webp`;
-- strong Korean full-stack developer introduction;
-- no dark particle/glow-heavy Magic UI clutter;
-- no mascot-led identity;
-- no cringe developer-at-laptop character illustration;
-- no public design-process phrases;
-- no private resume data.
+- dark 3D landing inspired by Spline;
+- Magic UI-style dark grid/glow/glass surface;
+- stack-first developer portfolio, not generic AI art;
+- Java/Spring Boot and React/TypeScript visible above the fold;
+- PostgreSQL/MyBatis, Linux/AWS, AWP/BIM visible in stack/detail sections;
+- short, resume-like Korean copy;
+- no sentimental/어린왕자 prose;
+- no AI-as-main-identity section above career evidence.

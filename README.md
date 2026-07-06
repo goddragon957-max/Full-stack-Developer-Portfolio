@@ -1,8 +1,8 @@
 # 엄신용 Full-stack Portfolio
 
-Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Tailwind CSS, Zustand, local shadcn-style primitives, and a clean Gianluca Patti / Lapa-inspired illustrated visual direction.
+Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, Zustand, and local shadcn-style primitives.
 
-## Content Rule
+## Content rule
 
 This site is source-grounded. Public copy comes from `060703.pdf` resume extraction and the approved planning docs:
 
@@ -14,51 +14,48 @@ Do not fill empty space with invented marketing copy. If copy is not approved, d
 
 Private/sensitive resume data is excluded by default: phone number, personal address, salary, military details, and full resume tables.
 
-## Public Positioning
+## Public positioning
 
-> 이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다.
+> Java/Spring Boot와 React/TypeScript로 웹 서비스를 개발합니다.
 
 The portfolio presents:
 
 - PHP/CodeIgniter maintenance roots;
-- Java/Spring Boot, Next.js/React, TypeScript full-stack growth;
-- screen/API/DB/server/deployment flow understanding;
+- Java/Spring Boot backend work;
+- Next.js/React/TypeScript frontend work;
+- PostgreSQL/MyBatis, Linux, AWS operation context;
 - AWP business systems and 3D/BIM viewer validation;
-- AI-assisted development workflow using GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, and subagent/workflow patterns.
-- a copy direction based on operational judgment rather than sentimental portfolio filler.
+- AI tools only as supporting developer tools, not the main identity.
 
-## Visual Direction
+## Visual direction
 
-The current version is a clean readable illustrated portfolio:
+Current version: Spline-inspired dark 3D landing.
 
+- no generated hero image file;
+- WebGL/Three.js tech scene on the first screen;
+- Magic UI-like dark grid, glass panels, glow, and border animation;
+- visible stack labels: React, Spring Boot, PostgreSQL, AWP/BIM;
 - Pretendard primary font;
-- warm paper background;
-- dark brown ink;
-- lavender/sand accents;
-- GPT-generated abstract systems/BIM blueprint hero illustration stored at `public/assets/portfolio-hero-gpt.webp`;
-- thick outlined rounded intro card;
-- simple uppercase nav and round pills;
-- generous spacing, no glow-heavy clutter.
+- short, resume-like copy.
 
-## Included Sections
+## Included sections
 
 - Hero / introduction
+- Spline-inspired 3D stack scene
 - Portfolio summary stats
-- Core capabilities
+- Stack detail cards
 - Career evidence cards
-- AI-assisted workflow
-- Functional skill groups
+- Capability cards
 - Footer links
 
 ## Stack
 
 - Vite + React + TypeScript
+- Three.js for the 3D hero scene
 - Tailwind CSS v4 via `@tailwindcss/vite`
 - Zustand for capability/experience filter state
 - Lucide Icons
 - Local shadcn/ui-style `Button` and `Card`
-- GPT-generated WebP hero asset served from `public/assets/portfolio-hero-gpt.webp`
-- Hero image wrapper component: `src/components/PortfolioDoodle.tsx`
 
 ## Run
 
@@ -69,18 +66,3 @@ npm run lint
 npm run build
 npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
 ```
-
-## Vercel
-
-This project includes `vercel.json`:
-
-```json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "cleanUrls": true
-}
-```
-
-Deploy with Vercel after connecting the GitHub repo or by running Vercel CLI in this directory.
