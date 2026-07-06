@@ -2,7 +2,7 @@
 
 ## Product type
 
-Interactive 3D developer portfolio / playable landing page.
+Cyberpunk interactive 3D developer portfolio / playable landing page.
 
 ## Source of truth
 
@@ -11,71 +11,61 @@ Public copy must be grounded in `060703.pdf` resume extraction and approved docs
 - `docs/content-map.md`
 - `docs/copy/hero.md`
 
-Do not invent side-project narratives, fake metrics, stock-art copy, or generic AI portfolio language.
+Do not invent side-project narratives, fake metrics, stock-art copy, generic AI portfolio language, or sentimental slogans.
 
 ## Current direction
 
-The portfolio is now a **Bruno Simon-inspired drivable 3D world**. It should feel like a small portfolio game, not a normal landing page.
+The portfolio is now **Cyberpunk Dev City**.
 
 Core idea:
 
-- user drives a small toy car around a low-poly portfolio map;
-- the world has real portfolio zones: Stack Garage, Career Road, BIM Yard, Contact Gate;
-- the HUD updates based on the car's location;
+- user drives a neon hover rover through a dark cyberpunk developer city;
+- the world has portfolio zones as hologram landmarks;
+- Stack, Career, BIM/AWP, and Contact are shown as city districts;
 - the canvas is the product, not decoration;
-- generated hero images and old static 3D hero cards are removed.
-
-## Reference use
-
-Reference: https://bruno-simon.com/
-
-Borrow the interaction idea only:
-
-- playful vehicle control;
-- isometric/follow camera;
-- simple low-poly world;
-- portfolio content embedded as landmarks;
-- lightweight HUD and movement instructions.
-
-Do not copy Bruno Simon assets, exact layout, branding, or code.
-
-## Public positioning
-
-Main public facts remain:
-
-- Java/Spring Boot and React/TypeScript full-stack work;
-- PHP/CodeIgniter maintenance roots;
-- 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰 유지보수;
-- AWP 업무 시스템과 3D/BIM 뷰어;
-- PostgreSQL/MyBatis, Linux/AWS, xeokit/XKT/Three.js.
+- no paid car model is required for this pass because the style relies on lighting, silhouettes, neon signage, and HUD polish rather than photorealistic asset fidelity.
 
 ## Visual language
 
-- bright playable world, not dark SaaS dashboard;
-- low-poly toy-like 3D shapes;
-- red/orange car as the focal object;
-- pastel sky/green ground/dark road;
-- glass HUD cards over the world;
-- concise Korean copy;
-- no sentimental/AI-sounding prose.
+- cyberpunk, not toy low-poly;
+- dark navy/black environment;
+- cyan + magenta neon as the main system;
+- green/violet used only as zone accents;
+- hover rover, not boxy toy car;
+- neon city skyline, hologram signs, grid floor, data rails;
+- compact premium HUD, not giant dashboard cards;
+- Pretendard for Korean readability;
+- source-grounded Korean copy.
+
+## Portfolio zones
+
+- `NEON STACK GARAGE` — Java, Spring Boot, React, TypeScript, PostgreSQL, MyBatis
+- `CAREER MAINFRAME` — PHP/CodeIgniter, REST API, Vue.js, AWS, Linux
+- `BIM GRID YARD` — AWP, BIM, xeokit, XKT, Three.js, tile/LOD
+- `SIGNAL GATE` — GitHub, portfolio, career/contact destination
 
 ## Interaction contract
 
-- `WASD` and arrow keys move the car;
+- `WASD` and arrow keys drive the hover rover;
 - `Space` brakes;
 - touch controls are available on small screens;
-- approaching zones changes `data-active-zone` and the HUD content;
-- mini map shows car and zone dots;
-- browser smoke must verify the canvas, zone markers, and at least one real movement/state change.
+- top landmark links jump the rover to each district;
+- approaching/clicking zones changes `data-active-zone` and HUD content;
+- mini map shows rover and district dots;
+- browser smoke must verify canvas, movement, landmark jump, and zero fatal console errors.
 
 ## Implementation markers
 
-- `data-ui-pass="bruno-inspired-drive-portfolio"`
-- `data-game-world="bruno-inspired"`
+- `data-ui-pass="cyberpunk-dev-city-portfolio"`
+- `data-theme="cyberpunk"`
+- `data-game-world="cyberpunk-dev-city"`
 - `data-source="060703-resume"`
 
 ## Avoid
 
+- bright pastel toy world;
+- primitive box car as the visual focal point;
+- paid-model dependency as a blocker;
 - generated `portfolio-hero-gpt.webp` image;
 - old `TechScene3D` static Spline-like hero;
 - old `PortfolioDoodle` image component;

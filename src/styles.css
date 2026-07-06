@@ -3,17 +3,20 @@
 @import 'tw-animate-css';
 
 :root {
-  color-scheme: light;
-  --ink: #0f172a;
-  --panel: rgba(255, 255, 255, 0.76);
-  --panel-strong: rgba(255, 255, 255, 0.9);
-  --line: rgba(15, 23, 42, 0.12);
-  --shadow: rgba(15, 23, 42, 0.18);
-  --blue: #2563eb;
-  --cyan: #06b6d4;
-  --orange: #f97316;
-  --green: #22c55e;
-  --violet: #8b5cf6;
+  color-scheme: dark;
+  --ink: #ecfeff;
+  --muted: rgba(207, 250, 254, 0.62);
+  --panel: rgba(3, 7, 18, 0.68);
+  --panel-strong: rgba(6, 11, 30, 0.88);
+  --line: rgba(0, 229, 255, 0.26);
+  --line-hot: rgba(255, 43, 214, 0.38);
+  --shadow-cyan: rgba(0, 229, 255, 0.26);
+  --shadow-pink: rgba(255, 43, 214, 0.2);
+  --cyan: #00e5ff;
+  --pink: #ff2bd6;
+  --green: #39ff14;
+  --violet: #a855f7;
+  --orange: #ff8a00;
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   font-feature-settings: 'kern';
   text-rendering: optimizeLegibility;
@@ -21,13 +24,13 @@
 
 * { box-sizing: border-box; }
 html, body, #root { width: 100%; min-height: 100%; }
-html { background: #bcecff; }
+html { background: #030612; }
 body {
   margin: 0;
   min-width: 320px;
   overflow: hidden;
   color: var(--ink);
-  background: #bcecff;
+  background: #030612;
 }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; }
@@ -38,7 +41,7 @@ main[data-app="loop-dog-lab"] {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #bcecff;
+  background: #030612;
 }
 
 .drive-portfolio {
@@ -48,8 +51,34 @@ main[data-app="loop-dog-lab"] {
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(circle at 18% 10%, rgba(255,255,255,.55), transparent 22vw),
-    linear-gradient(180deg, #bcecff 0%, #d9f7ff 42%, #a8e7c0 100%);
+    radial-gradient(circle at 18% 18%, rgba(0,229,255,.18), transparent 28vw),
+    radial-gradient(circle at 82% 20%, rgba(255,43,214,.18), transparent 26vw),
+    radial-gradient(circle at 50% 92%, rgba(168,85,247,.18), transparent 30vw),
+    linear-gradient(180deg, #030612 0%, #080418 48%, #02030a 100%);
+}
+.drive-portfolio::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.035) 1px, transparent 1px),
+    linear-gradient(180deg, transparent 0%, rgba(0,0,0,.16) 100%);
+  background-size: 100% 5px, 5px 100%, 100% 100%;
+  mix-blend-mode: screen;
+  opacity: .32;
+}
+.drive-portfolio::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 48%, transparent 0%, transparent 46%, rgba(2,3,10,.46) 100%),
+    linear-gradient(90deg, rgba(0,229,255,.16), transparent 15%, transparent 85%, rgba(255,43,214,.18));
 }
 .game-canvas {
   position: absolute;
@@ -83,44 +112,66 @@ main[data-app="loop-dog-lab"] {
 .control-help,
 .touch-controls {
   border: 1px solid var(--line);
-  background: var(--panel);
-  box-shadow: 0 22px 80px var(--shadow), inset 0 1px 0 rgba(255,255,255,.72);
-  backdrop-filter: blur(20px) saturate(1.25);
+  background:
+    linear-gradient(135deg, rgba(0,229,255,.09), transparent 32%),
+    linear-gradient(315deg, rgba(255,43,214,.1), transparent 34%),
+    var(--panel);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.045) inset,
+    0 0 28px var(--shadow-cyan),
+    0 28px 90px rgba(0,0,0,.44);
+  backdrop-filter: blur(20px) saturate(1.35);
 }
 .game-topbar > div {
+  position: relative;
   width: fit-content;
-  max-width: min(520px, 100%);
-  padding: 14px 18px;
-  border-radius: 22px;
+  max-width: min(560px, 100%);
+  padding: 14px 18px 14px 20px;
+  border-radius: 4px 18px 4px 18px;
+  overflow: hidden;
+}
+.game-topbar > div::before,
+.zone-card::before,
+.control-help::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--cyan), var(--pink));
+  box-shadow: 0 0 22px var(--cyan);
 }
 .game-topbar span,
 .zone-eyebrow,
 .game-hud span,
 .control-help span {
   display: block;
-  color: rgba(15,23,42,.58);
+  color: var(--cyan);
   font-size: 11px;
   line-height: 1.1;
-  font-weight: 900;
-  letter-spacing: .08em;
+  font-weight: 950;
+  letter-spacing: .16em;
   text-transform: uppercase;
+  text-shadow: 0 0 16px rgba(0,229,255,.72);
 }
 .game-topbar strong {
   display: block;
-  margin-top: 5px;
+  margin-top: 6px;
   color: var(--ink);
   font-size: clamp(18px, 2.2vw, 30px);
   line-height: 1;
-  font-weight: 940;
-  letter-spacing: -.05em;
+  font-weight: 950;
+  letter-spacing: -.045em;
   word-break: keep-all;
+  text-shadow: 0 0 24px rgba(236,254,255,.22);
 }
 .game-topbar nav {
   pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px;
+  padding: 8px;
   border-radius: 999px;
 }
 .game-topbar nav a {
@@ -128,54 +179,74 @@ main[data-app="loop-dog-lab"] {
   display: inline-flex;
   align-items: center;
   padding: 0 13px;
+  border: 1px solid rgba(0,229,255,.12);
   border-radius: 999px;
-  color: rgba(15,23,42,.68);
-  font-size: 12px;
+  background: rgba(3,7,18,.34);
+  color: rgba(207,250,254,.74);
+  font-size: 11px;
   line-height: 1;
-  font-weight: 900;
-  letter-spacing: -.01em;
-  transition: background .18s ease, color .18s ease, transform .18s ease;
+  font-weight: 920;
+  letter-spacing: .02em;
+  transition: background .18s ease, color .18s ease, transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .game-topbar nav a:hover {
   transform: translateY(-1px);
-  background: rgba(37,99,235,.1);
-  color: var(--blue);
+  border-color: rgba(0,229,255,.48);
+  background: rgba(0,229,255,.12);
+  color: var(--ink);
+  box-shadow: 0 0 24px rgba(0,229,255,.24);
 }
 
 .zone-card {
+  --zone-accent: var(--cyan);
   position: absolute;
   z-index: 5;
   left: clamp(12px, 2.2vw, 28px);
   bottom: clamp(14px, 2.4vw, 34px);
-  width: min(455px, calc(100vw - 28px));
-  padding: clamp(16px, 2.1vw, 23px);
-  border-radius: 24px;
+  width: min(386px, calc(100vw - 28px));
+  padding: clamp(14px, 1.72vw, 19px);
+  border-color: color-mix(in srgb, var(--zone-accent) 58%, rgba(255,255,255,.08));
+  border-radius: 4px 22px 4px 22px;
   pointer-events: auto;
+  overflow: hidden;
+}
+.zone-card::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 13px;
+  width: 48px;
+  height: 7px;
+  background: linear-gradient(90deg, var(--zone-accent), transparent);
+  opacity: .62;
+  box-shadow: 0 0 18px var(--zone-accent);
 }
 .zone-card h1 {
-  margin: 7px 0 9px;
+  margin: 7px 0 8px;
   color: var(--ink);
-  font-size: clamp(32px, 4.1vw, 54px);
-  line-height: .94;
-  letter-spacing: -.06em;
-  font-weight: 960;
+  font-size: clamp(28px, 3.25vw, 43px);
+  line-height: .95;
+  letter-spacing: -.052em;
+  font-weight: 970;
   word-break: keep-all;
+  text-shadow: 0 0 28px color-mix(in srgb, var(--zone-accent) 48%, transparent);
 }
 .zone-card strong {
   display: block;
-  color: #1d4ed8;
-  font-size: clamp(16px, 1.55vw, 21px);
-  line-height: 1.25;
-  letter-spacing: -.035em;
+  color: var(--zone-accent);
+  font-size: clamp(14px, 1.25vw, 17px);
+  line-height: 1.28;
+  letter-spacing: -.025em;
   font-weight: 900;
   word-break: keep-all;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--zone-accent) 62%, transparent);
 }
 .zone-card p {
-  margin: 14px 0 0;
-  color: rgba(15,23,42,.72);
-  font-size: 14px;
-  line-height: 1.58;
-  letter-spacing: -.02em;
+  margin: 11px 0 0;
+  color: rgba(207,250,254,.72);
+  font-size: 12.8px;
+  line-height: 1.55;
+  letter-spacing: -.018em;
   word-break: keep-all;
 }
 .zone-chips {
@@ -185,17 +256,18 @@ main[data-app="loop-dog-lab"] {
   margin-top: 13px;
 }
 .zone-chips span {
-  min-height: 31px;
+  min-height: 30px;
   display: inline-flex;
   align-items: center;
   padding: 0 10px;
-  border: 1px solid rgba(15,23,42,.1);
+  border: 1px solid rgba(0,229,255,.18);
   border-radius: 999px;
-  background: rgba(255,255,255,.62);
-  color: rgba(15,23,42,.78);
-  font-size: 12px;
+  background: rgba(0,229,255,.07);
+  color: rgba(236,254,255,.84);
+  font-size: 11.5px;
   line-height: 1;
   font-weight: 860;
+  box-shadow: inset 0 0 18px rgba(0,229,255,.05);
 }
 
 .game-hud {
@@ -203,11 +275,11 @@ main[data-app="loop-dog-lab"] {
   z-index: 5;
   right: clamp(12px, 2.2vw, 28px);
   bottom: clamp(148px, 18vw, 236px);
-  width: min(250px, calc(100vw - 24px));
+  width: min(242px, calc(100vw - 24px));
   display: grid;
   gap: 7px;
-  padding: 12px;
-  border-radius: 22px;
+  padding: 10px;
+  border-radius: 18px 4px 18px 4px;
 }
 .game-hud div {
   display: grid;
@@ -215,14 +287,16 @@ main[data-app="loop-dog-lab"] {
   align-items: center;
   min-height: 38px;
   padding: 0 11px;
-  border-radius: 14px;
-  background: rgba(255,255,255,.46);
+  border: 1px solid rgba(255,255,255,.045);
+  border-radius: 12px 2px 12px 2px;
+  background: rgba(3,7,18,.5);
 }
 .game-hud strong {
   color: var(--ink);
   font-size: 14px;
   font-weight: 930;
-  letter-spacing: -.02em;
+  letter-spacing: -.01em;
+  text-shadow: 0 0 14px rgba(0,229,255,.38);
 }
 
 .mini-map {
@@ -232,17 +306,18 @@ main[data-app="loop-dog-lab"] {
   bottom: clamp(14px, 2.4vw, 34px);
   width: 154px;
   height: 154px;
-  border-radius: 28px;
+  border-radius: 24px 4px 24px 4px;
   overflow: hidden;
 }
 .mini-map::before,
 .mini-map::after {
   content: '';
   position: absolute;
-  background: rgba(15,23,42,.16);
+  background: rgba(0,229,255,.22);
+  box-shadow: 0 0 16px rgba(0,229,255,.26);
 }
-.mini-map::before { left: 50%; top: 12%; bottom: 12%; width: 2px; transform: translateX(-50%); }
-.mini-map::after { top: 50%; left: 12%; right: 12%; height: 2px; transform: translateY(-50%); }
+.mini-map::before { left: 50%; top: 10%; bottom: 10%; width: 1px; transform: translateX(-50%); }
+.mini-map::after { top: 50%; left: 10%; right: 10%; height: 1px; transform: translateY(-50%); }
 .map-zone,
 .map-car {
   position: absolute;
@@ -250,22 +325,20 @@ main[data-app="loop-dog-lab"] {
   border-radius: 999px;
 }
 .map-zone {
-  width: 12px;
-  height: 12px;
-  background: #64748b;
-  box-shadow: 0 0 0 5px rgba(100,116,139,.12);
+  width: 10px;
+  height: 10px;
+  box-shadow: 0 0 0 4px rgba(0,229,255,.1), 0 0 18px currentColor;
 }
 .map-zone.active {
   width: 16px;
   height: 16px;
-  background: #2563eb;
-  box-shadow: 0 0 0 8px rgba(37,99,235,.16);
+  box-shadow: 0 0 0 7px rgba(255,255,255,.08), 0 0 28px currentColor;
 }
 .map-car {
   width: 14px;
   height: 14px;
-  background: #ef4444;
-  box-shadow: 0 0 0 7px rgba(239,68,68,.18);
+  background: #ecfeff;
+  box-shadow: 0 0 0 7px rgba(0,229,255,.12), 0 0 24px rgba(0,229,255,.92);
   transition: left .12s linear, top .12s linear;
 }
 
@@ -279,15 +352,17 @@ main[data-app="loop-dog-lab"] {
   align-items: center;
   gap: 12px;
   min-height: 52px;
-  padding: 0 18px;
+  padding: 0 18px 0 22px;
   border-radius: 999px;
   white-space: nowrap;
+  overflow: hidden;
 }
 .control-help strong {
   color: var(--ink);
   font-size: 14px;
   line-height: 1;
   font-weight: 930;
+  text-shadow: 0 0 14px rgba(255,43,214,.42);
 }
 
 .touch-controls {
@@ -300,7 +375,7 @@ main[data-app="loop-dog-lab"] {
   justify-items: center;
   gap: 7px;
   padding: 10px;
-  border-radius: 26px;
+  border-radius: 24px 4px 24px 4px;
   touch-action: none;
 }
 .touch-controls div {
@@ -310,13 +385,13 @@ main[data-app="loop-dog-lab"] {
 .touch-controls button {
   width: 48px;
   height: 48px;
-  border: 1px solid rgba(15,23,42,.1);
-  border-radius: 16px;
-  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(0,229,255,.2);
+  border-radius: 14px 2px 14px 2px;
+  background: rgba(0,229,255,.08);
   color: var(--ink);
   font-size: 16px;
   font-weight: 900;
-  box-shadow: 0 10px 26px rgba(15,23,42,.12);
+  box-shadow: 0 0 24px rgba(0,229,255,.18);
 }
 .touch-controls button:active { transform: translateY(1px) scale(.98); }
 
@@ -331,7 +406,7 @@ main[data-app="loop-dog-lab"] {
     justify-self: start;
   }
   .zone-card {
-    width: min(480px, calc(100vw - 24px));
+    width: min(440px, calc(100vw - 24px));
   }
   .game-hud {
     display: none;
@@ -361,8 +436,8 @@ main[data-app="loop-dog-lab"] {
     gap: 8px;
   }
   .game-topbar > div {
-    padding: 12px 14px;
-    border-radius: 18px;
+    padding: 12px 14px 12px 17px;
+    border-radius: 4px 16px 4px 16px;
   }
   .game-topbar nav {
     padding: 7px;
@@ -371,18 +446,18 @@ main[data-app="loop-dog-lab"] {
   .game-topbar nav a {
     min-height: 34px;
     padding: 0 10px;
-    font-size: 11px;
+    font-size: 10px;
   }
   .zone-card {
     left: 10px;
     right: 10px;
     bottom: 78px;
     width: auto;
-    padding: 16px;
-    border-radius: 22px;
+    padding: 15px 15px 15px 18px;
+    border-radius: 4px 20px 4px 20px;
   }
   .zone-card h1 {
-    font-size: clamp(30px, 12vw, 46px);
+    font-size: clamp(28px, 10vw, 40px);
   }
   .zone-card p {
     display: none;

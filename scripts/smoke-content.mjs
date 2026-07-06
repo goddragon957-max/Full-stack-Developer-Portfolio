@@ -7,26 +7,34 @@ const css = readFileSync('src/styles.css', 'utf8');
 const pkg = readFileSync('package.json', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const readme = readFileSync('README.md', 'utf8');
+const verify = readFileSync('VERIFY.md', 'utf8');
+const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${game}\n${css}\n${pkg}\n${design}\n${readme}`;
+const joined = `${app}\n${game}\n${css}\n${pkg}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
 
 const required = [
-  'bruno-inspired-drive-portfolio',
+  'cyberpunk-dev-city-portfolio',
   'data-font="pretendard"',
   'Pretendard',
   '060703-resume',
-  'data-game-world="bruno-inspired"',
-  'Bruno Simon inspired drivable portfolio world',
+  'data-theme="cyberpunk"',
+  'data-game-world="cyberpunk-dev-city"',
+  'Cyberpunk Dev City drivable portfolio world',
   'PortfolioGame3D',
-  'createCar',
+  'createHoverRover',
+  'addNeonCity',
+  'addCyberFloor',
+  'addDataRails',
   'jumpToZone',
   'updateCar',
   'WASD / Arrow Keys',
   'Space = brake',
-  'STACK GARAGE',
-  'CAREER ROAD',
-  'BIM YARD',
-  'CONTACT GATE',
+  'NEON STACK GARAGE',
+  'CAREER MAINFRAME',
+  'BIM GRID YARD',
+  'SIGNAL GATE',
+  'Hover Rover',
+  'Neon Grid',
   'Java',
   'Spring Boot',
   'React',
@@ -40,12 +48,14 @@ const required = [
   'xeokit',
   'XKT',
   'word-break: keep-all',
+  'cyan/magenta',
 ];
 
 const forbiddenPublic = [
   'spline-dark-stack-portfolio',
   'stack-first-portfolio',
   'gianluca-clean-portfolio',
+  'bruno-inspired-drive-portfolio',
   'portfolio-hero-gpt.webp',
   'data-hero-image',
   'gpt-generated',
@@ -67,7 +77,7 @@ const forbiddenPublic = [
 
 const missing = required.filter((item) => !joined.includes(item));
 if (missing.length) {
-  console.error(`Missing required Bruno-style game portfolio markers: ${missing.join(', ')}`);
+  console.error(`Missing required Cyberpunk Dev City markers: ${missing.join(', ')}`);
   process.exit(1);
 }
 
@@ -95,4 +105,4 @@ if (zoneCount < 4) {
   process.exit(1);
 }
 
-console.log(`content smoke passed: ${zoneCount} zone/title records, ${required.length} Bruno-style game markers, no rejected legacy markers`);
+console.log(`content smoke passed: ${zoneCount} zone/title records, ${required.length} Cyberpunk Dev City markers, no rejected legacy markers`);

@@ -1,18 +1,20 @@
 # 엄신용 Full-stack Portfolio
 
-Bruno Simon-inspired interactive 3D developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, and Zustand.
+Cyberpunk interactive 3D developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, and Zustand.
 
 ## Current version
 
-This is no longer a static landing page. The first screen is a drivable 3D portfolio world:
+The first screen is **Cyberpunk Dev City**:
 
-- drive a small red/orange toy car;
-- explore portfolio zones on the map;
-- Stack Garage shows the main technologies;
-- Career Road summarizes work history;
-- BIM Yard highlights AWP/BIM/3D viewer experience;
-- Contact Gate points to portfolio destinations;
-- HUD and mini map update as the car moves.
+- drive a neon hover rover through a dark developer city;
+- explore hologram portfolio districts;
+- Neon Stack Garage shows the main technologies;
+- Career Mainframe summarizes work history;
+- BIM Grid Yard highlights AWP/BIM/3D viewer experience;
+- Signal Gate points to portfolio destinations;
+- HUD and mini map update as the rover moves.
+
+This direction intentionally avoids depending on paid 3D vehicle models. The professional look comes from cyberpunk art direction: dark composition, neon lighting, city silhouettes, hologram signage, material contrast, and compact HUD design.
 
 ## Content rule
 
@@ -39,7 +41,7 @@ Do not fill empty space with invented marketing copy. Private/sensitive resume d
 - `WASD` or arrow keys: drive
 - `Space`: brake
 - On touch devices: on-screen control pad
-- Top landmark links jump the car to each portfolio zone
+- Top landmark links jump the rover to each portfolio district
 
 ## Stack
 
@@ -64,7 +66,7 @@ npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
 A pass requires more than a build. Verify that:
 
 - the Three.js canvas renders;
-- car movement changes `data-car-x` / `data-car-z`;
-- entering a zone changes `data-active-zone`;
+- rover movement changes `data-car-x` / `data-car-z`;
+- clicking a landmark changes `data-active-zone`;
 - browser console has zero fatal JavaScript errors;
-- first screenshot reads as an interactive 3D portfolio, not a dashboard or generated image.
+- first screenshot reads as cyberpunk 3D portfolio, not a bright toy Three.js demo.

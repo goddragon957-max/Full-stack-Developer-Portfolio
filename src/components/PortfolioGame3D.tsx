@@ -10,59 +10,68 @@ type Zone = {
   description: string;
   position: [number, number];
   color: number;
+  accent: string;
   chips: string[];
 };
 
 const zones: Zone[] = [
   {
     id: 'stack',
-    title: 'STACK GARAGE',
+    title: 'NEON STACK GARAGE',
     subtitle: 'Java · Spring Boot · React · TypeScript',
-    description: '주요 스택을 먼저 보여주는 차고입니다. 화면, API, DB, 서버 흐름을 같이 다룹니다.',
+    description: '주요 스택을 네온 정비고처럼 보여줍니다. 화면, API, DB, 서버 흐름을 하나의 개발 차선으로 묶었습니다.',
     position: [-13, -10],
-    color: 0x38bdf8,
+    color: 0x00e5ff,
+    accent: '#00e5ff',
     chips: ['Java', 'Spring Boot', 'React', 'TypeScript', 'PostgreSQL', 'MyBatis'],
   },
   {
     id: 'career',
-    title: 'CAREER ROAD',
+    title: 'CAREER MAINFRAME',
     subtitle: '6년+ 웹 개발·운영',
-    description: 'PHP/CodeIgniter 유지보수에서 문자 발송 서버, 앱 API, AWP 업무 시스템까지 이어진 경력입니다.',
+    description: 'PHP/CodeIgniter 유지보수에서 문자 발송 서버, 앱 API, AWP 업무 시스템까지 이어진 운영형 경력입니다.',
     position: [13, -9],
-    color: 0xf97316,
+    color: 0xff2bd6,
+    accent: '#ff2bd6',
     chips: ['PHP', 'CodeIgniter', 'REST API', 'Vue.js', 'AWS', 'Linux'],
   },
   {
     id: 'bim',
-    title: 'BIM YARD',
+    title: 'BIM GRID YARD',
     subtitle: 'AWP · BIM · 3D Viewer',
-    description: 'Workpackage, IWP, 도면, 문서, MTO, 리비전 이력과 3D/BIM 뷰어 상태를 함께 다룹니다.',
+    description: 'Workpackage, IWP, 도면, 문서, MTO, 리비전 이력과 3D/BIM 뷰어 상태를 사이버 그리드로 연결합니다.',
     position: [13, 10],
-    color: 0xa78bfa,
+    color: 0x8b5cf6,
+    accent: '#a855f7',
     chips: ['AWP', 'BIM', 'xeokit', 'XKT', 'Three.js', 'tile/LOD'],
   },
   {
     id: 'contact',
-    title: 'CONTACT GATE',
+    title: 'SIGNAL GATE',
     subtitle: 'GitHub · Career evidence',
-    description: '포트폴리오 목적지는 기술 스택과 경력 근거입니다. 필요하면 GitHub와 경력 섹션으로 연결합니다.',
+    description: '포트폴리오 목적지는 기술 스택과 경력 근거입니다. 외부 링크는 신호 게이트처럼 정리합니다.',
     position: [-13, 10],
-    color: 0x22c55e,
+    color: 0x39ff14,
+    accent: '#39ff14',
     chips: ['GitHub', 'Portfolio', 'Career', 'Contact'],
   },
 ];
 
 const defaultZone = {
   id: 'intro' as ZoneId,
-  title: 'USY DEV CIRCUIT',
-  subtitle: 'Bruno-inspired interactive portfolio',
-  description: '차를 직접 몰고 주요 스택, 경력, AWP/BIM 구역을 둘러보는 3D 포트폴리오입니다.',
-  chips: ['WASD', 'Arrow Keys', 'Drive', 'Explore'],
+  title: 'CYBERPUNK DEV CITY',
+  subtitle: 'Drive through full-stack evidence',
+  description: '네온 호버 로버로 스택, 경력, AWP/BIM 구역을 탐색하는 사이버펑크 3D 포트폴리오입니다.',
+  chips: ['WASD', 'Arrow Keys', 'Hover Rover', 'Neon Grid'],
 };
 
-function makeTextSprite(lines: string[], options: { color?: string; bg?: string; width?: number; height?: number } = {}) {
-  const width = options.width ?? 640;
-  const height = options.height ?? 240;
+function makeTextSprite(
+  lines: string[],
+  options: { color?: string; bg?: string; width?: number; height?: number; accent?: string } = {},
+) {
+  const width = options.width ?? 760;
+  const height = options.height ?? 260;
+  const accent = options.accent ?? '#00e5ff';
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -70,37 +79,52 @@ function makeTextSprite(lines: string[], options: { color?: string; bg?: string;
   if (!ctx) throw new Error('Canvas 2D context unavailable');
 
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = options.bg ?? 'rgba(8, 13, 31, 0.88)';
-  roundRect(ctx, 12, 12, width - 24, height - 24, 34);
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, options.bg ?? 'rgba(4, 8, 22, 0.94)');
+  gradient.addColorStop(1, 'rgba(21, 8, 38, 0.9)');
+  ctx.fillStyle = gradient;
+  angledPanel(ctx, 18, 18, width - 36, height - 36, 34);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+
+  ctx.strokeStyle = accent;
+  ctx.shadowColor = accent;
+  ctx.shadowBlur = 24;
   ctx.lineWidth = 5;
   ctx.stroke();
+  ctx.shadowBlur = 0;
 
-  ctx.fillStyle = options.color ?? '#ffffff';
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  for (let y = 42; y < height - 34; y += 18) {
+    ctx.fillRect(34, y, width - 68, 1.2);
+  }
+
+  ctx.fillStyle = options.color ?? '#ecfeff';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = '900 58px Pretendard, Inter, Arial, sans-serif';
+  ctx.shadowColor = accent;
+  ctx.shadowBlur = 18;
+  ctx.font = '950 54px Pretendard, Inter, Arial, sans-serif';
   ctx.fillText(lines[0] ?? '', width / 2, height * 0.42);
-  ctx.font = '760 31px Pretendard, Inter, Arial, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.76)';
+  ctx.shadowBlur = 8;
+  ctx.font = '780 29px Pretendard, Inter, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(236,254,255,0.78)';
   ctx.fillText(lines[1] ?? '', width / 2, height * 0.66);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true }));
-  sprite.scale.set(4.7, 1.78, 1);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false }));
+  sprite.scale.set(5.45, 1.86, 1);
   return sprite;
 }
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
-  const r = Math.min(radius, width / 2, height / 2);
+function angledPanel(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, cut: number) {
   ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + width, y, x + width, y + height, r);
-  ctx.arcTo(x + width, y + height, x, y + height, r);
-  ctx.arcTo(x, y + height, x, y, r);
-  ctx.arcTo(x, y, x + width, y, r);
+  ctx.moveTo(x + cut, y);
+  ctx.lineTo(x + width, y);
+  ctx.lineTo(x + width, y + height - cut);
+  ctx.lineTo(x + width - cut, y + height);
+  ctx.lineTo(x, y + height);
+  ctx.lineTo(x, y + cut);
   ctx.closePath();
 }
 
@@ -134,54 +158,48 @@ export function PortfolioGame3D() {
     if (!mount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xbcecff);
-    scene.fog = new THREE.Fog(0xbcecff, 28, 78);
+    scene.background = new THREE.Color(0x030612);
+    scene.fog = new THREE.FogExp2(0x090418, 0.023);
 
-    const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 120);
-    camera.position.set(0, 8, -12);
+    const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 150);
+    camera.position.set(0, 7.8, -12);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
 
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x78a56d, 2.2);
-    scene.add(hemi);
+    scene.add(new THREE.AmbientLight(0x1a1f45, 1.4));
 
-    const sun = new THREE.DirectionalLight(0xffffff, 3.4);
-    sun.position.set(-12, 20, -10);
-    sun.castShadow = true;
-    sun.shadow.camera.left = -35;
-    sun.shadow.camera.right = 35;
-    sun.shadow.camera.top = 35;
-    sun.shadow.camera.bottom = -35;
-    sun.shadow.mapSize.set(2048, 2048);
-    scene.add(sun);
+    const moon = new THREE.DirectionalLight(0x9fb7ff, 1.6);
+    moon.position.set(-15, 24, -18);
+    moon.castShadow = true;
+    moon.shadow.camera.left = -38;
+    moon.shadow.camera.right = 38;
+    moon.shadow.camera.top = 38;
+    moon.shadow.camera.bottom = -38;
+    moon.shadow.mapSize.set(2048, 2048);
+    scene.add(moon);
 
     const world = new THREE.Group();
     scene.add(world);
 
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(64, 64),
-      new THREE.MeshStandardMaterial({ color: 0x8fd6b2, roughness: 0.78 }),
-    );
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    world.add(ground);
-
-    addRoads(world);
-    addTrackMarks(world);
-    addProps(world);
+    addCyberFloor(world);
+    addNeonRoads(world);
+    addNeonCity(world);
+    addDataRails(world);
     addStations(world);
 
-    const car = createCar();
-    car.position.set(0, 0.38, -2);
+    const car = createHoverRover();
+    car.position.set(0, 0.58, -2);
     world.add(car);
 
-    const startSign = makeTextSprite(['엄신용', 'Full-stack Developer']);
-    startSign.position.set(0, 3.2, -7.2);
+    const startSign = makeTextSprite(['CYBERPUNK DEV CITY', '엄신용 · Full-stack Developer'], { accent: '#00e5ff' });
+    startSign.position.set(0, 4.15, -8.2);
     world.add(startSign);
 
     const resize = () => {
@@ -214,7 +232,7 @@ export function PortfolioGame3D() {
 
     const animate = () => {
       const delta = Math.min(clock.getDelta(), 0.045);
-      updateCar(car, delta);
+      updateCar(car, delta, clock.elapsedTime);
       updateCamera(camera, car);
       animateWorld(world, clock.elapsedTime);
       renderer.render(scene, camera);
@@ -224,7 +242,7 @@ export function PortfolioGame3D() {
         const activeZone = getActiveZone(carState.current.x, carState.current.z);
         setHud({
           zone: activeZone ?? defaultZone,
-          speed: Math.round(Math.abs(carState.current.speed) * 280),
+          speed: Math.round(Math.abs(carState.current.speed) * 320),
           x: Number(carState.current.x.toFixed(1)),
           z: Number(carState.current.z.toFixed(1)),
         });
@@ -238,7 +256,7 @@ export function PortfolioGame3D() {
       return codes.some((code) => keys.current[code] || touchKeys.current[code]);
     }
 
-    function updateCar(carObject: THREE.Group, delta: number) {
+    function updateCar(carObject: THREE.Group, delta: number, elapsed: number) {
       const state = carState.current;
       const accelerating = pressed('ArrowUp', 'KeyW');
       const reversing = pressed('ArrowDown', 'KeyS');
@@ -246,25 +264,31 @@ export function PortfolioGame3D() {
       const turningRight = pressed('ArrowRight', 'KeyD');
       const braking = pressed('Space');
 
-      if (accelerating) state.speed += 13 * delta;
-      if (reversing) state.speed -= 9 * delta;
-      if (braking) state.speed *= 0.82;
-      state.speed *= Math.pow(0.9, delta * 24);
-      state.speed = THREE.MathUtils.clamp(state.speed, -2.25, 3.25);
+      if (accelerating) state.speed += 12.5 * delta;
+      if (reversing) state.speed -= 8.5 * delta;
+      if (braking) state.speed *= 0.8;
+      state.speed *= Math.pow(0.91, delta * 24);
+      state.speed = THREE.MathUtils.clamp(state.speed, -2.05, 3.15);
 
-      const steerPower = THREE.MathUtils.clamp(Math.abs(state.speed) / 2.2, 0.18, 1);
-      if (turningLeft) state.angle += 2.35 * delta * steerPower * Math.sign(state.speed || 1);
-      if (turningRight) state.angle -= 2.35 * delta * steerPower * Math.sign(state.speed || 1);
+      const steerPower = THREE.MathUtils.clamp(Math.abs(state.speed) / 2.15, 0.2, 1);
+      if (turningLeft) state.angle += 2.25 * delta * steerPower * Math.sign(state.speed || 1);
+      if (turningRight) state.angle -= 2.25 * delta * steerPower * Math.sign(state.speed || 1);
 
-      state.x += Math.sin(state.angle) * state.speed * delta * 3.15;
-      state.z += Math.cos(state.angle) * state.speed * delta * 3.15;
-      state.x = THREE.MathUtils.clamp(state.x, -26, 26);
-      state.z = THREE.MathUtils.clamp(state.z, -26, 26);
+      state.x += Math.sin(state.angle) * state.speed * delta * 3.1;
+      state.z += Math.cos(state.angle) * state.speed * delta * 3.1;
+      state.x = THREE.MathUtils.clamp(state.x, -27, 27);
+      state.z = THREE.MathUtils.clamp(state.z, -27, 27);
 
-      carObject.position.set(state.x, 0.38 + Math.sin(clock.elapsedTime * 11) * Math.abs(state.speed) * 0.015, state.z);
+      const hover = 0.55 + Math.sin(elapsed * 3.4) * 0.045 + Math.abs(state.speed) * 0.018;
+      carObject.position.set(state.x, hover, state.z);
       carObject.rotation.y = state.angle;
+      carObject.rotation.z = THREE.MathUtils.lerp(carObject.rotation.z, (turningLeft ? 0.08 : turningRight ? -0.08 : 0), 0.08);
       carObject.children.forEach((child) => {
-        if (child.userData.wheel) child.rotation.x -= state.speed * delta * 8;
+        if (child.userData.rotor) child.rotation.y += delta * (6 + Math.abs(state.speed) * 5);
+        if (child.userData.pulse) {
+          const scale = 1 + Math.sin(elapsed * 7 + child.position.x) * 0.08;
+          child.scale.setScalar(scale);
+        }
       });
     }
 
@@ -286,18 +310,19 @@ export function PortfolioGame3D() {
   return (
     <section
       className="drive-portfolio"
-      data-game-world="bruno-inspired"
+      data-theme="cyberpunk"
+      data-game-world="cyberpunk-dev-city"
       data-active-zone={hud.zone.id}
       data-car-x={hud.x}
       data-car-z={hud.z}
       data-speed={hud.speed}
-      aria-label="Bruno Simon inspired drivable portfolio world"
+      aria-label="Cyberpunk Dev City drivable portfolio world"
     >
       <div ref={mountRef} className="game-canvas" />
 
       <div className="game-topbar">
         <div>
-          <span>USY DEV CIRCUIT</span>
+          <span>CYBERPUNK DEV CITY</span>
           <strong>엄신용 · Full-stack Developer</strong>
         </div>
         <nav aria-label="portfolio landmarks">
@@ -309,8 +334,8 @@ export function PortfolioGame3D() {
         </nav>
       </div>
 
-      <aside className="zone-card" id={hud.zone.id}>
-        <p className="zone-eyebrow">현재 구역</p>
+      <aside className="zone-card" id={hud.zone.id} style={{ '--zone-accent': 'accent' in hud.zone ? hud.zone.accent : '#00e5ff' } as React.CSSProperties}>
+        <p className="zone-eyebrow">CURRENT SIGNAL</p>
         <h1>{hud.zone.title}</h1>
         <strong>{hud.zone.subtitle}</strong>
         <p>{hud.zone.description}</p>
@@ -320,9 +345,9 @@ export function PortfolioGame3D() {
       </aside>
 
       <div className="game-hud">
-        <div><span>SPEED</span><strong>{hud.speed}</strong></div>
-        <div><span>POS</span><strong>{hud.x}, {hud.z}</strong></div>
-        <div><span>ZONE</span><strong>{hud.zone.id.toUpperCase()}</strong></div>
+        <div><span>VELOCITY</span><strong>{hud.speed}</strong></div>
+        <div><span>GRID POS</span><strong>{hud.x}, {hud.z}</strong></div>
+        <div><span>SIGNAL</span><strong>{hud.zone.id.toUpperCase()}</strong></div>
       </div>
 
       <div className="mini-map" aria-label="mini map">
@@ -330,14 +355,14 @@ export function PortfolioGame3D() {
           <span
             className={`map-zone ${hud.zone.id === zone.id ? 'active' : ''}`}
             key={zone.id}
-            style={{ left: `${((zone.position[0] + 26) / 52) * 100}%`, top: `${((zone.position[1] + 26) / 52) * 100}%` }}
+            style={{ left: `${((zone.position[0] + 27) / 54) * 100}%`, top: `${((zone.position[1] + 27) / 54) * 100}%`, background: zone.accent }}
           />
         ))}
-        <span className="map-car" style={{ left: `${((hud.x + 26) / 52) * 100}%`, top: `${((hud.z + 26) / 52) * 100}%` }} />
+        <span className="map-car" style={{ left: `${((hud.x + 27) / 54) * 100}%`, top: `${((hud.z + 27) / 54) * 100}%` }} />
       </div>
 
       <div className="control-help">
-        <span>Drive with</span>
+        <span>Drive hover rover</span>
         <strong>WASD / Arrow Keys</strong>
         <span>Space = brake</span>
       </div>
@@ -355,172 +380,276 @@ export function PortfolioGame3D() {
   );
 }
 
-function addRoads(world: THREE.Group) {
-  const material = new THREE.MeshStandardMaterial({ color: 0x2f3a45, roughness: 0.74 });
-  const stripeMaterial = new THREE.MeshBasicMaterial({ color: 0xf8fafc });
+function addCyberFloor(world: THREE.Group) {
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(74, 74),
+    new THREE.MeshStandardMaterial({ color: 0x050816, roughness: 0.72, metalness: 0.28 }),
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  world.add(ground);
+
+  const grid = new THREE.GridHelper(72, 72, 0x00e5ff, 0x17244e);
+  grid.position.y = 0.025;
+  grid.userData.grid = true;
+  const materials = Array.isArray(grid.material) ? grid.material : [grid.material];
+  materials.forEach((material) => {
+    material.transparent = true;
+    material.opacity = 0.34;
+  });
+  world.add(grid);
+
+  const horizon = new THREE.Mesh(
+    new THREE.RingGeometry(22, 22.08, 128),
+    new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: 0.46, side: THREE.DoubleSide }),
+  );
+  horizon.rotation.x = -Math.PI / 2;
+  horizon.position.y = 0.06;
+  world.add(horizon);
+}
+
+function addNeonRoads(world: THREE.Group) {
+  const roadMat = new THREE.MeshStandardMaterial({ color: 0x080b16, roughness: 0.36, metalness: 0.62 });
+  const laneCyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.82 });
+  const lanePink = new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: 0.72 });
   const roads = [
-    { x: 0, z: 0, w: 44, h: 5.2, r: 0 },
-    { x: 0, z: 0, w: 5.2, h: 44, r: 0 },
-    { x: -13, z: -10, w: 11, h: 4.8, r: Math.PI / 5 },
-    { x: 13, z: -9, w: 11, h: 4.8, r: -Math.PI / 5 },
-    { x: 13, z: 10, w: 11, h: 4.8, r: Math.PI / 5 },
-    { x: -13, z: 10, w: 11, h: 4.8, r: -Math.PI / 5 },
+    { x: 0, z: 0, w: 48, h: 5.1, r: 0 },
+    { x: 0, z: 0, w: 5.1, h: 48, r: 0 },
+    { x: -13, z: -10, w: 12, h: 4.6, r: Math.PI / 5 },
+    { x: 13, z: -9, w: 12, h: 4.6, r: -Math.PI / 5 },
+    { x: 13, z: 10, w: 12, h: 4.6, r: Math.PI / 5 },
+    { x: -13, z: 10, w: 12, h: 4.6, r: -Math.PI / 5 },
   ];
   roads.forEach((road) => {
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(road.w, road.h), material);
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(road.w, road.h), roadMat);
     mesh.rotation.x = -Math.PI / 2;
     mesh.rotation.z = road.r;
-    mesh.position.set(road.x, 0.018, road.z);
+    mesh.position.set(road.x, 0.035, road.z);
     mesh.receiveShadow = true;
     world.add(mesh);
   });
 
-  for (let i = -18; i <= 18; i += 4) {
-    const dash = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 0.12), stripeMaterial);
+  for (let i = -22; i <= 22; i += 4) {
+    const dash = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.08), i % 8 === 0 ? lanePink : laneCyan);
     dash.rotation.x = -Math.PI / 2;
-    dash.position.set(i, 0.04, 0);
+    dash.position.set(i, 0.075, 0);
     world.add(dash);
-    const dashV = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 1.35), stripeMaterial);
+    const dashV = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 1.6), i % 8 === 0 ? laneCyan : lanePink);
     dashV.rotation.x = -Math.PI / 2;
-    dashV.position.set(0, 0.04, i);
+    dashV.position.set(0, 0.075, i);
     world.add(dashV);
   }
 }
 
-function addTrackMarks(world: THREE.Group) {
-  const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 });
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(7.4, 0.04, 8, 96), material);
-  ring.rotation.x = -Math.PI / 2;
-  ring.position.y = 0.06;
-  world.add(ring);
+function addNeonCity(world: THREE.Group) {
+  const buildingMat = new THREE.MeshStandardMaterial({ color: 0x080b18, roughness: 0.38, metalness: 0.72, emissive: 0x030816, emissiveIntensity: 0.5 });
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0x2d375f, transparent: true, opacity: 0.75 });
+  const windowCyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.72 });
+  const windowPink = new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: 0.58 });
+  const buildingPositions: Array<[number, number, number, number, number]> = [
+    [-30, -26, 3.1, 9, 2.8], [-24, -30, 4.2, 13, 3.2], [-15, -29, 3.4, 7, 2.8], [-5, -31, 5, 15, 3.6], [8, -30, 3.2, 10, 2.8], [20, -29, 5.2, 17, 4], [30, -24, 3.5, 11, 3],
+    [31, -12, 4.4, 12, 3.4], [30, 3, 3.6, 9, 3], [31, 17, 5.4, 16, 4], [24, 30, 4.2, 12, 3.4], [11, 31, 3.8, 8, 3], [-2, 30, 5.1, 14, 3.8], [-16, 31, 3.5, 10, 3], [-28, 24, 4.8, 13, 3.7], [-31, 11, 3.6, 9, 2.8], [-30, -2, 5.2, 15, 3.8],
+  ];
+
+  buildingPositions.forEach(([x, z, w, h, d], index) => {
+    const building = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), buildingMat.clone());
+    building.position.set(x, h / 2, z);
+    building.castShadow = true;
+    building.receiveShadow = true;
+    world.add(building);
+
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(building.geometry), edgeMat);
+    edges.position.copy(building.position);
+    world.add(edges);
+
+    for (let y = 1.4; y < h - 0.6; y += 1.55) {
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.58, 0.08), index % 2 ? windowPink : windowCyan);
+      win.position.set(x, y, z + d / 2 + 0.012);
+      world.add(win);
+    }
+  });
 }
 
-function addProps(world: THREE.Group) {
-  const treeTrunk = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.7 });
-  const treeTop = new THREE.MeshStandardMaterial({ color: 0x1f9d55, roughness: 0.68 });
-  const positions = [
-    [-22, -17], [-18, 16], [19, -18], [22, 18], [-7, -20], [7, 20], [-21, 2], [21, -2],
-  ];
-  positions.forEach(([x, z], index) => {
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 1.2, 8), treeTrunk);
-    trunk.position.set(x, 0.6, z);
-    trunk.castShadow = true;
-    world.add(trunk);
-    const top = new THREE.Mesh(index % 2 ? new THREE.DodecahedronGeometry(1.05) : new THREE.ConeGeometry(1.05, 2, 8), treeTop);
-    top.position.set(x, 1.65, z);
-    top.castShadow = true;
-    world.add(top);
-  });
-
-  const blockMat = new THREE.MeshStandardMaterial({ color: 0xdbeafe, roughness: 0.58 });
-  for (let i = 0; i < 12; i += 1) {
-    const block = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.25 + (i % 3) * 0.35, 1.4), blockMat.clone());
-    block.position.set(-22 + i * 4, 0.15 + (i % 3) * 0.18, i % 2 ? 22 : -22);
-    block.castShadow = true;
-    block.receiveShadow = true;
-    world.add(block);
+function addDataRails(world: THREE.Group) {
+  const railMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.48 });
+  const magentaMat = new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: 0.42 });
+  for (let i = -24; i <= 24; i += 8) {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.035, 58), i % 16 === 0 ? railMat : magentaMat);
+    rail.position.set(i, 0.18, 0);
+    world.add(rail);
+    const rail2 = new THREE.Mesh(new THREE.BoxGeometry(58, 0.035, 0.035), i % 16 === 0 ? magentaMat : railMat);
+    rail2.position.set(0, 0.19, i);
+    world.add(rail2);
   }
 }
 
 function addStations(world: THREE.Group) {
   zones.forEach((zone) => {
     const [x, z] = zone.position;
-    const baseMat = new THREE.MeshStandardMaterial({ color: zone.color, roughness: 0.52, metalness: 0.08 });
-    const base = new THREE.Mesh(new THREE.BoxGeometry(6.3, 0.45, 4.7), baseMat);
-    base.position.set(x, 0.22, z);
-    base.castShadow = true;
-    base.receiveShadow = true;
-    world.add(base);
+    const accentMat = new THREE.MeshBasicMaterial({ color: zone.color, transparent: true, opacity: 0.82 });
+    const platform = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.75, 4.45, 0.34, 6),
+      new THREE.MeshStandardMaterial({ color: 0x0a1022, roughness: 0.33, metalness: 0.78, emissive: zone.color, emissiveIntensity: 0.18 }),
+    );
+    platform.position.set(x, 0.2, z);
+    platform.rotation.y = Math.PI / 6;
+    platform.castShadow = true;
+    platform.receiveShadow = true;
+    world.add(platform);
 
-    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.62 });
-    for (let i = 0; i < 4; i += 1) {
-      const sx = i < 2 ? -2.35 : 2.35;
-      const sz = i % 2 ? -1.55 : 1.55;
-      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.38, 2.4, 0.38), pillarMat);
-      pillar.position.set(x + sx, 1.42, z + sz);
-      pillar.castShadow = true;
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(3.55, 0.035, 8, 96),
+      new THREE.MeshBasicMaterial({ color: zone.color, transparent: true, opacity: 0.78 }),
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.set(x, 0.48, z);
+    ring.userData.spin = true;
+    world.add(ring);
+
+    for (let i = 0; i < 6; i += 1) {
+      const angle = (i / 6) * Math.PI * 2;
+      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.6, 0.16), accentMat);
+      pillar.position.set(x + Math.cos(angle) * 3.05, 1.65, z + Math.sin(angle) * 3.05);
+      pillar.userData.pulse = true;
       world.add(pillar);
     }
 
-    const sign = makeTextSprite([zone.title, zone.subtitle], { color: '#ffffff' });
-    sign.position.set(x * 0.82, 3.12, z - 2.85);
+    const sign = makeTextSprite([zone.title, zone.subtitle], { accent: zone.accent });
+    sign.position.set(x * 0.78, 4.05, z - 3.1);
     world.add(sign);
 
-    const trophy = new THREE.Mesh(
-      zone.id === 'bim' ? new THREE.IcosahedronGeometry(1.2, 0) : new THREE.BoxGeometry(1.8, 1.8, 1.8),
-      new THREE.MeshStandardMaterial({ color: zone.color, roughness: 0.28, metalness: 0.22 }),
-    );
-    trophy.position.set(x, 1.55, z + 0.45);
-    trophy.rotation.set(0.2, 0.4, 0.1);
-    trophy.castShadow = true;
-    trophy.userData.spin = true;
-    world.add(trophy);
+    const icon = createZoneIcon(zone.id, zone.color);
+    icon.position.set(x, 1.35, z + 0.3);
+    icon.userData.spin = true;
+    world.add(icon);
+
+    const light = new THREE.PointLight(zone.color, 4.2, 15, 1.5);
+    light.position.set(x, 3.3, z);
+    world.add(light);
   });
 }
 
-function createCar() {
-  const car = new THREE.Group();
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff4d2e, roughness: 0.42, metalness: 0.12 });
-  const cabinMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.24, metalness: 0.18 });
-  const blackMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.58 });
-  const lightMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+function createZoneIcon(id: ZoneId, color: number) {
+  const group = new THREE.Group();
+  const glowMat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.2, roughness: 0.24, metalness: 0.55 });
+  const lineMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.8, wireframe: true });
 
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.42, 2.38), bodyMat);
-  body.position.y = 0.22;
-  body.castShadow = true;
-  car.add(body);
+  if (id === 'stack') {
+    for (let i = 0; i < 4; i += 1) {
+      const rack = new THREE.Mesh(new THREE.BoxGeometry(0.72, 1.35, 0.45), glowMat);
+      rack.position.set((i - 1.5) * 0.55, 0.2 + i * 0.08, 0);
+      group.add(rack);
+    }
+  } else if (id === 'career') {
+    for (let i = 0; i < 5; i += 1) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.6 + i * 0.28, 0.24), glowMat);
+      bar.position.set((i - 2) * 0.42, bar.geometry.parameters.height / 2 - 0.45, 0);
+      group.add(bar);
+    }
+  } else if (id === 'bim') {
+    const cube = new THREE.Mesh(new THREE.BoxGeometry(1.65, 1.65, 1.65), lineMat);
+    cube.rotation.set(0.35, 0.55, 0.1);
+    group.add(cube);
+  } else if (id === 'contact') {
+    const gate = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.08, 8, 64), glowMat);
+    gate.rotation.y = Math.PI / 2;
+    group.add(gate);
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 12), glowMat);
+    group.add(core);
+  }
 
-  const hood = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.28, 0.9), bodyMat);
-  hood.position.set(0, 0.47, 0.48);
-  hood.castShadow = true;
-  car.add(hood);
+  return group;
+}
 
-  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.62, 0.86), cabinMat);
-  cabin.position.set(0, 0.78, -0.32);
-  cabin.castShadow = true;
-  car.add(cabin);
+function createHoverRover() {
+  const rover = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x101522, roughness: 0.22, metalness: 0.82, emissive: 0x111827, emissiveIntensity: 0.45 });
+  const armorMat = new THREE.MeshStandardMaterial({ color: 0x252a3d, roughness: 0.28, metalness: 0.7, emissive: 0x040712, emissiveIntensity: 0.25 });
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x00e5ff, roughness: 0.12, metalness: 0.2, transparent: true, opacity: 0.72, emissive: 0x00e5ff, emissiveIntensity: 0.7 });
+  const cyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.92 });
+  const pink = new THREE.MeshBasicMaterial({ color: 0xff2bd6, transparent: true, opacity: 0.88 });
 
-  const spoiler = new THREE.Mesh(new THREE.BoxGeometry(1.44, 0.12, 0.24), blackMat);
-  spoiler.position.set(0, 0.82, -1.22);
-  spoiler.castShadow = true;
-  car.add(spoiler);
+  const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.92, 2.8, 6), bodyMat);
+  fuselage.rotation.x = Math.PI / 2;
+  fuselage.rotation.z = Math.PI / 6;
+  fuselage.position.y = 0.34;
+  fuselage.castShadow = true;
+  rover.add(fuselage);
 
-  const lightLeft = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.12, 0.08), lightMat);
-  lightLeft.position.set(-0.42, 0.36, 1.23);
-  const lightRight = lightLeft.clone();
-  lightRight.position.x = 0.42;
-  car.add(lightLeft, lightRight);
+  const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.48, 28, 12), glassMat);
+  cockpit.scale.set(1.08, 0.42, 1.35);
+  cockpit.position.set(0, 0.77, -0.28);
+  cockpit.castShadow = true;
+  rover.add(cockpit);
 
-  const wheelGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.28, 24);
-  const wheelPositions = [
-    [-0.9, 0.08, 0.78], [0.9, 0.08, 0.78], [-0.9, 0.08, -0.78], [0.9, 0.08, -0.78],
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.68, 1.05, 6), armorMat);
+  nose.rotation.x = Math.PI / 2;
+  nose.position.set(0, 0.34, 1.42);
+  nose.castShadow = true;
+  rover.add(nose);
+
+  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.16, 2.65), cyan);
+  spine.position.set(0, 0.83, 0.05);
+  rover.add(spine);
+
+  const underglow = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 3.05), new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.24, side: THREE.DoubleSide }));
+  underglow.rotation.x = -Math.PI / 2;
+  underglow.position.y = 0.04;
+  underglow.userData.pulse = true;
+  rover.add(underglow);
+
+  const podPositions = [
+    [-1.02, 0.18, 0.86], [1.02, 0.18, 0.86], [-1.02, 0.18, -0.86], [1.02, 0.18, -0.86],
   ];
-  wheelPositions.forEach(([x, y, z]) => {
-    const wheel = new THREE.Mesh(wheelGeo, blackMat);
-    wheel.rotation.z = Math.PI / 2;
-    wheel.position.set(x, y, z);
-    wheel.castShadow = true;
-    wheel.userData.wheel = true;
-    car.add(wheel);
+  podPositions.forEach(([x, y, z], index) => {
+    const pod = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.07, 8, 32), index % 2 ? pink : cyan);
+    pod.rotation.x = Math.PI / 2;
+    pod.position.set(x, y, z);
+    pod.userData.rotor = true;
+    rover.add(pod);
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.08, 0.12), armorMat);
+    strut.position.set(x * 0.52, y + 0.08, z);
+    strut.rotation.z = x > 0 ? -0.18 : 0.18;
+    strut.castShadow = true;
+    rover.add(strut);
   });
 
-  return car;
+  const leftLight = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.06), cyan);
+  leftLight.position.set(-0.34, 0.42, 1.78);
+  const rightLight = leftLight.clone();
+  rightLight.position.x = 0.34;
+  rover.add(leftLight, rightLight);
+
+  const tail = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.08, 0.28), pink);
+  tail.position.set(0, 0.68, -1.46);
+  tail.castShadow = true;
+  rover.add(tail);
+
+  const point = new THREE.PointLight(0x00e5ff, 2.2, 8, 1.4);
+  point.position.set(0, 0.45, 0.1);
+  rover.add(point);
+
+  return rover;
 }
 
 function updateCamera(camera: THREE.PerspectiveCamera, car: THREE.Group) {
   const angle = car.rotation.y;
   const forward = new THREE.Vector3(Math.sin(angle), 0, Math.cos(angle));
-  const targetPosition = car.position.clone().add(forward.clone().multiplyScalar(-8.4)).add(new THREE.Vector3(0, 5.6, 0));
-  camera.position.lerp(targetPosition, 0.075);
-  const lookAt = car.position.clone().add(new THREE.Vector3(0, 1.2, 0)).add(forward.clone().multiplyScalar(3.2));
+  const targetPosition = car.position.clone().add(forward.clone().multiplyScalar(-8.2)).add(new THREE.Vector3(0, 5.9, 0));
+  camera.position.lerp(targetPosition, 0.07);
+  const lookAt = car.position.clone().add(new THREE.Vector3(0, 1.1, 0)).add(forward.clone().multiplyScalar(3.4));
   camera.lookAt(lookAt);
 }
 
 function animateWorld(world: THREE.Group, elapsed: number) {
   world.traverse((object) => {
     if (object.userData.spin) {
-      object.rotation.y += 0.018;
-      object.position.y += Math.sin(elapsed * 2.4 + object.position.x) * 0.002;
+      object.rotation.y += 0.012;
+      object.position.y += Math.sin(elapsed * 2.6 + object.position.x) * 0.0015;
+    }
+    if (object.userData.pulse) {
+      const pulse = 1 + Math.sin(elapsed * 4.5 + object.position.x + object.position.z) * 0.06;
+      object.scale.setScalar(pulse);
     }
   });
 }
@@ -528,6 +657,6 @@ function animateWorld(world: THREE.Group, elapsed: number) {
 function getActiveZone(x: number, z: number) {
   return zones.find((zone) => {
     const [zx, zz] = zone.position;
-    return Math.hypot(x - zx, z - zz) < 5.4;
+    return Math.hypot(x - zx, z - zz) < 5.5;
   });
 }
