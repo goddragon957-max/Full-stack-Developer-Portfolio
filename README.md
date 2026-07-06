@@ -35,7 +35,7 @@ The current version is a clean readable illustrated portfolio:
 - warm paper background;
 - dark brown ink;
 - lavender/sand accents;
-- hand-drawn line-art hero illustration;
+- GPT-generated hero illustration stored at `public/assets/portfolio-hero-gpt.webp`;
 - thick outlined rounded intro card;
 - simple uppercase nav and round pills;
 - generous spacing, no glow-heavy clutter.
@@ -57,7 +57,8 @@ The current version is a clean readable illustrated portfolio:
 - Zustand for capability/experience filter state
 - Lucide Icons
 - Local shadcn/ui-style `Button` and `Card`
-- Local SVG illustration component: `src/components/PortfolioDoodle.tsx`
+- GPT-generated WebP hero asset served from `public/assets/portfolio-hero-gpt.webp`
+- Hero image wrapper component: `src/components/PortfolioDoodle.tsx`
 
 ## Run
 

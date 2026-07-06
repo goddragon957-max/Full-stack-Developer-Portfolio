@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 
 const app = readFileSync('src/App.tsx', 'utf8');
 const data = readFileSync('src/data/portfolio.ts', 'utf8');
@@ -33,6 +33,8 @@ const required = [
   'Codex',
   'MCP',
   'PortfolioDoodle',
+  'portfolio-hero-gpt.webp',
+  'data-hero-image="gpt-generated"',
   'word-break: keep-all',
   'Maggie Appleton',
   'Tom MacWright',
@@ -68,10 +70,21 @@ if (forbidden.length) {
   process.exit(1);
 }
 
+const heroAsset = 'public/assets/portfolio-hero-gpt.webp';
+if (!existsSync(heroAsset)) {
+  console.error(`Missing generated GPT hero image asset: ${heroAsset}`);
+  process.exit(1);
+}
+const heroAssetSize = statSync(heroAsset).size;
+if (heroAssetSize < 50_000 || heroAssetSize > 500_000) {
+  console.error(`Generated GPT hero image asset size looks wrong: ${heroAssetSize} bytes`);
+  process.exit(1);
+}
+
 const experienceCount = (data.match(/id: '/g) || []).length;
 if (experienceCount < 5) {
   console.error(`Expected at least 5 experience/capability records, found ${experienceCount}`);
   process.exit(1);
 }
 
-console.log(`content smoke passed: ${experienceCount} records, ${required.length} required markers, no forbidden public filler`);
+console.log(`content smoke passed: ${experienceCount} records, ${required.length} required markers, generated hero ${heroAssetSize} bytes, no forbidden public filler`);

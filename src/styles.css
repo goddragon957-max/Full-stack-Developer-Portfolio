@@ -152,38 +152,17 @@ main[data-app="loop-dog-lab"]::before {
     #fbfaf7;
 }
 .portfolio-doodle {
-  width: min(100%, 900px);
+  width: min(100%, 1060px);
   height: auto;
   display: block;
-  margin: clamp(18px, 4vw, 50px) auto 0;
-  color: var(--brown);
+  margin: clamp(16px, 3.2vw, 42px) auto 0;
 }
-.doodle-stroke,
-.doodle-stroke * {
-  stroke: var(--brown);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-.doodle-fill { fill: rgba(255,255,255,.82); }
-.doodle-panel { fill: #efeeeb; }
-.doodle-hatch { fill: url(#dots); color: #817b78; }
-.doodle-cream { fill: #fffdf7; }
-.doodle-tool { fill: #d1d1cf; }
-.doodle-cursor { fill: #ffffff; }
-.doodle-person { fill: #c9c9c6; }
-.doodle-laptop { fill: #ece8de; }
-.doodle-lavender { fill: var(--lavender); }
-.doodle-avatar { fill: #bba2ff; }
-.doodle-hair { fill: #5f423f; }
-.floating-tags text {
-  fill: var(--brown);
-  stroke: none;
-  font-family: 'Pretendard Variable', Pretendard, sans-serif;
-  font-size: 18px;
-  font-weight: 830;
-  letter-spacing: -.03em;
+.portfolio-generated-image {
+  aspect-ratio: 1400 / 933;
+  object-fit: contain;
+  border-radius: 12px;
+  filter: drop-shadow(0 20px 34px rgba(96, 66, 63, 0.14));
+  transform: translateX(-1.5%);
 }
 .featured-word {
   margin-top: -8px;
