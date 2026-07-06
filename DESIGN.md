@@ -25,7 +25,7 @@ The user rejected the dark Magic UI pass because it was not readable. The approv
 - readable Pretendard typography;
 - dark brown ink color;
 - soft lavender/sand accent palette;
-- large GPT-generated hero illustration at `public/assets/portfolio-hero-gpt.webp`;
+- large GPT-generated abstract systems/BIM blueprint hero at `public/assets/portfolio-hero-gpt.webp`;
 - rounded lavender intro card;
 - simple uppercase nav;
 - generous spacing and low visual noise.
@@ -37,7 +37,7 @@ Reference traits to preserve:
 - minimal top navigation with round pills;
 - cream/off-white surfaces;
 - thick brown outlines on key cards;
-- polished editorial illustration, not particle/aurora/glow effects.
+- polished editorial abstract systems illustration, not people, mascots, particle/aurora/glow effects, or developer-at-laptop clichés.
 
 ## Avoid
 
@@ -54,7 +54,7 @@ Reference traits to preserve:
 
 1. Top nav with USY mark, centered links, small rounded action pills.
 2. Hero split:
-   - left: GPT-generated developer/workflow/BIM hero illustration;
+   - left: GPT-generated no-person systems/workflow/BIM blueprint hero illustration;
    - right: lavender introduction card with resume-grounded copy.
 3. Four source-grounded stats.
 4. Four capability cards with a selected detail panel.

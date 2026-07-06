@@ -158,7 +158,7 @@ main[data-app="loop-dog-lab"]::before {
   margin: clamp(16px, 3.2vw, 42px) auto 0;
 }
 .portfolio-generated-image {
-  aspect-ratio: 1400 / 933;
+  aspect-ratio: 1400 / 851;
   object-fit: contain;
   border-radius: 12px;
   filter: drop-shadow(0 20px 34px rgba(96, 66, 63, 0.14));

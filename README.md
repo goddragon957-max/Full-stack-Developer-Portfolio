@@ -35,7 +35,7 @@ The current version is a clean readable illustrated portfolio:
 - warm paper background;
 - dark brown ink;
 - lavender/sand accents;
-- GPT-generated hero illustration stored at `public/assets/portfolio-hero-gpt.webp`;
+- GPT-generated abstract systems/BIM blueprint hero illustration stored at `public/assets/portfolio-hero-gpt.webp`;
 - thick outlined rounded intro card;
 - simple uppercase nav and round pills;
 - generous spacing, no glow-heavy clutter.
