@@ -54,11 +54,11 @@ export type SkillGroup = {
 
 export const hero = {
   label: 'FULL-STACK DEVELOPER · AI-ASSISTED WORKFLOW',
-  headline: ['운영 웹을 이해하고', '확장하는 풀스택', '개발자입니다.'],
+  headline: ['이미 돌아가는 시스템을 읽고,', '필요한 만큼 바꾸는', '개발자입니다.'],
   subcopy:
-    'PHP/CodeIgniter 기반 유지보수로 개발을 시작해 Java/Spring Boot, Next.js/React, TypeScript로 영역을 넓혔습니다. 화면, API, DB, 서버, 배포 흐름을 함께 보며 기능을 구현하고 운영 이슈를 해결해 왔습니다.',
+    '새 프로젝트를 처음부터 예쁘게 만드는 일보다 더 많이 해온 것은, 이미 운영 중인 서비스 안에서 무엇이 깨졌고 어디까지 바꿀 수 있는지 읽어내는 일이었습니다. PHP/CodeIgniter 쇼핑몰 유지보수에서 시작해 Spring Boot API, React/TypeScript 화면, DB와 서버 운영, 배포 흐름까지 옮겨 다니며 한 기능이 실제 운영 환경에서 어떻게 살아남는지 배웠습니다.',
   aiLine:
-    'GPT, Cursor, Codex, OpenCode 같은 AI agent 도구를 코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증 흐름에 활용합니다.',
+    'AI는 판단을 대신하지 않습니다. 대신 낯선 코드를 읽고, 구현 초안을 만들고, 리팩터링 후보를 정리하고, 검증 체크리스트를 반복하는 시간을 줄여줍니다.',
 };
 
 export const stats = [
@@ -73,7 +73,7 @@ export const capabilities: Capability[] = [
     id: 'fullstack',
     title: 'Full-stack Web Development',
     kicker: '화면부터 API까지',
-    body: 'Next.js/React/TypeScript 화면과 Java/Spring Boot REST API를 연결해 업무 기능을 구현합니다.',
+    body: '화면 하나를 바꿀 때도 API 응답, DB 구조, 권한, 배포 이후 운영까지 같이 봅니다. Next.js/React/TypeScript 화면과 Java/Spring Boot REST API를 연결해 업무 기능을 구현합니다.',
     points: ['Next.js · React · TypeScript', 'Spring Boot · Java · REST API', 'Vue.js · JSP · PHP/CodeIgniter'],
     icon: Code2,
   },
@@ -81,7 +81,7 @@ export const capabilities: Capability[] = [
     id: 'operation',
     title: 'Service Operation & Maintenance',
     kicker: '운영 중인 서비스 기준',
-    body: '오류 수정, 기능 추가, 리팩터링, DB/서버/배포 흐름을 함께 보며 실제 서비스 안정성을 다룹니다.',
+    body: '운영 중인 서비스에서는 좋은 코드보다 먼저 안전한 변경 범위가 필요합니다. 오류 수정, 기능 추가, 리팩터링, DB/서버/배포 흐름을 함께 보며 실제 서비스 안정성을 다룹니다.',
     points: ['장애·운영 이슈 대응', '공통 CRUD·파일 처리 흐름', 'Linux · Apache/Nginx · AWS 운영'],
     icon: ServerCog,
   },
@@ -97,7 +97,7 @@ export const capabilities: Capability[] = [
     id: 'ai-workflow',
     title: 'AI-assisted Development Workflow',
     kicker: 'AI를 작업 하네스로',
-    body: 'AI를 단순 질의가 아니라 코드 탐색, 구현 초안, 문서화, 반복 검증을 빠르게 굴리는 개발 흐름으로 사용합니다.',
+    body: 'AI는 일을 덜 생각하게 만드는 도구가 아니라 반복을 줄이는 도구여야 합니다. 코드 탐색, 구현 초안, 문서화, 반복 검증을 빠르게 굴리는 개발 흐름으로 사용합니다.',
     points: ['GPT · Cursor · Codex · OpenCode', 'AGENTS.md · Skills · MCP', 'role prompt · subagent/workflow'],
     icon: Bot,
   },
@@ -130,7 +130,7 @@ export const experiences: Experience[] = [
       'Workpackage 임베딩과 유사도 검색 등 pgvector 기반 AI/Copilot 연동 흐름 검토/구현',
     ],
     stack: ['Next.js', 'React', 'TypeScript', 'Spring Boot 3', 'Java 21', 'PostgreSQL', 'MyBatis', 'JWT', 'MUI', 'AG Grid', 'xeokit', 'XKT', 'Three.js', 'CopilotKit'],
-    proof: '현재 경력의 대표 프로젝트. 현대적인 프론트엔드/백엔드/도메인 복잡도와 3D 뷰어 검증 경험을 동시에 보여줍니다.',
+    proof: '현재 경력의 대표 프로젝트입니다. 업무 도메인, 화면, API, 권한, 데이터, 3D 뷰어가 한 번에 얽힌 시스템을 다뤘다는 점에서 단순 CRUD 경력과 구분됩니다.',
     icon: Building2,
   },
   {
@@ -149,7 +149,7 @@ export const experiences: Experience[] = [
       'Vue.js 기반 SPA 화면 개발과 API 연동, 컴포넌트 단위 UI/UX 개선',
     ],
     stack: ['Java', 'REST API', 'Vue.js', 'AWS EC2', 'S3', 'CloudFront', 'RDS', 'CI/CD'],
-    proof: '백엔드/API와 배포·운영 경험을 같이 보여주는 경력 기반 카드입니다.',
+    proof: '문자 발송은 실패가 바로 운영 이슈가 되는 영역입니다. API 구현뿐 아니라 전송 로직, 외부 모듈, 배포와 모니터링까지 같이 다룬 경험입니다.',
     icon: Network,
   },
   {
@@ -168,7 +168,7 @@ export const experiences: Experience[] = [
       'Cursor 초기 도입 이후 기존 코드 파악과 반복 유지보수 작업에 AI 보조 코딩 적용',
     ],
     stack: ['API', '관리자 페이지', 'DB/서버 운영', '앱 연동', 'Cursor'],
-    proof: '운영 중인 앱/웹 서비스를 안정화하고 연동 이슈를 조율한 경험입니다.',
+    proof: '앱과 서버 사이의 문제는 코드 한 줄보다 상태와 책임 경계에서 자주 생깁니다. 운영 중인 앱/웹 서비스를 안정화하고 연동 이슈를 조율한 경험입니다.',
     icon: MonitorCog,
   },
   {
@@ -187,7 +187,7 @@ export const experiences: Experience[] = [
       'GPT를 시작으로 오류 원인 분석, 코드 작성 보조, 문서 초안 작성 등 AI 보조 개발 방식 적용',
     ],
     stack: ['PHP', 'CodeIgniter', 'MySQL', 'PostgreSQL', 'Linux', 'Apache/Nginx', 'PG API'],
-    proof: '유지보수 기반 성장과 서비스 운영 감각의 출발점입니다.',
+    proof: '유지보수는 남이 만든 구조를 읽는 훈련이었습니다. 주문, 배송, 결제, 회원 관리처럼 실제 돈과 운영이 걸린 기능을 고치며 서비스 감각을 익혔습니다.',
     icon: Wrench,
   },
   {
@@ -206,7 +206,7 @@ export const experiences: Experience[] = [
       '코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증 같은 작업을 자동화 대상으로 분리',
     ],
     stack: ['GPT', 'Cursor', 'Codex', 'OpenCode', 'AGENTS.md', 'Skills', 'MCP', 'subagent/workflow'],
-    proof: '경력 기반 개발 역량에 AI agent workflow를 얹는 차별화 포인트입니다.',
+    proof: 'AI를 포트폴리오 장식이 아니라 작업 방식으로 다룹니다. 낯선 코드 탐색, 구현 초안, 문서화, 검증 반복을 줄여 개발자가 판단할 시간을 남기는 쪽에 초점을 둡니다.',
     icon: BrainCircuit,
   },
 ];
@@ -240,8 +240,8 @@ export const skillGroups: SkillGroup[] = [
 ];
 
 export const workflowSteps = [
-  { title: '탐색', body: '낯선 레거시/업무 코드의 구조와 변경 범위를 빠르게 파악합니다.', icon: GitBranch },
-  { title: '초안', body: '구현 방향, API 흐름, UI 상태, 리팩터링 후보를 AI와 함께 빠르게 만듭니다.', icon: Sparkles },
-  { title: '검증', body: '타입 체크, 빌드, 브라우저 확인, 체크리스트로 거짓 완료를 줄입니다.', icon: CheckCircle2 },
-  { title: '문서화', body: 'AGENTS.md, Skills, MCP, 작업 기록으로 다음 반복 비용을 낮춥니다.', icon: Workflow },
+  { title: '탐색', body: '낯선 코드를 바로 고치지 않습니다. 먼저 호출 흐름, 데이터 모양, 권한과 배포 영향을 읽습니다.', icon: GitBranch },
+  { title: '초안', body: 'AI에게 정답을 맡기기보다 선택지를 뽑게 합니다. 구현 방향, API 흐름, UI 상태, 리팩터링 후보를 빠르게 비교합니다.', icon: Sparkles },
+  { title: '검증', body: '타입 체크와 빌드만으로 끝내지 않습니다. 브라우저에서 직접 눌러보고, 체크리스트로 거짓 완료를 줄입니다.', icon: CheckCircle2 },
+  { title: '문서화', body: '한 번 겪은 시행착오는 다시 겪지 않게 남깁니다. AGENTS.md, Skills, MCP, 작업 기록은 다음 반복 비용을 낮추기 위한 장치입니다.', icon: Workflow },
 ];

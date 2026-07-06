@@ -18,7 +18,7 @@ Build and maintain a Vercel-ready personal developer portfolio for 엄신용. Th
 
 Headline:
 
-> 운영 웹을 이해하고 확장하는 풀스택 개발자입니다.
+> 이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다.
 
 Core evidence:
 
@@ -27,6 +27,14 @@ Core evidence:
 - Screen/API/DB/server/deployment flow understanding.
 - AWP business system and 3D/BIM viewer validation.
 - AI-assisted development workflow using GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompts, and subagent/workflow.
+- Developer judgment around change scope, verification, and running-service stability.
+- AI as repetition reduction, not a replacement for judgment.
+
+## Copy Standard
+
+Use deeper operational writing. Good copy should explain a tension from the work: legacy vs modern stack, speed vs verification, automation vs judgment, new feature vs running-service stability.
+
+Do not use sentimental or generic warmth language such as “누구에게 따뜻함이 필요한지”, “기술과 사람을 연결”, “함께 성장”, or similar 어린왕자-style softness. If a sentence could fit any developer portfolio, delete it.
 
 ## Visual Direction
 

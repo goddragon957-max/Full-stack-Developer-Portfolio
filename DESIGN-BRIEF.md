@@ -6,7 +6,7 @@ This portfolio is a **source-grounded full-stack developer portfolio** in a clea
 
 The public page should introduce 엄신용 as:
 
-> 운영 웹을 이해하고 확장하는 풀스택 개발자입니다.
+> 이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다.
 
 ## Content Source
 
@@ -26,6 +26,7 @@ Do not publish private resume details: phone, address, salary, military details,
 - screen/API/DB/server/deployment flow understanding
 - AWP business systems and 3D/BIM viewer validation
 - AI-assisted development workflow: GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompts, subagent/workflow
+- the tension between fast automation and developer judgment
 
 ## Visual System
 
@@ -73,4 +74,5 @@ Browser QA:
 - experience filters change `[data-selected-experience]`
 - zero console errors
 - first screen reads cleanly in Korean without crunched letter spacing
+- public copy avoids sentimental warmth language and explains operational judgment
 - visual direction feels like a warm illustrated portfolio, not Magic UI particle noise

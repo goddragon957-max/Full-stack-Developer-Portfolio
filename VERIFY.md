@@ -44,6 +44,7 @@ First screen should read as:
 
 - clean Gianluca Patti / Lapa-inspired illustrated portfolio;
 - Pretendard Korean typography that is readable at first glance;
+- deeper operational copy, not sentimental warmth/어린왕자-style prose;
 - warm cream paper, brown ink, lavender/sand accents;
 - large line-art portfolio illustration;
 - strong Korean full-stack developer introduction;

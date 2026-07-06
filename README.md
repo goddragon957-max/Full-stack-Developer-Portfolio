@@ -16,7 +16,7 @@ Private/sensitive resume data is excluded by default: phone number, personal add
 
 ## Public Positioning
 
-> 운영 웹을 이해하고 확장하는 풀스택 개발자입니다.
+> 이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다.
 
 The portfolio presents:
 
@@ -25,6 +25,7 @@ The portfolio presents:
 - screen/API/DB/server/deployment flow understanding;
 - AWP business systems and 3D/BIM viewer validation;
 - AI-assisted development workflow using GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, and subagent/workflow patterns.
+- a copy direction based on operational judgment rather than sentimental portfolio filler.
 
 ## Visual Direction
 

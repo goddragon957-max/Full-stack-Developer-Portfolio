@@ -15,7 +15,7 @@ Do not invent side-project narratives or filler marketing copy. If there is not 
 
 ## Public Positioning
 
-A full-stack developer who started from PHP/CodeIgniter service maintenance and expanded into Java/Spring Boot, Next.js/React, TypeScript, database/server/deployment flows, AWP business systems, 3D/BIM viewer validation, and AI-assisted development workflows.
+A full-stack developer who reads existing systems and changes only what needs to change. The public narrative should emphasize operational judgment: understanding code, API, DB, server, deployment, domain constraints, and verification before changing a running service.
 
 ## Visual Direction
 
@@ -29,6 +29,7 @@ The user rejected the dark Magic UI pass because it was not readable. The approv
 - rounded lavender intro card;
 - simple uppercase nav;
 - generous spacing and low visual noise.
+- deeper operational copy inspired by Maggie Appleton's layered self-description, Tom MacWright's built-history directness, Tania Rascia's plain credibility, and swyx's public thesis style.
 
 Reference traits to preserve:
 
@@ -47,6 +48,7 @@ Reference traits to preserve:
 - making Loop Dog Lab, mascots, 댕댕이/멍멍이, or internal agent jargon the first-screen identity;
 - publishing private details from the PDF: phone, personal email, address, salary, military information;
 - fake metrics or unrelated side-project cards above career evidence.
+- sentimental "warmth" copy, 어린왕자-style softness, or generic "technology and people" language.
 
 ## Layout
 

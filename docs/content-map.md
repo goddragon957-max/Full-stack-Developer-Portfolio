@@ -18,15 +18,15 @@
 
 ### Core identity
 
-**운영 중인 웹 서비스를 고치고 확장해 온 풀스택 개발자.**
+**이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 풀스택 개발자.**
 
-PHP/CodeIgniter 유지보수에서 시작해 Java/Spring Boot, Next.js/React, TypeScript 기반 화면·API·DB·서버·배포 흐름을 함께 다뤄왔다.
+PHP/CodeIgniter 유지보수에서 시작해 Java/Spring Boot, Next.js/React, TypeScript 기반 화면·API·DB·서버·배포 흐름을 함께 다뤄왔다. 핵심은 새 화면을 예쁘게 만드는 문장이 아니라 운영 중인 시스템에서 어디까지 안전하게 바꿀 수 있는지 읽어내는 능력이다.
 
 ### Differentiator
 
-**AI-assisted coding을 실제 유지보수/구현/검증 흐름에 적용하는 개발자.**
+**AI-assisted coding을 판단 대체가 아니라 반복 제거에 쓰는 개발자.**
 
-GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompt, subagent/workflow 구성을 코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증에 활용한다.
+GPT, Cursor, Codex, OpenCode, AGENTS.md, Skills, MCP, role prompt, subagent/workflow 구성을 코드 탐색, 구현 초안, 리팩터링, 문서화, 반복 검증에 활용한다. 자동화는 일을 덜 생각하기 위한 장치가 아니라 더 중요한 판단에 시간을 남기기 위한 장치로 설명한다.
 
 ### Strongest current work
 
@@ -48,14 +48,16 @@ Goal: 이 사람을 “AI product builder” 같은 추상 문구가 아니라, 
 
 Must include:
 
-- 풀스택 개발자
+- 이미 운영 중인 시스템을 읽고 변경하는 풀스택 개발자
 - 운영/유지보수 기반 성장
 - 화면/API/DB/서버/배포 흐름
 - AI-assisted coding / agent workflow 활용
+- 운영 안정성, 변경 범위, 검증 관점
 
 Do not include:
 
 - 과장된 AI 창업가 문구
+- 어린왕자식 감성 문구, 따뜻함/살펴봄/함께함 같은 범용 표현
 - 댕댕이/멍멍이 중심 소개
 - 검증되지 않은 사이드 프로젝트 나열
 

@@ -6,15 +6,17 @@ const css = readFileSync('src/styles.css', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const contentMap = readFileSync('docs/content-map.md', 'utf8');
 const heroCopy = readFileSync('docs/copy/hero.md', 'utf8');
+const copyRefs = readFileSync('docs/copy/references.md', 'utf8');
 
-const joined = `${app}\n${data}\n${css}\n${design}\n${contentMap}\n${heroCopy}`;
+const joined = `${app}\n${data}\n${css}\n${design}\n${contentMap}\n${heroCopy}\n${copyRefs}`;
 
 const required = [
   'gianluca-clean-portfolio',
   'data-font="pretendard"',
   'Pretendard',
   '060703-resume',
-  '운영 웹을 이해하고 확장하는 풀스택 개발자입니다',
+  '이미 돌아가는 시스템을 읽고, 필요한 만큼 바꾸는 개발자입니다',
+  'AI는 판단을 대신하지 않습니다',
   'PHP/CodeIgniter',
   'Java/Spring Boot',
   'Next.js/React',
@@ -30,6 +32,8 @@ const required = [
   'MCP',
   'PortfolioDoodle',
   'word-break: keep-all',
+  'Maggie Appleton',
+  'Tom MacWright',
 ];
 
 const forbiddenPublic = [
@@ -41,6 +45,9 @@ const forbiddenPublic = [
   'Particles',
   'BorderBeam',
   'TechEngine3D',
+  '누구에게 따뜻함',
+  '따뜻한 개발자',
+  '어린왕자',
   'mailto:cvb7412@naver.com',
   'hidden phone',
 ];
