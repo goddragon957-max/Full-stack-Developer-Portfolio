@@ -1,6 +1,18 @@
 # 엄신용 Full-stack Portfolio
 
-Vercel-ready personal developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, Zustand, and local shadcn-style primitives.
+Bruno Simon-inspired interactive 3D developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, and Zustand.
+
+## Current version
+
+This is no longer a static landing page. The first screen is a drivable 3D portfolio world:
+
+- drive a small red/orange toy car;
+- explore portfolio zones on the map;
+- Stack Garage shows the main technologies;
+- Career Road summarizes work history;
+- BIM Yard highlights AWP/BIM/3D viewer experience;
+- Contact Gate points to portfolio destinations;
+- HUD and mini map update as the car moves.
 
 ## Content rule
 
@@ -10,52 +22,32 @@ This site is source-grounded. Public copy comes from `060703.pdf` resume extract
 - `docs/copy/hero.md`
 - `DESIGN.md`
 
-Do not fill empty space with invented marketing copy. If copy is not approved, define the section function only.
+Do not fill empty space with invented marketing copy. Private/sensitive resume data is excluded by default: phone number, personal address, salary, military details, and full resume tables.
 
-Private/sensitive resume data is excluded by default: phone number, personal address, salary, military details, and full resume tables.
+## Public facts represented
 
-## Public positioning
+- Java/Spring Boot backend work
+- React/TypeScript frontend work
+- PHP/CodeIgniter maintenance roots
+- PostgreSQL/MyBatis, Linux, AWS operation context
+- 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰 유지보수
+- AWP business systems and 3D/BIM viewer validation
+- xeokit, XKT, Three.js
 
-> Java/Spring Boot와 React/TypeScript로 웹 서비스를 개발합니다.
+## Controls
 
-The portfolio presents:
-
-- PHP/CodeIgniter maintenance roots;
-- Java/Spring Boot backend work;
-- Next.js/React/TypeScript frontend work;
-- PostgreSQL/MyBatis, Linux, AWS operation context;
-- AWP business systems and 3D/BIM viewer validation;
-- AI tools only as supporting developer tools, not the main identity.
-
-## Visual direction
-
-Current version: Spline-inspired dark 3D landing.
-
-- no generated hero image file;
-- WebGL/Three.js tech scene on the first screen;
-- Magic UI-like dark grid, glass panels, glow, and border animation;
-- visible stack labels: React, Spring Boot, PostgreSQL, AWP/BIM;
-- Pretendard primary font;
-- short, resume-like copy.
-
-## Included sections
-
-- Hero / introduction
-- Spline-inspired 3D stack scene
-- Portfolio summary stats
-- Stack detail cards
-- Career evidence cards
-- Capability cards
-- Footer links
+- `WASD` or arrow keys: drive
+- `Space`: brake
+- On touch devices: on-screen control pad
+- Top landmark links jump the car to each portfolio zone
 
 ## Stack
 
 - Vite + React + TypeScript
-- Three.js for the 3D hero scene
+- Three.js for the playable 3D world
 - Tailwind CSS v4 via `@tailwindcss/vite`
-- Zustand for capability/experience filter state
-- Lucide Icons
-- Local shadcn/ui-style `Button` and `Card`
+- Zustand remains available for stateful UI work
+- Lucide Icons remain available for future UI overlays
 
 ## Run
 
@@ -66,3 +58,13 @@ npm run lint
 npm run build
 npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
 ```
+
+## Verification focus
+
+A pass requires more than a build. Verify that:
+
+- the Three.js canvas renders;
+- car movement changes `data-car-x` / `data-car-z`;
+- entering a zone changes `data-active-zone`;
+- browser console has zero fatal JavaScript errors;
+- first screenshot reads as an interactive 3D portfolio, not a dashboard or generated image.

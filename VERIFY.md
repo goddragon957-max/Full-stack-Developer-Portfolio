@@ -1,4 +1,4 @@
-# Verification — 엄신용 Full-stack Portfolio
+# Verification — Bruno-inspired drivable portfolio
 
 ## Static gates
 
@@ -10,11 +10,11 @@ npm run build
 
 Expected:
 
-- content smoke passes Spline/Magic dark markers;
+- content smoke passes Bruno-style game markers;
 - TypeScript passes;
 - Vite production build succeeds.
 
-## Browser smoke
+## Browser/play smoke
 
 Start preview:
 
@@ -26,30 +26,44 @@ Verify in browser:
 
 ```js
 document.querySelector('[data-app="loop-dog-lab"]') !== null
-document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'spline-dark-stack-portfolio'
+document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'bruno-inspired-drive-portfolio'
 document.querySelector('[data-font]')?.getAttribute('data-font') === 'pretendard'
 document.querySelector('[data-source]')?.getAttribute('data-source') === '060703-resume'
-document.querySelector('[data-hero-3d]')?.getAttribute('data-hero-3d') === 'spline-inspired'
-document.querySelector('[data-hero-3d] canvas') !== null
+document.querySelector('[data-game-world]')?.getAttribute('data-game-world') === 'bruno-inspired'
+document.querySelector('[data-game-world] canvas') !== null
 ```
 
 Interaction checks:
 
-1. Move the pointer over the 3D scene and confirm the scene reacts subtly.
-2. Click the `AWP / BIM / 3D Viewer` capability card and confirm `[data-active-capability="bim"]`.
-3. Click the `Backend/API` experience filter and confirm `[data-selected-experience="message-server"]`.
-4. Confirm no generated hero image is rendered and `public/assets/portfolio-hero-gpt.webp` does not exist.
-5. Confirm console has zero JavaScript errors.
+1. Press `ArrowUp` or `W` for at least 500ms.
+2. Confirm `data-car-x` or `data-car-z` changes.
+3. Press left/right and confirm the car continues to respond.
+4. Drive near a station or click a top landmark and confirm `data-active-zone` changes from `intro` to one of:
+   - `stack`
+   - `career`
+   - `bim`
+   - `contact`
+5. Confirm HUD text includes Stack Garage / Career Road / BIM Yard / Contact Gate across the page source.
+6. Confirm no generated hero image is rendered and these files do not exist:
+   - `public/assets/portfolio-hero-gpt.webp`
+   - `src/components/PortfolioDoodle.tsx`
+   - `src/components/TechScene3D.tsx`
+7. Confirm console has zero fatal JavaScript errors.
 
-## Visual QA
+## Visual QA scorecard
 
-First screen should read as:
+Score each 0/1/2. Any 0 is a hard fail.
 
-- dark 3D landing inspired by Spline;
-- Magic UI-style dark grid/glow/glass surface;
-- stack-first developer portfolio, not generic AI art;
-- Java/Spring Boot and React/TypeScript visible above the fold;
-- PostgreSQL/MyBatis, Linux/AWS, AWP/BIM visible in stack/detail sections;
-- short, resume-like Korean copy;
-- no sentimental/어린왕자 prose;
-- no AI-as-main-identity section above career evidence.
+| Criterion | Pass target |
+|---|---|
+| Product read in 3 seconds | Reads as a playful 3D portfolio/game, not a normal dashboard |
+| Focal object readability | Red/orange car is visible and appealing |
+| World readability | Ground, roads, stations, signs, and map layout are understandable |
+| Interaction readability | Controls and HUD make it clear that the user can drive |
+| Portfolio readability | Java/Spring Boot, React/TypeScript, PostgreSQL, AWP/BIM are visible |
+| Screenshot desirability | A screenshot should make the user want to try driving |
+
+## Known acceptable limitations
+
+- This is Bruno-inspired, not a clone. It does not use Bruno Simon assets or code.
+- Physics are lightweight arcade-style movement, not full rigid-body simulation.
