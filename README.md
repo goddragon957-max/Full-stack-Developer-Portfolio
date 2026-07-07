@@ -7,6 +7,8 @@ A playable cozy 2D farming RPG where the portfolio is discovered inside the game
 This is **not** a portfolio page with game decoration. The portfolio content is embedded in a small RPG farm:
 
 - walk with `WASD` / arrow keys;
+- hold movement keys for continuous RAF-driven walking;
+- press `Enter`, `Space`, or `E` to start from the fullscreen pixel title screen;
 - press `E` or `Space` near objects;
 - enter the farmhouse;
 - inspect portfolio objects inside the house;
@@ -51,9 +53,17 @@ The generated interior room contains the portfolio objects:
 ## Controls
 
 ```text
-WASD / Arrow Keys  Move
+Enter / Space / E  Start title screen
+WASD / Arrow Keys  Hold to move continuously
 E / Space          Interact / enter / inspect
 ```
+
+## Current Game Polish
+
+- Fullscreen `100dvh` game shell instead of a scrolling webpage.
+- Pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
+- Movement is driven by a pressed-key `requestAnimationFrame` loop, not OS key repeat.
+- Player sprite changes through generated walking frames while moving.
 
 ## Verification
 
@@ -69,6 +79,12 @@ Browser checks:
 - `data-ui-pass="portfolio-inside-farming-rpg"`
 - `data-game-world="playable-cozy-farm-rpg"`
 - `data-current-scene` changes from `outside` to `interior` after entering farmhouse
+- `data-screen-mode="fullscreen-game-shell"`
+- `data-game-phase` changes from `intro` to `playing` after start
+- `data-intro-title="EOM SINYONG"`
+- `data-typed-title` reaches `EOM SINYONG`
+- `data-movement-mode="pressed-key-raf-loop"`
+- `data-player-walking` and `data-player-frame` change while a movement key is held
 - `data-player-x` / `data-player-y` change with movement
 - `data-nearby-object` detects nearby objects
 - `data-active-dialogue` changes after pressing `E`

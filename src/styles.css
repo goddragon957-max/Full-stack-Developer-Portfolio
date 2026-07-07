@@ -22,39 +22,57 @@
 }
 
 * { box-sizing: border-box; }
-html, body, #root { width: 100%; min-height: 100%; }
-html { background: #f7d994; }
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+html {
+  background: #1e160f;
+  overflow: hidden;
+}
 body {
   margin: 0;
   min-width: 320px;
+  height: 100%;
+  overflow: hidden;
   color: var(--ink);
-  background:
-    linear-gradient(90deg, rgba(95, 58, 31, .08) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(95, 58, 31, .08) 1px, transparent 1px),
-    #f7d994;
-  background-size: 16px 16px;
+  background: #1e160f;
 }
-button { font: inherit; }
+button { font: inherit; cursor: pointer; }
 button, a { -webkit-tap-highlight-color: transparent; }
 h1, h2, h3, p { margin-top: 0; }
-main[data-app="loop-dog-lab"] { min-height: 100vh; }
+main[data-app="loop-dog-lab"] {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
 
 .farm-game {
-  min-height: 100vh;
-  padding: clamp(10px, 2vw, 24px);
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: 0;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,.42), transparent 22vw),
-    radial-gradient(circle at 80% 8%, rgba(111,189,85,.22), transparent 24vw),
-    linear-gradient(180deg, #fff0b7 0%, #e9bd66 100%);
+    radial-gradient(circle at 14% 8%, rgba(255, 226, 129, .2), transparent 24vw),
+    radial-gradient(circle at 86% 10%, rgba(111,189,85,.18), transparent 22vw),
+    linear-gradient(180deg, #2b1c11 0%, #61411f 52%, #1c130d 100%);
   word-break: keep-all;
 }
 .game-shell {
-  width: min(1180px, 100%);
-  margin: 0 auto;
-  border: 5px solid var(--line);
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  border: 0;
   background: #bd8f4f;
-  box-shadow: 0 6px 0 #3a2617, 0 24px 0 rgba(58, 38, 23, .16);
+  box-shadow: none;
   image-rendering: pixelated;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
 }
 .game-hud {
   display: grid;
@@ -115,15 +133,22 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
 }
 
 .game-layout {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) clamp(230px, 22vw, 310px);
   gap: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 .game-viewport {
   position: relative;
-  min-height: 650px;
-  padding: 14px 14px 150px;
-  overflow: auto;
+  min-height: 0;
+  height: 100%;
+  padding: clamp(12px, 1.8vw, 28px) clamp(12px, 1.8vw, 28px) 156px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
   background:
     linear-gradient(90deg, rgba(95, 58, 31, .12) 1px, transparent 1px),
     linear-gradient(180deg, rgba(95, 58, 31, .12) 1px, transparent 1px),
@@ -137,9 +162,11 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
   grid-template-rows: repeat(16, 32px);
   border: 5px solid #6f441f;
   background: var(--grass);
-  box-shadow: inset 0 0 0 4px rgba(255,255,255,.2), 0 6px 0 rgba(58,38,23,.35);
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.2), 0 8px 0 rgba(58,38,23,.38), 0 18px 36px rgba(36, 21, 11, .28);
   overflow: hidden;
   margin: 0 auto;
+  transform: scale(1.12);
+  transform-origin: center;
 }
 .tile {
   width: 32px;
@@ -250,22 +277,29 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
 .player-sprite {
   position: absolute;
   z-index: 30;
-  width: 38px;
+  width: 40px;
   height: auto;
-  translate: -3px -36px;
-  transition: left .12s steps(2), top .12s steps(2);
+  translate: -4px -38px;
+  transition: left .082s steps(2, end), top .082s steps(2, end);
   filter: drop-shadow(0 4px 0 rgba(58,38,23,.22));
   image-rendering: pixelated;
   user-select: none;
   -webkit-user-drag: none;
 }
+.player-sprite.is-walking {
+  animation: player-pixel-bob .184s steps(2, end) infinite;
+}
 .interior-world .player-sprite {
-  width: 42px;
+  width: 44px;
 }
 .facing-left,
 .facing-right,
 .facing-up,
 .facing-down { transform: none; }
+@keyframes player-pixel-bob {
+  0%, 100% { translate: -4px -38px; }
+  50% { translate: -4px -41px; }
+}
 
 .dialogue-box {
   position: absolute;
@@ -306,7 +340,9 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
 }
 
 .quest-journal {
-  min-height: 650px;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
   padding: 12px;
   background: #6d4526;
   color: #fff3c9;
@@ -392,6 +428,120 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
 }
 .touch-pad button:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.28); }
 
+.intro-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 56px);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 239, 178, .2), transparent 18vw),
+    linear-gradient(180deg, rgba(30, 20, 12, .66), rgba(30, 20, 12, .9));
+  backdrop-filter: blur(2px) saturate(.92);
+}
+.intro-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .25;
+  background:
+    linear-gradient(90deg, rgba(255, 244, 204, .2) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 244, 204, .18) 1px, transparent 1px);
+  background-size: 16px 16px;
+  image-rendering: pixelated;
+}
+.intro-card {
+  position: relative;
+  width: min(760px, 92vw);
+  padding: clamp(24px, 5vw, 54px);
+  text-align: center;
+  color: #fff4c9;
+  background:
+    linear-gradient(180deg, rgba(89, 55, 28, .94), rgba(47, 30, 17, .96));
+  border: 6px solid #f3c56d;
+  box-shadow:
+    0 0 0 6px #3a2617,
+    0 12px 0 #1d1209,
+    0 32px 68px rgba(0, 0, 0, .48),
+    inset 0 0 0 4px rgba(255, 245, 207, .12);
+}
+.intro-kicker,
+.intro-card small,
+.intro-start,
+.pixel-title {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.intro-kicker {
+  display: inline-block;
+  padding: 6px 10px;
+  color: #3a2617;
+  background: #ffd770;
+  border: 3px solid #3a2617;
+  box-shadow: 0 4px 0 rgba(0,0,0,.22);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+.pixel-title {
+  min-height: clamp(66px, 12vw, 126px);
+  margin: clamp(18px, 4vw, 34px) 0 14px;
+  color: #fff3a4;
+  font-size: clamp(42px, 9vw, 96px);
+  line-height: .95;
+  font-weight: 950;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-shadow:
+    4px 0 #3a2617,
+    0 4px #3a2617,
+    4px 4px #3a2617,
+    8px 8px rgba(0,0,0,.28);
+}
+.pixel-title i {
+  display: inline-block;
+  margin-left: .08em;
+  color: #9cff82;
+  font-style: normal;
+  animation: cursor-blink .72s steps(1, end) infinite;
+}
+.intro-card p {
+  max-width: 540px;
+  margin: 0 auto 22px;
+  color: #ffeec0;
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.55;
+  font-weight: 800;
+}
+.intro-start {
+  min-width: 180px;
+  padding: 14px 20px;
+  color: #2d2114;
+  background: #9cff82;
+  border: 4px solid #2d2114;
+  box-shadow: 0 6px 0 #1b1209;
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+.intro-start:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #1b1209; }
+.intro-start:active { transform: translateY(4px); box-shadow: 0 2px 0 #1b1209; }
+.intro-card small {
+  display: block;
+  margin-top: 16px;
+  color: #f3c56d;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+.is-intro .game-shell {
+  filter: saturate(.82) brightness(.76);
+}
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
 @media (max-width: 980px) {
   .game-hud {
     grid-template-columns: 1fr 88px 88px;
@@ -403,12 +553,14 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
     grid-template-columns: 1fr;
   }
   .quest-journal {
-    min-height: auto;
-    border-left: 0;
-    border-top: 5px solid var(--line);
+    display: none;
   }
   .game-viewport {
-    min-height: 570px;
+    min-height: 0;
+    height: 100%;
+  }
+  .tile-world {
+    transform: scale(.94);
   }
   .touch-pad {
     display: grid;
@@ -416,8 +568,8 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
 }
 
 @media (max-width: 620px) {
-  .farm-game { padding: 6px; }
-  .game-shell { border-width: 4px; }
+  .farm-game { padding: 0; }
+  .game-shell { border-width: 0; }
   .game-hud {
     grid-template-columns: 1fr 72px 72px;
     gap: 6px;
@@ -426,21 +578,21 @@ main[data-app="loop-dog-lab"] { min-height: 100vh; }
   .game-hud div { min-height: 46px; padding: 7px; }
   .game-hud strong { font-size: 14px; }
   .game-viewport {
-    padding: 8px 8px 150px;
-    min-height: 520px;
+    padding: 8px 8px 140px;
+    min-height: 0;
   }
   .tile-world {
-    transform-origin: top left;
+    transform-origin: center;
     transform: scale(.72);
-    margin-bottom: -132px;
+    margin-bottom: 0;
   }
   .dialogue-box {
     left: 9px;
     right: 9px;
     bottom: 8px;
-    min-height: 136px;
+    min-height: 132px;
     padding: 11px;
   }
   .dialogue-box p { font-size: 12.5px; }
-  .quest-journal { padding: 9px; }
+  .intro-card { padding: 22px 16px; }
 }

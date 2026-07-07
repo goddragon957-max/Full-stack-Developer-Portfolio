@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type SceneId = 'outside' | 'interior';
 type EntityId =
@@ -22,6 +22,8 @@ type Player = {
   x: number;
   y: number;
   facing: Direction;
+  walking: boolean;
+  step: number;
 };
 
 type Entity = {
@@ -45,6 +47,19 @@ type Entity = {
 const TILE = 32;
 const WORLD_W = 24;
 const WORLD_H = 16;
+const INTRO_TITLE = 'EOM SINYONG';
+const MOVE_INTERVAL_MS = 92;
+
+const keyMap: Record<string, Direction | undefined> = {
+  ArrowUp: 'up',
+  KeyW: 'up',
+  ArrowDown: 'down',
+  KeyS: 'down',
+  ArrowLeft: 'left',
+  KeyA: 'left',
+  ArrowRight: 'right',
+  KeyD: 'right',
+};
 
 const outsideEntities: Entity[] = [
   {
@@ -289,11 +304,31 @@ const treeSprites = [
   { src: '/assets/game-sprites/sprite-56.png', x: 21, y: 9, size: 70 },
 ];
 
-const playerSprites: Record<Direction, string> = {
-  down: '/assets/generated-sprites/character/sprite-11.png',
-  left: '/assets/generated-sprites/character/sprite-31.png',
-  right: '/assets/generated-sprites/character/sprite-35.png',
-  up: '/assets/generated-sprites/character/sprite-43.png',
+const playerWalkSprites: Record<Direction, string[]> = {
+  down: [
+    '/assets/generated-sprites/character/sprite-11.png',
+    '/assets/generated-sprites/character/sprite-12.png',
+    '/assets/generated-sprites/character/sprite-13.png',
+    '/assets/generated-sprites/character/sprite-16.png',
+  ],
+  left: [
+    '/assets/generated-sprites/character/sprite-31.png',
+    '/assets/generated-sprites/character/sprite-32.png',
+    '/assets/generated-sprites/character/sprite-33.png',
+    '/assets/generated-sprites/character/sprite-34.png',
+  ],
+  right: [
+    '/assets/generated-sprites/character/sprite-35.png',
+    '/assets/generated-sprites/character/sprite-36.png',
+    '/assets/generated-sprites/character/sprite-37.png',
+    '/assets/generated-sprites/character/sprite-38.png',
+  ],
+  up: [
+    '/assets/generated-sprites/character/sprite-43.png',
+    '/assets/generated-sprites/character/sprite-44.png',
+    '/assets/generated-sprites/character/sprite-45.png',
+    '/assets/generated-sprites/character/sprite-46.png',
+  ],
 };
 
 function tileType(x: number, y: number) {
@@ -324,16 +359,40 @@ function addUnique(list: string[], item: string) {
 }
 
 export function PortfolioFarmGame() {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [typedNameLength, setTypedNameLength] = useState(0);
   const [scene, setScene] = useState<SceneId>('outside');
-  const [player, setPlayer] = useState<Player>({ x: 6, y: 6, facing: 'down' });
+  const [player, setPlayer] = useState<Player>({ x: 6, y: 6, facing: 'down', walking: false, step: 0 });
   const [dialogue, setDialogue] = useState<Entity | null>(outsideEntities[0]);
   const [journal, setJournal] = useState<string[]>([outsideEntities[0].journalTitle]);
   const [harvestCount, setHarvestCount] = useState(0);
 
+  const pressedDirectionsRef = useRef<Direction[]>([]);
+  const moveFrameRef = useRef<number | null>(null);
+  const lastMoveAtRef = useRef(0);
+  const gameStartedRef = useRef(gameStarted);
+  const movePlayerRef = useRef<(direction: Direction) => void>(() => undefined);
+  const interactRef = useRef<() => void>(() => undefined);
+  const stopWalkingRef = useRef<() => void>(() => undefined);
+
   const currentEntities = scene === 'outside' ? outsideEntities : interiorEntities;
   const nearby = useMemo(() => getNearestEntity(player, currentEntities), [player, currentEntities]);
+  const typedTitle = INTRO_TITLE.slice(0, typedNameLength);
+  const allEntities = useMemo(() => [...outsideEntities, ...interiorEntities], []);
+  const journalEntries = journal.map((title) => allEntities.find((entity) => entity.journalTitle === title)).filter(Boolean) as Entity[];
+  const playerFrames = playerWalkSprites[player.facing];
+  const playerFrameIndex = player.walking ? player.step % playerFrames.length : 0;
+  const playerSprite = playerFrames[playerFrameIndex];
 
-  const movePlayer = (direction: Direction) => {
+  const startGame = useCallback(() => {
+    setGameStarted(true);
+  }, []);
+
+  const stopWalking = useCallback(() => {
+    setPlayer((current) => (current.walking ? { ...current, walking: false } : current));
+  }, []);
+
+  const movePlayer = useCallback((direction: Direction) => {
     setDialogue(null);
     setPlayer((current) => {
       const delta = {
@@ -344,28 +403,36 @@ export function PortfolioFarmGame() {
       }[direction];
       const nextX = Math.max(0, Math.min(WORLD_W - 1, current.x + delta[0]));
       const nextY = Math.max(0, Math.min(WORLD_H - 1, current.y + delta[1]));
-      return { x: nextX, y: nextY, facing: direction };
+      return {
+        x: nextX,
+        y: nextY,
+        facing: direction,
+        walking: true,
+        step: current.step + 1,
+      };
     });
-  };
+  }, []);
 
-  const unlock = (target: Entity) => {
+  const unlock = useCallback((target: Entity) => {
     setDialogue(target);
     setJournal((current) => addUnique(current, target.journalTitle));
-  };
+  }, []);
 
-  const enterHouse = () => {
+  const enterHouse = useCallback(() => {
+    pressedDirectionsRef.current = [];
     setScene('interior');
-    setPlayer({ x: 11, y: 13, facing: 'up' });
+    setPlayer((current) => ({ ...current, x: 11, y: 13, facing: 'up', walking: false, step: current.step + 1 }));
     unlock(interiorEntities[0]);
-  };
+  }, [unlock]);
 
-  const leaveHouse = () => {
+  const leaveHouse = useCallback(() => {
+    pressedDirectionsRef.current = [];
     setScene('outside');
-    setPlayer({ x: 4, y: 6, facing: 'down' });
+    setPlayer((current) => ({ ...current, x: 4, y: 6, facing: 'down', walking: false, step: current.step + 1 }));
     unlock(outsideEntities[0]);
-  };
+  }, [unlock]);
 
-  const interact = () => {
+  const interact = useCallback(() => {
     const target = nearby;
     if (!target) {
       setDialogue({
@@ -393,47 +460,133 @@ export function PortfolioFarmGame() {
     if (target.id === 'cropPatch') {
       setHarvestCount((count) => Math.min(count + 1, 3));
     }
-  };
+  }, [currentEntities, enterHouse, leaveHouse, nearby, scene, unlock]);
 
   useEffect(() => {
+    if (typedNameLength >= INTRO_TITLE.length) return undefined;
+    const timer = window.setTimeout(() => {
+      setTypedNameLength((length) => Math.min(INTRO_TITLE.length, length + 1));
+    }, 86);
+    return () => window.clearTimeout(timer);
+  }, [typedNameLength]);
+
+  useEffect(() => {
+    gameStartedRef.current = gameStarted;
+  }, [gameStarted]);
+
+  useEffect(() => {
+    movePlayerRef.current = movePlayer;
+  }, [movePlayer]);
+
+  useEffect(() => {
+    interactRef.current = interact;
+  }, [interact]);
+
+  useEffect(() => {
+    stopWalkingRef.current = stopWalking;
+  }, [stopWalking]);
+
+  useEffect(() => {
+    const stopMoveLoop = () => {
+      if (moveFrameRef.current !== null) {
+        window.cancelAnimationFrame(moveFrameRef.current);
+        moveFrameRef.current = null;
+      }
+      lastMoveAtRef.current = 0;
+    };
+
+    const tick = (time: number) => {
+      const direction = pressedDirectionsRef.current[pressedDirectionsRef.current.length - 1];
+      if (!gameStartedRef.current || !direction) {
+        stopMoveLoop();
+        stopWalkingRef.current();
+        return;
+      }
+
+      if (time - lastMoveAtRef.current >= MOVE_INTERVAL_MS) {
+        movePlayerRef.current(direction);
+        lastMoveAtRef.current = time;
+      }
+      moveFrameRef.current = window.requestAnimationFrame(tick);
+    };
+
+    const ensureMoveLoop = () => {
+      if (moveFrameRef.current === null) {
+        moveFrameRef.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    const clearDirections = () => {
+      pressedDirectionsRef.current = [];
+      stopMoveLoop();
+      stopWalkingRef.current();
+    };
+
     const onKeyDown = (event: KeyboardEvent) => {
-      const keyMap: Record<string, Direction | undefined> = {
-        ArrowUp: 'up',
-        KeyW: 'up',
-        ArrowDown: 'down',
-        KeyS: 'down',
-        ArrowLeft: 'left',
-        KeyA: 'left',
-        ArrowRight: 'right',
-        KeyD: 'right',
-      };
+      if (!gameStartedRef.current) {
+        if (event.code === 'Enter' || event.code === 'Space' || event.code === 'KeyE') {
+          event.preventDefault();
+          setGameStarted(true);
+        }
+        return;
+      }
+
       const direction = keyMap[event.code];
       if (direction) {
         event.preventDefault();
-        movePlayer(direction);
+        pressedDirectionsRef.current = pressedDirectionsRef.current.filter((pressed) => pressed !== direction);
+        pressedDirectionsRef.current.push(direction);
+        ensureMoveLoop();
         return;
       }
+
       if (event.code === 'KeyE' || event.code === 'Space') {
         event.preventDefault();
-        interact();
+        interactRef.current();
       }
     };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      const direction = keyMap[event.code];
+      if (!direction) return;
+      pressedDirectionsRef.current = pressedDirectionsRef.current.filter((pressed) => pressed !== direction);
+      if (pressedDirectionsRef.current.length === 0) {
+        stopWalkingRef.current();
+      }
+    };
+
     window.addEventListener('keydown', onKeyDown, { passive: false });
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [nearby, scene]);
+    window.addEventListener('keyup', onKeyUp, { passive: true });
+    window.addEventListener('blur', clearDirections, { passive: true });
+    window.addEventListener('pagehide', clearDirections, { passive: true });
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', clearDirections);
+      window.removeEventListener('pagehide', clearDirections);
+      stopMoveLoop();
+    };
+  }, []);
 
   const prompt = nearby?.prompt ?? (scene === 'outside' ? '집 문이나 마을 오브젝트 옆에서 E를 누르세요.' : '집 안 물건 옆에서 E를 눌러 포트폴리오 기록을 조사하세요.');
-  const allEntities = [...outsideEntities, ...interiorEntities];
-  const journalEntries = journal.map((title) => allEntities.find((entity) => entity.journalTitle === title)).filter(Boolean) as Entity[];
 
   return (
     <section
-      className={`farm-game scene-${scene}`}
+      className={`farm-game scene-${scene} ${gameStarted ? 'is-playing' : 'is-intro'}`}
       data-ui-pass="portfolio-inside-farming-rpg"
       data-game-world="playable-cozy-farm-rpg"
+      data-screen-mode="fullscreen-game-shell"
+      data-game-phase={gameStarted ? 'playing' : 'intro'}
+      data-intro-title={INTRO_TITLE}
+      data-typed-title={typedTitle}
       data-current-scene={scene}
       data-player-x={player.x}
       data-player-y={player.y}
+      data-player-facing={player.facing}
+      data-player-walking={player.walking ? 'true' : 'false'}
+      data-player-frame={playerFrameIndex}
+      data-movement-mode="pressed-key-raf-loop"
       data-nearby-object={nearby?.id ?? ''}
       data-active-dialogue={dialogue?.id ?? ''}
       data-journal-count={journal.length}
@@ -444,7 +597,7 @@ export function PortfolioFarmGame() {
       <div className="game-shell">
         <header className="game-hud" aria-label="Game status">
           <div>
-            <span>Day 1 · {scene === 'outside' ? 'Developer Farm' : 'Farmhouse Interior'}</span>
+            <span>{gameStarted ? `Day 1 · ${scene === 'outside' ? 'Developer Farm' : 'Farmhouse Interior'}` : 'Title Screen · Pixel Portfolio RPG'}</span>
             <strong>{scene === 'outside' ? '포트폴리오가 숨겨진 농장 RPG' : '집 안 물건에 포트폴리오가 들어있다'}</strong>
           </div>
           <div className="hud-meter">
@@ -455,7 +608,7 @@ export function PortfolioFarmGame() {
             <span>Journal</span>
             <strong>{journal.length}/{allEntities.length}</strong>
           </div>
-          <div className="hud-controls">Move WASD/Arrows · Press E / Space · Enter house · Inspect objects</div>
+          <div className="hud-controls">Hold WASD/Arrows · E / Space interact · Enter starts</div>
         </header>
 
         <div className="game-layout">
@@ -476,7 +629,7 @@ export function PortfolioFarmGame() {
                     <b>{entity.label}</b>
                   </div>
                 ))}
-                <img className={`player-sprite facing-${player.facing}`} src={playerSprites[player.facing]} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" />
+                <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
               </div>
             ) : (
               <div className="tile-world interior-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
@@ -486,7 +639,7 @@ export function PortfolioFarmGame() {
                     <b>{entity.label}</b>
                   </div>
                 ))}
-                <img className={`player-sprite facing-${player.facing}`} src={playerSprites[player.facing]} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" />
+                <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
               </div>
             )}
 
@@ -515,7 +668,7 @@ export function PortfolioFarmGame() {
               <span>Current prompt</span>
               <p>{prompt}</p>
             </div>
-            <div className="sprite-atlas-note">Pixel art is loaded from Codex-generated sheets: <code>farmhouse-interior-room.png</code>, <code>developer-farmer-character-sheet.png</code>, and extracted <code>game-sprites</code>.</div>
+            <div className="sprite-atlas-note">Fullscreen game shell · RAF movement loop · Codex-generated sprite sheets.</div>
           </aside>
         </div>
 
@@ -527,6 +680,23 @@ export function PortfolioFarmGame() {
           <button type="button" onClick={() => movePlayer('down')}>↓</button>
         </nav>
       </div>
+
+      {!gameStarted && (
+        <div className="intro-screen" data-intro-screen="pixel-title">
+          <div className="intro-card">
+            <span className="intro-kicker">PIXEL PORTFOLIO RPG</span>
+            <h1 className="pixel-title" aria-label={INTRO_TITLE}>
+              <span>{typedTitle}</span>
+              <i aria-hidden="true">▌</i>
+            </h1>
+            <p>Walk the farm. Enter the house. Read the portfolio by touching objects.</p>
+            <button type="button" className="intro-start" onClick={startGame}>
+              START GAME
+            </button>
+            <small>Press Enter / Space / E · Hold arrows or WASD after start</small>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

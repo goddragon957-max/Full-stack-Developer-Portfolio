@@ -28,10 +28,12 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 
 ## Game loop
 
-1. Player moves around the farm with WASD/arrows.
-2. Player presses `E`/`Space` near objects.
-3. Farmhouse interaction enters the generated interior room.
-4. Inside the house, portfolio content is unlocked by inspecting objects:
+1. Player starts at a fullscreen pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
+2. Player starts the game with `Enter`, `Space`, `E`, or the `START GAME` button.
+3. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
+4. Player presses `E`/`Space` near objects.
+5. Farmhouse interaction enters the generated interior room.
+6. Inside the house, portfolio content is unlocked by inspecting objects:
    - SKILL desk
    - QUEST board
    - SERVER shelf
@@ -53,9 +55,17 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 
 - `data-ui-pass="portfolio-inside-farming-rpg"`
 - `data-game-world="playable-cozy-farm-rpg"`
+- `data-screen-mode="fullscreen-game-shell"`
+- `data-game-phase`
+- `data-intro-title`
+- `data-typed-title`
 - `data-current-scene`
 - `data-player-x`
 - `data-player-y`
+- `data-player-facing`
+- `data-player-walking`
+- `data-player-frame`
+- `data-movement-mode="pressed-key-raf-loop"`
 - `data-nearby-object`
 - `data-active-dialogue`
 - `data-journal-count`

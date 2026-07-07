@@ -42,7 +42,10 @@ The portfolio must be embedded **inside the game**, not the other way around.
 
 ## Gameplay contract
 
-- Move with WASD/arrows.
+- Start at a fullscreen pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
+- Start with Enter/Space/E or the START GAME button.
+- Hold WASD/arrows for continuous movement driven by `requestAnimationFrame`, not OS key repeat.
+- Movement should change generated walking sprite frames.
 - Interact with E/Space.
 - Farmhouse interaction enters the interior scene.
 - Interior object interaction unlocks portfolio journal entries.
