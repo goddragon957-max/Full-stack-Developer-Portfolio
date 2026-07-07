@@ -1,101 +1,69 @@
-# Reference Board - Cozy Pixel Farming Portfolio
+# Reference Board — Portfolio Inside a Cozy Farming RPG
 
-## Concept Chosen By User
+## Rejected interpretations
 
-The new direction is an original cozy farming pixel-art developer portfolio. It borrows only the broad genre mood of a warm 2D farming village: cottages, crops, paths, signboards, and a small character avatar.
+The user rejected these directions:
 
-The previous 3D/cyberpunk direction is rejected for this project because it became dark, generic, and hard to read as a portfolio.
+1. GPT/generated portfolio hero images — looked cringe/AI-like.
+2. Spline/Magic UI dark 3D landing — unreadable/generic.
+3. Bruno/Three.js drivable 3D portfolio — toy-like and not professionally designed.
+4. Cyberpunk Dev City — strongly rejected.
+5. Cozy pixel portfolio page — still wrong because it placed a game-like map inside a portfolio page.
 
-## Legal / Style Boundary
+## Correct interpretation
 
-Do not copy Stardew Valley assets, sprites, UI, logos, names, text, exact maps, characters, or layout. This portfolio should feel source-grounded to the developer and should use original DOM/CSS pixel art plus the generated `cozy-farming-village-tileset-4x3.png` only as a small supporting reference detail.
+The portfolio must be embedded **inside the game**, not the other way around.
 
-## Primary Art Direction
+> Build a playable 2D cozy farming RPG slice. The user discovers portfolio content by walking around, entering a house, inspecting objects, reading journal entries, and completing small interactions.
 
-Visual metaphor:
+## Visual direction
 
-- a small developer farm acts as a portfolio village;
-- buildings are clickable career landmarks;
-- the character moves between landmarks as the active state changes;
-- practical career evidence appears in a notebook/signboard panel.
+- Original cozy farming RPG feel inspired by the genre, not copied Stardew Valley assets/UI/text.
+- Generated pixel-art assets are the source of truth.
+- CSS is for layout/HUD/hotspots only, not for fake hand-made pixel art characters or important objects.
+- The house interior is a generated game room background.
+- Portfolio content is inside generated objects:
+  - SKILL desk
+  - QUEST board
+  - SERVER shelf
+  - BIM blueprint table
+  - JOURNAL shelf
+  - MAIL table
 
-Keywords:
+## Current generated assets
 
-- cozy pixel village
-- warm paper
-- green fields
-- soil paths
-- colorful roofs
-- developer farmer
-- readable portfolio
-- practical career evidence
+- `public/assets/cozy-farming-village-tileset-4x3.png`
+- `public/assets/game-sprites/`
+- `public/assets/generated-sheets/farmhouse-interior-room.png`
+- `public/assets/generated-sheets/developer-farmer-character-sheet.png`
+- `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png`
+- `public/assets/generated-sprites/character/`
+- `public/assets/generated-sprites/interior/`
 
-## Palette
+## Gameplay contract
 
-- page background: cream / warm paper
-- ground: saturated grass greens
-- paths and fields: soil browns
-- roofs: blue, red, yellow, purple
-- text: dark brown
-- panels: notebook cream with hard shadow
+- Move with WASD/arrows.
+- Interact with E/Space.
+- Farmhouse interaction enters the interior scene.
+- Interior object interaction unlocks portfolio journal entries.
+- Crop patch can be harvested to change state.
+- Browser QA must verify real state changes, not just visible text.
 
-## Landmark Naming
+## First-3-seconds visual scorecard target
 
-- `FARMHOUSE` - Home / Developer Farm
-- `WORKSHOP` - Skills
-- `MARKET` - Projects
-- `BARN` - Backend & Infra
-- `COMMUNITY BOARD` - Experience
-- `MAILBOX` - Contact
+- Genre readability: cozy farming RPG immediately readable.
+- Character readability: generated player sprite visible and charmful.
+- Stage readability: outside farm and generated house interior are authored spaces.
+- HUD readability: Quest Log/Journal/dialogue are game UI.
+- Screenshot desirability: should look like a small playable game, not a portfolio website.
 
-## Required Technology Nouns
+## Anti-regression rule
 
-Use the source-grounded nouns directly in visible content:
+Do not reintroduce:
 
-- Java
-- Spring Boot
-- React
-- TypeScript
-- PostgreSQL
-- MyBatis
-- AWS
-- Linux
-- AWP
-- BIM
-- xeokit
-- XKT
-
-## Implementation Rules
-
-### Map
-
-- build with semantic DOM and CSS classes such as `.pixel-map`, `.pixel-building`, `.pixel-character`, `.field`, and `.path`;
-- use buttons for landmarks;
-- expose `data-ui-pass="cozy-pixel-farm-portfolio"`;
-- expose `data-game-world="cozy-farming-village"`;
-- expose `data-active-zone` and `data-player-zone`.
-
-### Typography
-
-- use Pretendard for Korean/body copy;
-- use monospace/pixel-like treatment only for tiny labels, badges, kbd hints, and buttons;
-- keep `word-break: keep-all` in the main UI.
-
-### Mobile
-
-- switch to a vertical portfolio;
-- keep the village visible;
-- preserve click and keyboard interactions where hardware keyboard exists.
-
-## First-Frame Scorecard
-
-Any 0 is fail.
-
-| Criterion | 0 | 1 | 2 |
-|---|---|---|---|
-| Cozy village read | unclear | partial | immediately readable |
-| Portfolio clarity | hidden | partially clear | landmark to content mapping is obvious |
-| Character | missing | visible but weak | clear small developer/farmer avatar |
-| Originality | copied | too referential | original source-grounded identity |
-| Typography | novelty font noise | acceptable | Pretendard body copy is comfortable |
-| Mobile | broken | usable | vertical layout reads cleanly |
+- static portfolio hero/header as the main structure;
+- landmark buttons as primary navigation;
+- permanent portfolio side cards;
+- CSS-drawn fake characters/buildings;
+- generated images shown only as decorative thumbnails;
+- 3D/cyberpunk/glow directions.

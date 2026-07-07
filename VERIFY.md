@@ -1,69 +1,60 @@
-# Verification - Cozy Pixel Farming Portfolio
+# VERIFY.md — Portfolio Farm Game
 
-## Static Gates
+## Commands
 
 ```bash
 npm run test
 npm run lint
 npm run build
+npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
 ```
 
-Expected:
+## Static smoke expectations
 
-- content smoke passes cozy pixel farm markers;
-- TypeScript passes;
-- Vite production build succeeds.
+`npm run test` must verify:
 
-## Browser Smoke
+- `PortfolioFarmGame` is the mounted game component.
+- `PixelPortfolioVillage`, `PortfolioGame3D`, generated hero images, and cyberpunk/3D markers are absent from public UI.
+- Required markers exist:
+  - `data-ui-pass="portfolio-inside-farming-rpg"`
+  - `data-game-world="playable-cozy-farm-rpg"`
+  - `data-current-scene`
+  - `data-player-x`
+  - `data-player-y`
+  - `data-nearby-object`
+  - `data-active-dialogue`
+  - `data-journal-count`
+  - `data-harvest-count`
+  - `data-generated-assets="codex-image-sheets-and-game-sprites"`
+- Generated asset files exist:
+  - outdoor generated sheet
+  - extracted outdoor sprites
+  - generated farmhouse interior room
+  - generated character sheet
+  - extracted character sprites
 
-Start preview:
+## Browser play checks
 
-```bash
-npm run preview -- --host 0.0.0.0 --port 4192 --strictPort
-```
+Open the strict-port preview and verify in the browser:
 
-Verify in browser:
+1. Initial scene is `outside`.
+2. Player uses generated character sprite, not CSS body parts.
+3. Pressing movement keys changes `data-player-x` / `data-player-y`.
+4. Pressing `E` near farmhouse changes `data-current-scene` to `interior`.
+5. The interior scene displays `farmhouse-interior-room.png` as the actual room background.
+6. Interior hotspots exist for `SKILL`, `QUEST`, `SERVER`, `BIM`, `JOURNAL`, `MAIL`, and `EXIT`.
+7. Moving near an interior object changes `data-nearby-object`.
+8. Pressing `E` near `SKILL` or another interior object changes `data-active-dialogue` and increases `data-journal-count`.
+9. Dialogue text exposes portfolio content through the object, not through a permanent portfolio section panel.
+10. Browser console has zero fatal JavaScript errors.
 
-```js
-const root = document.querySelector('[data-ui-pass="cozy-pixel-farm-portfolio"]')
-root !== null
-root?.getAttribute('data-game-world') === 'cozy-farming-village'
-root?.hasAttribute('data-active-zone') === true
-root?.hasAttribute('data-player-zone') === true
-document.querySelectorAll('.pixel-building').length === 6
-document.body.innerText.includes('FARMHOUSE')
-document.body.innerText.includes('WORKSHOP')
-document.body.innerText.includes('MARKET')
-document.body.innerText.includes('BARN')
-document.body.innerText.includes('COMMUNITY BOARD')
-document.body.innerText.includes('MAILBOX')
-```
+## Visual QA gate
 
-Interaction checks:
+The first useful screenshot should read as:
 
-1. Confirm console has no fatal JavaScript errors.
-2. Click `MARKET`.
-3. Confirm `data-active-zone` and `data-player-zone` become `market`.
-4. Confirm the visible content changes to project copy.
-5. Press `ArrowRight` or `D`.
-6. Confirm active/player zone state or character position changes.
-7. Confirm the page includes Java, Spring Boot, React, TypeScript, PostgreSQL, MyBatis, AWS, Linux, AWP, BIM, xeokit, and XKT.
+- a playable cozy pixel-art farming RPG;
+- generated pixel assets, not hand-made CSS placeholders;
+- a house interior where portfolio content lives in objects;
+- Quest Log/Journal as game UI, not a website card layout.
 
-## Visual QA Scorecard
-
-Score each 0/1/2. Any 0 is a hard fail.
-
-| Criterion | Pass target |
-|---|---|
-| Product read in 3 seconds | Reads as a cozy 2D pixel portfolio village |
-| Character | Small developer/farmer avatar is visible on the map |
-| Landmarks | Six clickable buildings/signboards are readable |
-| Portfolio clarity | The active card clearly maps landmarks to career evidence |
-| Typography | Pretendard body copy is readable; tiny labels can be monospace |
-| Mobile | Vertical layout remains readable and keeps the village visible |
-
-## Known Acceptable Limitations
-
-- This pass does not require a canvas/game engine.
-- The village art is made from DOM/CSS pixel shapes.
-- The generated asset sheet is a supporting detail, not the only interface.
+Hard fail if the result looks like a portfolio page with a decorative game map.

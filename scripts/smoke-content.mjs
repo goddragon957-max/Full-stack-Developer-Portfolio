@@ -1,33 +1,38 @@
 import { existsSync, readFileSync } from 'node:fs';
 
 const app = readFileSync('src/App.tsx', 'utf8');
-const village = readFileSync('src/components/PixelPortfolioVillage.tsx', 'utf8');
+const game = readFileSync('src/components/PortfolioFarmGame.tsx', 'utf8');
 const css = readFileSync('src/styles.css', 'utf8');
-const pkg = readFileSync('package.json', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const readme = readFileSync('README.md', 'utf8');
 const verify = readFileSync('VERIFY.md', 'utf8');
 const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${village}\n${css}\n${pkg}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
-const publicJoined = `${app}\n${village}\n${css}`;
+const joined = `${app}\n${game}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
+const publicJoined = `${app}\n${game}\n${css}`;
 
 const required = [
-  'data-ui-pass="cozy-pixel-farm-portfolio"',
-  'data-game-world="cozy-farming-village"',
-  'data-active-zone',
-  'data-player-zone',
-  'PixelPortfolioVillage',
-  'cozy-farming-village-tileset-4x3.png',
-  'FARMHOUSE',
-  'WORKSHOP',
-  'MARKET',
-  'BARN',
-  'COMMUNITY BOARD',
-  'MAILBOX',
-  'Developer Farm',
-  'Pretendard',
-  'word-break: keep-all',
+  'data-ui-pass="portfolio-inside-farming-rpg"',
+  'data-game-world="playable-cozy-farm-rpg"',
+  'data-current-scene',
+  'data-player-x',
+  'data-player-y',
+  'data-nearby-object',
+  'data-active-dialogue',
+  'data-journal-count',
+  'data-harvest-count',
+  'data-generated-assets="codex-image-sheets-and-game-sprites"',
+  'PortfolioFarmGame',
+  'game-sprites',
+  'generated-sheets/farmhouse-interior-room.png',
+  'generated-sprites/character',
+  'developer-farmer-character-sheet.png',
+  'Press E',
+  'Quest Log',
+  'Journal',
+  'tile-world',
+  'interior-world',
+  'dialogue-box',
   'Java',
   'Spring Boot',
   'React',
@@ -40,9 +45,16 @@ const required = [
   'BIM',
   'xeokit',
   'XKT',
+  'word-break: keep-all',
 ];
 
 const forbiddenPublic = [
+  'data-ui-pass="cozy-pixel-farm-portfolio"',
+  'Cozy Pixel Farming Portfolio',
+  'PixelPortfolioVillage',
+  'farm-layout',
+  'farm-panel',
+  'landmark button',
   'cyberpunk-dev-city-portfolio',
   'Cyberpunk Dev City',
   'data-theme="cyberpunk"',
@@ -56,14 +68,12 @@ const forbiddenPublic = [
   'SIGNAL GATE',
   'cyan/magenta',
   'portfolio-hero-gpt.webp',
-  'spline-dark-stack-portfolio',
-  'bruno-inspired-drive-portfolio',
-  'TechScene3D',
+  'Stardew Valley Wiki',
 ];
 
 const missing = required.filter((item) => !joined.includes(item));
 if (missing.length) {
-  console.error(`Missing required cozy pixel farm markers: ${missing.join(', ')}`);
+  console.error(`Missing required portfolio-inside-game markers: ${missing.join(', ')}`);
   process.exit(1);
 }
 
@@ -73,28 +83,46 @@ if (forbidden.length) {
   process.exit(1);
 }
 
-const removedFiles = [
+const requiredFiles = [
+  'src/components/PortfolioFarmGame.tsx',
+  'public/assets/cozy-farming-village-tileset-4x3.png',
+  'public/assets/generated-sheets/farmhouse-interior-room.png',
+  'public/assets/generated-sheets/developer-farmer-character-sheet.png',
+  'public/assets/generated-sheets/developer-farmhouse-interior-sheet.png',
+  'public/assets/game-sprites/manifest.json',
+  'public/assets/game-sprites/sprite-18.png',
+  'public/assets/game-sprites/sprite-19.png',
+  'public/assets/game-sprites/sprite-24.png',
+  'public/assets/game-sprites/sprite-51.png',
+  'public/assets/generated-sprites/character/manifest.json',
+  'public/assets/generated-sprites/character/sprite-11.png',
+  'public/assets/generated-sprites/character/sprite-31.png',
+  'public/assets/generated-sprites/character/sprite-35.png',
+  'public/assets/generated-sprites/character/sprite-43.png',
+];
+const missingFiles = requiredFiles.filter((path) => !existsSync(path));
+if (missingFiles.length) {
+  console.error(`Missing required generated game sprite files: ${missingFiles.join(', ')}`);
+  process.exit(1);
+}
+
+const rejectedFiles = [
   'src/components/PortfolioGame3D.tsx',
+  'src/components/PixelPortfolioVillage.tsx',
   'public/assets/portfolio-hero-gpt.webp',
   'src/components/PortfolioDoodle.tsx',
   'src/components/TechScene3D.tsx',
 ];
-const leftovers = removedFiles.filter((path) => existsSync(path));
+const leftovers = rejectedFiles.filter((path) => existsSync(path));
 if (leftovers.length) {
   console.error(`Rejected legacy files still exist: ${leftovers.join(', ')}`);
   process.exit(1);
 }
 
-if (!existsSync('public/assets/cozy-farming-village-tileset-4x3.png')) {
-  console.error('Missing generated pixel farming reference asset sheet');
+const entityCount = (game.match(/id: '/g) || []).length;
+if (entityCount < 7) {
+  console.error(`Expected at least 7 interactable game entities, found ${entityCount}`);
   process.exit(1);
 }
 
-const landmarkButtonCount = (village.match(/className={`pixel-building/g) || []).length + (village.match(/<button/g) || []).length;
-const zoneRecords = (village.match(/label: '/g) || []).length;
-if (zoneRecords !== 6 || landmarkButtonCount < 1) {
-  console.error(`Expected six portfolio zones and semantic landmark buttons, found ${zoneRecords} zones`);
-  process.exit(1);
-}
-
-console.log(`content smoke passed: ${zoneRecords} cozy pixel farm zones, ${required.length} required markers, no rejected public markers`);
+console.log(`content smoke passed: ${entityCount} interactable game entities, ${required.length} required markers, generated game sprites present, no rejected public markers`);

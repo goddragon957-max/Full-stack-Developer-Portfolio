@@ -1,76 +1,80 @@
-# 엄신용 Full-stack Portfolio
+# 엄신용 Portfolio Farm Game
 
-Cozy 2D pixel farming village portfolio built with Vite, React, TypeScript, Tailwind CSS, and plain CSS pixel-art shapes.
+A playable cozy 2D farming RPG where the portfolio is discovered inside the game world.
 
-## Current Version
+## Current Direction
 
-The first screen is **Cozy Pixel Farming Portfolio**:
+This is **not** a portfolio page with game decoration. The portfolio content is embedded in a small RPG farm:
 
-- a readable pixel village map is the primary navigation;
-- a small developer/farmer character stands at the active landmark;
-- six landmark buttons open portfolio sections;
-- the side panel shows practical career evidence, not generic marketing copy;
-- the generated `cozy-farming-village-tileset-4x3.png` appears as a small reference/art detail.
+- walk with `WASD` / arrow keys;
+- press `E` or `Space` near objects;
+- enter the farmhouse;
+- inspect portfolio objects inside the house;
+- unlock journal entries as game discoveries.
 
-## Landmarks
+## Generated Pixel Assets
 
-- `FARMHOUSE` - Home / Developer Farm introduction
-- `WORKSHOP` - Skills
-- `MARKET` - Projects
-- `BARN` - Backend & Infra
-- `COMMUNITY BOARD` - Experience
-- `MAILBOX` - Contact
+All pixel-art visuals used for the game are generated image assets, not hand-drawn CSS placeholders:
 
-## Content Rule
+- `public/assets/cozy-farming-village-tileset-4x3.png` — generated outdoor farming asset sheet
+- `public/assets/game-sprites/` — extracted outdoor sprites from the generated asset sheet
+- `public/assets/generated-sheets/farmhouse-interior-room.png` — generated complete house interior map
+- `public/assets/generated-sheets/developer-farmer-character-sheet.png` — generated player character sheet
+- `public/assets/generated-sprites/character/` — extracted player sprites
+- `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png` — generated interior object sheet
+- `public/assets/generated-sprites/interior/` — extracted interior props
 
-This site is source-grounded. Public copy comes from the resume extraction and approved planning docs:
+## Game Structure
 
-- `docs/content-map.md`
-- `docs/copy/hero.md`
-- `DESIGN.md`
+### Outside Farm
 
-Do not fill empty space with invented marketing copy. Private/sensitive resume data is excluded by default.
+- Farmhouse: enter the interior
+- Workshop: skill clue
+- Market: project clue
+- Server Barn: backend/infra clue
+- Community Board: AWP/BIM quest clue
+- Mailbox: contact clue
+- Crop Patch: harvestable project record
 
-## Public Facts Represented
+### Inside Farmhouse
 
-- Java/Spring Boot backend work
-- React/TypeScript frontend work
-- PostgreSQL/MyBatis database work
-- AWS and Linux operation context
-- AWP business systems
-- BIM viewer validation with xeokit and XKT
+The generated interior room contains the portfolio objects:
+
+- `SKILL` desk: React, TypeScript, Java, Spring Boot, PostgreSQL, MyBatis
+- `QUEST` board: project work and operations
+- `SERVER` shelf: AWS, Linux, backend/infra
+- `BIM` blueprint table: AWP, BIM, xeokit, XKT
+- `JOURNAL` shelf: experience history
+- `MAIL` table: contact/link destination
+- `EXIT` door: return to farm
 
 ## Controls
 
-- Click a landmark button to change the active portfolio zone.
-- `ArrowRight`, `ArrowDown`, `D`, or `S` moves to the next zone.
-- `ArrowLeft`, `ArrowUp`, `A`, or `W` moves to the previous zone.
-- The root exposes `data-active-zone` and `data-player-zone` for browser smoke checks.
+```text
+WASD / Arrow Keys  Move
+E / Space          Interact / enter / inspect
+```
 
-## Stack
-
-- Vite + React + TypeScript
-- CSS/SVG-free DOM pixel art for this pass
-- Tailwind CSS v4 via `@tailwindcss/vite`
-- Zustand and Lucide remain available for future UI work
-
-## Run
+## Verification
 
 ```bash
-npm install
 npm run test
 npm run lint
 npm run build
-npm run preview -- --host 0.0.0.0 --port 4192 --strictPort
+npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
 ```
 
-## Verification Focus
+Browser checks:
 
-A pass requires more than a build. Verify that:
+- `data-ui-pass="portfolio-inside-farming-rpg"`
+- `data-game-world="playable-cozy-farm-rpg"`
+- `data-current-scene` changes from `outside` to `interior` after entering farmhouse
+- `data-player-x` / `data-player-y` change with movement
+- `data-nearby-object` detects nearby objects
+- `data-active-dialogue` changes after pressing `E`
+- `data-journal-count` increases after inspecting portfolio objects
+- `data-harvest-count` increases after crop harvest
 
-- the root has `data-ui-pass="cozy-pixel-farm-portfolio"`;
-- the root has `data-game-world="cozy-farming-village"`;
-- all six landmark buttons render;
-- clicking `MARKET` changes `data-active-zone` to `market`;
-- pressing `ArrowRight` or `D` changes active/player zone state;
-- the first screenshot reads as a cozy 2D pixel portfolio village.
+## Rule
+
+Do not return to a static portfolio landing page. The portfolio belongs **inside the game loop**: movement, interaction, dialogue, journal, objects, and rooms.

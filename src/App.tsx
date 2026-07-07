@@ -1,9 +1,9 @@
-import { PixelPortfolioVillage } from './components/PixelPortfolioVillage';
+import { PortfolioFarmGame } from './components/PortfolioFarmGame';
 
 export function App() {
   return (
     <main data-app="loop-dog-lab">
-      <PixelPortfolioVillage />
+      <PortfolioFarmGame />
     </main>
   );
 }
