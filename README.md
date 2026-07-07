@@ -1,55 +1,58 @@
 # 엄신용 Full-stack Portfolio
 
-Cyberpunk interactive 3D developer portfolio built with Vite, React, TypeScript, Three.js, Tailwind CSS, and Zustand.
+Cozy 2D pixel farming village portfolio built with Vite, React, TypeScript, Tailwind CSS, and plain CSS pixel-art shapes.
 
-## Current version
+## Current Version
 
-The first screen is **Cyberpunk Dev City**:
+The first screen is **Cozy Pixel Farming Portfolio**:
 
-- drive a neon hover rover through a dark developer city;
-- explore hologram portfolio districts;
-- Neon Stack Garage shows the main technologies;
-- Career Mainframe summarizes work history;
-- BIM Grid Yard highlights AWP/BIM/3D viewer experience;
-- Signal Gate points to portfolio destinations;
-- HUD and mini map update as the rover moves.
+- a readable pixel village map is the primary navigation;
+- a small developer/farmer character stands at the active landmark;
+- six landmark buttons open portfolio sections;
+- the side panel shows practical career evidence, not generic marketing copy;
+- the generated `cozy-farming-village-tileset-4x3.png` appears as a small reference/art detail.
 
-This direction intentionally avoids depending on paid 3D vehicle models. The professional look comes from cyberpunk art direction: dark composition, neon lighting, city silhouettes, hologram signage, material contrast, and compact HUD design.
+## Landmarks
 
-## Content rule
+- `FARMHOUSE` - Home / Developer Farm introduction
+- `WORKSHOP` - Skills
+- `MARKET` - Projects
+- `BARN` - Backend & Infra
+- `COMMUNITY BOARD` - Experience
+- `MAILBOX` - Contact
 
-This site is source-grounded. Public copy comes from `060703.pdf` resume extraction and the approved planning docs:
+## Content Rule
+
+This site is source-grounded. Public copy comes from the resume extraction and approved planning docs:
 
 - `docs/content-map.md`
 - `docs/copy/hero.md`
 - `DESIGN.md`
 
-Do not fill empty space with invented marketing copy. Private/sensitive resume data is excluded by default: phone number, personal address, salary, military details, and full resume tables.
+Do not fill empty space with invented marketing copy. Private/sensitive resume data is excluded by default.
 
-## Public facts represented
+## Public Facts Represented
 
 - Java/Spring Boot backend work
 - React/TypeScript frontend work
-- PHP/CodeIgniter maintenance roots
-- PostgreSQL/MyBatis, Linux, AWS operation context
-- 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰 유지보수
-- AWP business systems and 3D/BIM viewer validation
-- xeokit, XKT, Three.js
+- PostgreSQL/MyBatis database work
+- AWS and Linux operation context
+- AWP business systems
+- BIM viewer validation with xeokit and XKT
 
 ## Controls
 
-- `WASD` or arrow keys: drive
-- `Space`: brake
-- On touch devices: on-screen control pad
-- Top landmark links jump the rover to each portfolio district
+- Click a landmark button to change the active portfolio zone.
+- `ArrowRight`, `ArrowDown`, `D`, or `S` moves to the next zone.
+- `ArrowLeft`, `ArrowUp`, `A`, or `W` moves to the previous zone.
+- The root exposes `data-active-zone` and `data-player-zone` for browser smoke checks.
 
 ## Stack
 
 - Vite + React + TypeScript
-- Three.js for the playable 3D world
+- CSS/SVG-free DOM pixel art for this pass
 - Tailwind CSS v4 via `@tailwindcss/vite`
-- Zustand remains available for stateful UI work
-- Lucide Icons remain available for future UI overlays
+- Zustand and Lucide remain available for future UI work
 
 ## Run
 
@@ -58,15 +61,16 @@ npm install
 npm run test
 npm run lint
 npm run build
-npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
+npm run preview -- --host 0.0.0.0 --port 4192 --strictPort
 ```
 
-## Verification focus
+## Verification Focus
 
 A pass requires more than a build. Verify that:
 
-- the Three.js canvas renders;
-- rover movement changes `data-car-x` / `data-car-z`;
-- clicking a landmark changes `data-active-zone`;
-- browser console has zero fatal JavaScript errors;
-- first screenshot reads as cyberpunk 3D portfolio, not a bright toy Three.js demo.
+- the root has `data-ui-pass="cozy-pixel-farm-portfolio"`;
+- the root has `data-game-world="cozy-farming-village"`;
+- all six landmark buttons render;
+- clicking `MARKET` changes `data-active-zone` to `market`;
+- pressing `ArrowRight` or `D` changes active/player zone state;
+- the first screenshot reads as a cozy 2D pixel portfolio village.

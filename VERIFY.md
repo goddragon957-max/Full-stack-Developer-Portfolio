@@ -1,6 +1,6 @@
-# Verification — Cyberpunk Dev City portfolio
+# Verification - Cozy Pixel Farming Portfolio
 
-## Static gates
+## Static Gates
 
 ```bash
 npm run test
@@ -10,63 +10,60 @@ npm run build
 
 Expected:
 
-- content smoke passes Cyberpunk Dev City markers;
+- content smoke passes cozy pixel farm markers;
 - TypeScript passes;
 - Vite production build succeeds.
 
-## Browser/play smoke
+## Browser Smoke
 
 Start preview:
 
 ```bash
-npm run preview -- --host 0.0.0.0 --port 4190 --strictPort
+npm run preview -- --host 0.0.0.0 --port 4192 --strictPort
 ```
 
 Verify in browser:
 
 ```js
-document.querySelector('[data-app="loop-dog-lab"]') !== null
-document.querySelector('[data-ui-pass]')?.getAttribute('data-ui-pass') === 'cyberpunk-dev-city-portfolio'
-document.querySelector('[data-font]')?.getAttribute('data-font') === 'pretendard'
-document.querySelector('[data-source]')?.getAttribute('data-source') === '060703-resume'
-document.querySelector('[data-theme]')?.getAttribute('data-theme') === 'cyberpunk'
-document.querySelector('[data-game-world]')?.getAttribute('data-game-world') === 'cyberpunk-dev-city'
-document.querySelector('[data-game-world] canvas') !== null
+const root = document.querySelector('[data-ui-pass="cozy-pixel-farm-portfolio"]')
+root !== null
+root?.getAttribute('data-game-world') === 'cozy-farming-village'
+root?.hasAttribute('data-active-zone') === true
+root?.hasAttribute('data-player-zone') === true
+document.querySelectorAll('.pixel-building').length === 6
+document.body.innerText.includes('FARMHOUSE')
+document.body.innerText.includes('WORKSHOP')
+document.body.innerText.includes('MARKET')
+document.body.innerText.includes('BARN')
+document.body.innerText.includes('COMMUNITY BOARD')
+document.body.innerText.includes('MAILBOX')
 ```
 
 Interaction checks:
 
-1. Press `ArrowUp` or `W` for at least 500ms.
-2. Confirm `data-car-x` or `data-car-z` changes.
-3. Press left/right and confirm the rover continues to respond.
-4. Click a top landmark and confirm `data-active-zone` changes from `intro` to one of:
-   - `stack`
-   - `career`
-   - `bim`
-   - `contact`
-5. Confirm HUD text includes Neon Stack Garage / Career Mainframe / BIM Grid Yard / Signal Gate across the page source.
-6. Confirm no generated hero image or old static 3D scene is rendered and these files do not exist:
-   - `public/assets/portfolio-hero-gpt.webp`
-   - `src/components/PortfolioDoodle.tsx`
-   - `src/components/TechScene3D.tsx`
-7. Confirm console has zero fatal JavaScript errors.
+1. Confirm console has no fatal JavaScript errors.
+2. Click `MARKET`.
+3. Confirm `data-active-zone` and `data-player-zone` become `market`.
+4. Confirm the visible content changes to project copy.
+5. Press `ArrowRight` or `D`.
+6. Confirm active/player zone state or character position changes.
+7. Confirm the page includes Java, Spring Boot, React, TypeScript, PostgreSQL, MyBatis, AWS, Linux, AWP, BIM, xeokit, and XKT.
 
-## Visual QA scorecard
+## Visual QA Scorecard
 
 Score each 0/1/2. Any 0 is a hard fail.
 
 | Criterion | Pass target |
 |---|---|
-| Product read in 3 seconds | Reads as cyberpunk 3D portfolio, not a default Three.js sample |
-| Focal object readability | Hover rover is visible, dark, neon, and not a toy box car |
-| World readability | Neon city, grid floor, roads, district holograms, skyline are understandable |
-| Lighting/materials | Cyan/magenta lighting and dark metal/glass feel intentional |
-| HUD readability | Compact premium HUD, readable Korean, not a huge dashboard slab |
-| Portfolio readability | Java/Spring Boot, React/TypeScript, PostgreSQL, AWP/BIM are visible |
-| Screenshot desirability | A screenshot should make the user want to try driving |
+| Product read in 3 seconds | Reads as a cozy 2D pixel portfolio village |
+| Character | Small developer/farmer avatar is visible on the map |
+| Landmarks | Six clickable buildings/signboards are readable |
+| Portfolio clarity | The active card clearly maps landmarks to career evidence |
+| Typography | Pretendard body copy is readable; tiny labels can be monospace |
+| Mobile | Vertical layout remains readable and keeps the village visible |
 
-## Known acceptable limitations
+## Known Acceptable Limitations
 
-- This pass does not require paid models.
-- The hover rover is custom procedural geometry; it should read as cyberpunk vehicle silhouette rather than photoreal car.
-- Physics are lightweight arcade-style movement, not full rigid-body simulation.
+- This pass does not require a canvas/game engine.
+- The village art is made from DOM/CSS pixel shapes.
+- The generated asset sheet is a supporting detail, not the only interface.
