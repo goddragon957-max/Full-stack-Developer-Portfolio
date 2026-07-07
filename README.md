@@ -61,6 +61,12 @@ E / Space          Interact / enter / inspect
 ## Current Game Polish
 
 - Fullscreen `100dvh` game shell instead of a scrolling webpage.
+- The game map is the primary full-screen surface.
+- Top HUD and right sidebar are intentionally removed.
+- Dialogue is a speech-bubble overlay on top of the game world.
+- A gear button opens the only utility window.
+- The gear menu contains `MAP`, `ABOUT`, and `SETTINGS` tabs.
+- The MAP tab shows the current scene map, player position, and interactable nodes.
 - Pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
 - Movement is driven by a pressed-key `requestAnimationFrame` loop, not OS key repeat.
 - Player sprite changes through generated walking frames while moving.
@@ -79,6 +85,14 @@ Browser checks:
 - `data-ui-pass="portfolio-inside-farming-rpg"`
 - `data-game-world="playable-cozy-farm-rpg"`
 - `data-current-scene` changes from `outside` to `interior` after entering farmhouse
+- `data-layout-mode="full-screen-map-with-overlay-ui"`
+- `data-topbar-visible="false"`
+- `data-sidebar-visible="false"`
+- `data-overlay-layer="dialogue-and-menu"`
+- `data-settings-open`
+- `data-settings-tab`
+- `data-labels-visible`
+- `data-hints-visible`
 - `data-screen-mode="fullscreen-game-shell"`
 - `data-game-phase` changes from `intro` to `playing` after start
 - `data-intro-title="EOM SINYONG"`

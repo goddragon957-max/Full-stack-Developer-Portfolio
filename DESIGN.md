@@ -30,17 +30,22 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 
 1. Player starts at a fullscreen pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
 2. Player starts the game with `Enter`, `Space`, `E`, or the `START GAME` button.
-3. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
-4. Player presses `E`/`Space` near objects.
-5. Farmhouse interaction enters the generated interior room.
-6. Inside the house, portfolio content is unlocked by inspecting objects:
+3. The game world/map fills the whole viewport.
+4. No top HUD/status bar and no right sidebar are allowed in normal play.
+5. Dialogue appears as a speech-bubble overlay on top of the map.
+6. A gear button opens the only utility window.
+7. Gear window tabs: `MAP`, `ABOUT`, `SETTINGS`.
+8. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
+9. Player presses `E`/`Space` near objects.
+10. Farmhouse interaction enters the generated interior room.
+11. Inside the house, portfolio content is unlocked by inspecting objects:
    - SKILL desk
    - QUEST board
    - SERVER shelf
    - BIM blueprint table
    - JOURNAL shelf
    - MAIL table
-5. Dialogue and Quest Log/Journal expose the portfolio content.
+12. Speech-bubble dialogue and the gear-menu overlays expose the portfolio content.
 
 ## Portfolio content mapping
 
@@ -56,6 +61,14 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 - `data-ui-pass="portfolio-inside-farming-rpg"`
 - `data-game-world="playable-cozy-farm-rpg"`
 - `data-screen-mode="fullscreen-game-shell"`
+- `data-layout-mode="full-screen-map-with-overlay-ui"`
+- `data-topbar-visible="false"`
+- `data-sidebar-visible="false"`
+- `data-overlay-layer="dialogue-and-menu"`
+- `data-settings-open`
+- `data-settings-tab`
+- `data-labels-visible`
+- `data-hints-visible`
 - `data-game-phase`
 - `data-intro-title`
 - `data-typed-title`

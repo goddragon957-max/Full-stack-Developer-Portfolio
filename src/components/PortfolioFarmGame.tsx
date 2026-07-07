@@ -17,6 +17,7 @@ type EntityId =
   | 'journalShelf'
   | 'mailTable';
 type Direction = 'up' | 'down' | 'left' | 'right';
+type MenuTab = 'map' | 'about' | 'settings';
 
 type Player = {
   x: number;
@@ -366,6 +367,10 @@ export function PortfolioFarmGame() {
   const [dialogue, setDialogue] = useState<Entity | null>(outsideEntities[0]);
   const [journal, setJournal] = useState<string[]>([outsideEntities[0].journalTitle]);
   const [harvestCount, setHarvestCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeMenuTab, setActiveMenuTab] = useState<MenuTab>('map');
+  const [showLabels, setShowLabels] = useState(true);
+  const [showHints, setShowHints] = useState(true);
 
   const pressedDirectionsRef = useRef<Direction[]>([]);
   const moveFrameRef = useRef<number | null>(null);
@@ -383,6 +388,8 @@ export function PortfolioFarmGame() {
   const playerFrames = playerWalkSprites[player.facing];
   const playerFrameIndex = player.walking ? player.step % playerFrames.length : 0;
   const playerSprite = playerFrames[playerFrameIndex];
+  const mapEntities = currentEntities;
+  const menuTabs: MenuTab[] = ['map', 'about', 'settings'];
 
   const startGame = useCallback(() => {
     setGameStarted(true);
@@ -577,6 +584,10 @@ export function PortfolioFarmGame() {
       data-ui-pass="portfolio-inside-farming-rpg"
       data-game-world="playable-cozy-farm-rpg"
       data-screen-mode="fullscreen-game-shell"
+      data-layout-mode="full-screen-map-with-overlay-ui"
+      data-topbar-visible="false"
+      data-sidebar-visible="false"
+      data-overlay-layer="dialogue-and-menu"
       data-game-phase={gameStarted ? 'playing' : 'intro'}
       data-intro-title={INTRO_TITLE}
       data-typed-title={typedTitle}
@@ -587,6 +598,10 @@ export function PortfolioFarmGame() {
       data-player-walking={player.walking ? 'true' : 'false'}
       data-player-frame={playerFrameIndex}
       data-movement-mode="pressed-key-raf-loop"
+      data-settings-open={menuOpen ? 'true' : 'false'}
+      data-settings-tab={activeMenuTab}
+      data-labels-visible={showLabels ? 'true' : 'false'}
+      data-hints-visible={showHints ? 'true' : 'false'}
       data-nearby-object={nearby?.id ?? ''}
       data-active-dialogue={dialogue?.id ?? ''}
       data-journal-count={journal.length}
@@ -595,90 +610,137 @@ export function PortfolioFarmGame() {
       data-font="Pretendard"
     >
       <div className="game-shell">
-        <header className="game-hud" aria-label="Game status">
-          <div>
-            <span>{gameStarted ? `Day 1 · ${scene === 'outside' ? 'Developer Farm' : 'Farmhouse Interior'}` : 'Title Screen · Pixel Portfolio RPG'}</span>
-            <strong>{scene === 'outside' ? '포트폴리오가 숨겨진 농장 RPG' : '집 안 물건에 포트폴리오가 들어있다'}</strong>
-          </div>
-          <div className="hud-meter">
-            <span>Harvest</span>
-            <strong>{harvestCount}/3</strong>
-          </div>
-          <div className="hud-meter">
-            <span>Journal</span>
-            <strong>{journal.length}/{allEntities.length}</strong>
-          </div>
-          <div className="hud-controls">Hold WASD/Arrows · E / Space interact · Enter starts</div>
-        </header>
-
-        <div className="game-layout">
-          <main className="game-viewport" aria-label="Playable cozy farming RPG map">
-            {scene === 'outside' ? (
-              <div className="tile-world outside-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
-                {Array.from({ length: WORLD_W * WORLD_H }).map((_, index) => {
-                  const x = index % WORLD_W;
-                  const y = Math.floor(index / WORLD_W);
-                  return <i key={`${x}-${y}`} className={`tile tile-${tileType(x, y)}`} data-tile-x={x} data-tile-y={y} />;
-                })}
-                {treeSprites.map((tree, index) => (
-                  <img key={`${tree.src}-${index}`} className="sprite tree-sprite" src={tree.src} alt="" aria-hidden="true" style={{ left: tree.x * TILE, top: tree.y * TILE, width: tree.size }} />
-                ))}
-                {outsideEntities.map((entity) => (
-                  <div key={entity.id} className={`game-entity entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
-                    {entity.sprite && <img className="sprite generated-sprite" src={entity.sprite} alt="" aria-hidden="true" />}
-                    <b>{entity.label}</b>
-                  </div>
-                ))}
-                <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
-              </div>
-            ) : (
-              <div className="tile-world interior-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
-                <img className="interior-room-bg" src="/assets/generated-sheets/farmhouse-interior-room.png" alt="Generated cozy developer farmhouse interior room" />
-                {interiorEntities.map((entity) => (
-                  <div key={entity.id} className={`game-entity interior-hotspot entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
-                    <b>{entity.label}</b>
-                  </div>
-                ))}
-                <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
-              </div>
-            )}
-
-            <div className="dialogue-box" data-dialogue-box="game-dialogue">
-              <span>{nearby ? `Near: ${nearby.name}` : scene === 'outside' ? 'Explore farm' : 'Inside farmhouse'}</span>
-              <strong>{dialogue ? dialogue.name : prompt}</strong>
-              {dialogue ? dialogue.dialogue.map((line) => <p key={line}>{line}</p>) : <p>{prompt}</p>}
-              <em>{nearby ? 'Press E to inspect / enter' : 'Move next to generated game objects'}</em>
-            </div>
-          </main>
-
-          <aside className="quest-journal" aria-label="Quest Log and Journal">
-            <div className="journal-title">
-              <span>Quest Log</span>
-              <strong>Journal</strong>
-            </div>
-            <ol>
-              {journalEntries.map((entry) => (
-                <li key={`${entry.scene}-${entry.id}`}>
-                  <b>{entry.journalTitle}</b>
-                  <p>{entry.tags.join(' · ')}</p>
-                </li>
+        <main className="game-viewport" aria-label="Playable cozy farming RPG map" data-game-surface="full-screen-map">
+          {scene === 'outside' ? (
+            <div className="tile-world outside-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
+              {Array.from({ length: WORLD_W * WORLD_H }).map((_, index) => {
+                const x = index % WORLD_W;
+                const y = Math.floor(index / WORLD_W);
+                return <i key={`${x}-${y}`} className={`tile tile-${tileType(x, y)}`} data-tile-x={x} data-tile-y={y} />;
+              })}
+              {treeSprites.map((tree, index) => (
+                <img key={`${tree.src}-${index}`} className="sprite tree-sprite" src={tree.src} alt="" aria-hidden="true" style={{ left: tree.x * TILE, top: tree.y * TILE, width: tree.size }} />
               ))}
-            </ol>
-            <div className="next-object">
-              <span>Current prompt</span>
-              <p>{prompt}</p>
+              {outsideEntities.map((entity) => (
+                <div key={entity.id} className={`game-entity entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
+                  {entity.sprite && <img className="sprite generated-sprite" src={entity.sprite} alt="" aria-hidden="true" />}
+                  <b>{entity.label}</b>
+                </div>
+              ))}
+              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
             </div>
-            <div className="sprite-atlas-note">Fullscreen game shell · RAF movement loop · Codex-generated sprite sheets.</div>
-          </aside>
-        </div>
+          ) : (
+            <div className="tile-world interior-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
+              <img className="interior-room-bg" src="/assets/generated-sheets/farmhouse-interior-room.png" alt="Generated cozy developer farmhouse interior room" />
+              {interiorEntities.map((entity) => (
+                <div key={entity.id} className={`game-entity interior-hotspot entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
+                  <b>{entity.label}</b>
+                </div>
+              ))}
+              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
+            </div>
+          )}
+        </main>
 
-        <nav className="touch-pad" aria-label="Mobile game controls">
-          <button type="button" onClick={() => movePlayer('up')}>↑</button>
-          <button type="button" onClick={() => movePlayer('left')}>←</button>
-          <button type="button" onClick={interact}>E</button>
-          <button type="button" onClick={() => movePlayer('right')}>→</button>
-          <button type="button" onClick={() => movePlayer('down')}>↓</button>
-        </nav>
+        <div className="game-overlay-layer" data-layer="game-overlay-ui">
+          <button
+            type="button"
+            className="gear-button"
+            aria-label="Open game menu"
+            data-settings-toggle="gear"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            ⚙
+          </button>
+
+          {menuOpen && (
+            <section className="settings-window" role="dialog" aria-modal="false" aria-label="Game menu" data-settings-window="game-menu" data-active-menu-tab={activeMenuTab}>
+              <header className="settings-header">
+                <div>
+                  <span>GAME MENU</span>
+                  <strong>{activeMenuTab.toUpperCase()}</strong>
+                </div>
+                <button type="button" className="settings-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>×</button>
+              </header>
+
+              <nav className="settings-tabs" aria-label="Game menu tabs">
+                {menuTabs.map((tab) => (
+                  <button key={tab} type="button" className={activeMenuTab === tab ? 'is-active' : ''} onClick={() => setActiveMenuTab(tab)}>
+                    {tab.toUpperCase()}
+                  </button>
+                ))}
+              </nav>
+
+              {activeMenuTab === 'map' && (
+                <div className="map-panel" data-map-panel="portfolio-world-map">
+                  <div className="map-title-row">
+                    <span>{scene === 'outside' ? 'Developer Farm Map' : 'Farmhouse Interior Map'}</span>
+                    <b>{player.x}, {player.y}</b>
+                  </div>
+                  <div className="mini-map" aria-label="Current game map">
+                    <i className="map-road map-road-vertical" />
+                    <i className="map-road map-road-horizontal" />
+                    {mapEntities.map((entity) => (
+                      <i
+                        key={`${scene}-${entity.id}`}
+                        className={`map-node node-${entity.kind} ${nearby?.id === entity.id ? 'is-nearby' : ''}`}
+                        title={entity.name}
+                        style={{ left: `${((entity.x + entity.w / 2) / WORLD_W) * 100}%`, top: `${((entity.y + entity.h / 2) / WORLD_H) * 100}%` }}
+                      />
+                    ))}
+                    <i className="map-player" style={{ left: `${((player.x + 0.5) / WORLD_W) * 100}%`, top: `${((player.y + 0.5) / WORLD_H) * 100}%` }} />
+                  </div>
+                  <p>노란 점은 현재 위치, 초록/갈색 점은 조사 가능한 포트폴리오 오브젝트입니다.</p>
+                </div>
+              )}
+
+              {activeMenuTab === 'about' && (
+                <div className="about-panel" data-about-panel="portfolio-about">
+                  <p>엄신용 포트폴리오는 웹 섹션이 아니라 농장 RPG 안의 발견물로 배치되어 있습니다.</p>
+                  <dl>
+                    <div><dt>Scene</dt><dd>{scene === 'outside' ? 'Developer Farm' : 'Farmhouse Interior'}</dd></div>
+                    <div><dt>Journal</dt><dd>{journal.length}/{allEntities.length}</dd></div>
+                    <div><dt>Harvest</dt><dd>{harvestCount}/3</dd></div>
+                  </dl>
+                  <ul>
+                    {journalEntries.slice(0, 5).map((entry) => (
+                      <li key={`menu-${entry.id}`}>{entry.journalTitle}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {activeMenuTab === 'settings' && (
+                <div className="settings-panel" data-settings-panel="game-options">
+                  <label>
+                    <input type="checkbox" checked={showLabels} onChange={(event) => setShowLabels(event.currentTarget.checked)} />
+                    <span>Object labels</span>
+                  </label>
+                  <label>
+                    <input type="checkbox" checked={showHints} onChange={(event) => setShowHints(event.currentTarget.checked)} />
+                    <span>Press-E hints</span>
+                  </label>
+                  <p>Controls: hold WASD/arrows · E/Space interact · gear opens this menu.</p>
+                </div>
+              )}
+            </section>
+          )}
+
+          <div className="dialogue-box speech-bubble-layer" data-dialogue-box="game-dialogue">
+            <span>{nearby ? `Near: ${nearby.name}` : scene === 'outside' ? 'Explore farm' : 'Inside farmhouse'}</span>
+            <strong>{dialogue ? dialogue.name : prompt}</strong>
+            {dialogue ? dialogue.dialogue.map((line) => <p key={line}>{line}</p>) : <p>{prompt}</p>}
+            <em>{nearby ? 'Press E to inspect / enter' : 'Move next to generated game objects'}</em>
+          </div>
+
+          <nav className="touch-pad" aria-label="Mobile game controls">
+            <button type="button" onClick={() => movePlayer('up')}>↑</button>
+            <button type="button" onClick={() => movePlayer('left')}>←</button>
+            <button type="button" onClick={interact}>E</button>
+            <button type="button" onClick={() => movePlayer('right')}>→</button>
+            <button type="button" onClick={() => movePlayer('down')}>↓</button>
+          </nav>
+        </div>
       </div>
 
       {!gameStarted && (

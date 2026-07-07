@@ -30,7 +30,7 @@ Replace it with:
 - a game viewport/HUD/dialogue box layout;
 - actual tile/step movement with `WASD`/arrow keys;
 - interaction key `E`/`Space`;
-- quest log/journal state;
+- overlay dialogue/menu state;
 - nearby object detection;
 - visible player position state;
 - portfolio facts unlocked through game interactions.
@@ -84,8 +84,9 @@ Required public markers:
 - `PortfolioFarmGame`
 - `game-sprites`
 - `Press E`
-- `Quest Log`
-- `Journal`
+- `speech-bubble-layer`
+- `settings-window`
+- `mini-map`
 - source nouns: Java, Spring Boot, React, TypeScript, PostgreSQL, MyBatis, AWS, Linux, AWP, BIM, xeokit, XKT
 
 Forbidden as the main UX:
