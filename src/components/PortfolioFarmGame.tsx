@@ -617,6 +617,7 @@ export function PortfolioFarmGame() {
       data-sprite-normalization="bottom-centered-transparent-canvas"
       data-movement-mode="pressed-key-raf-loop"
       data-world-scale-mode="pixel-locked-fit"
+      data-mobile-fit-mode="scaled-map-safe-area"
       data-settings-open={menuOpen ? 'true' : 'false'}
       data-settings-tab={activeMenuTab}
       data-labels-visible={showLabels ? 'true' : 'false'}

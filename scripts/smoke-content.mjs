@@ -32,6 +32,7 @@ const required = [
   'data-sprite-normalization="bottom-centered-transparent-canvas"',
   'data-walk-cycle="coherent-generated-frames"',
   'data-world-scale-mode="pixel-locked-fit"',
+  'data-mobile-fit-mode="scaled-map-safe-area"',
   'data-current-scene',
   'data-layout-mode="full-screen-map-with-overlay-ui"',
   'data-topbar-visible="false"',

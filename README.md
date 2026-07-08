@@ -105,6 +105,7 @@ Browser checks:
 - `data-sprite-normalization="bottom-centered-transparent-canvas"`
 - `data-walk-cycle="coherent-generated-frames"`
 - `data-world-scale-mode="pixel-locked-fit"`
+- `data-mobile-fit-mode="scaled-map-safe-area"`
 - `data-player-walking` and `data-player-frame` change while a movement key is held
 - `data-player-x` / `data-player-y` change with movement
 - `data-nearby-object` detects nearby objects
