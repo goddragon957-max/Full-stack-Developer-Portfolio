@@ -1,0 +1,210 @@
+{
+  "normalization": "bottom-centered-transparent-canvas",
+  "canvas": [
+    118,
+    181
+  ],
+  "sourceDirectory": "public/assets/generated-sprites/character",
+  "cycles": {
+    "down": [
+      {
+        "file": "down-0.png",
+        "source": "../character/sprite-10.png",
+        "sourceSize": [
+          118,
+          181
+        ],
+        "offset": [
+          0,
+          0
+        ]
+      },
+      {
+        "file": "down-1.png",
+        "source": "../character/sprite-11.png",
+        "sourceSize": [
+          117,
+          180
+        ],
+        "offset": [
+          0,
+          1
+        ]
+      },
+      {
+        "file": "down-2.png",
+        "source": "../character/sprite-12.png",
+        "sourceSize": [
+          116,
+          180
+        ],
+        "offset": [
+          1,
+          1
+        ]
+      },
+      {
+        "file": "down-3.png",
+        "source": "../character/sprite-13.png",
+        "sourceSize": [
+          117,
+          178
+        ],
+        "offset": [
+          0,
+          3
+        ]
+      }
+    ],
+    "left": [
+      {
+        "file": "left-0.png",
+        "source": "../character/sprite-30.png",
+        "sourceSize": [
+          105,
+          167
+        ],
+        "offset": [
+          6,
+          14
+        ]
+      },
+      {
+        "file": "left-1.png",
+        "source": "../character/sprite-31.png",
+        "sourceSize": [
+          106,
+          166
+        ],
+        "offset": [
+          6,
+          15
+        ]
+      },
+      {
+        "file": "left-2.png",
+        "source": "../character/sprite-32.png",
+        "sourceSize": [
+          104,
+          167
+        ],
+        "offset": [
+          7,
+          14
+        ]
+      },
+      {
+        "file": "left-3.png",
+        "source": "../character/sprite-33.png",
+        "sourceSize": [
+          103,
+          166
+        ],
+        "offset": [
+          7,
+          15
+        ]
+      }
+    ],
+    "right": [
+      {
+        "file": "right-0.png",
+        "source": "../character/sprite-34.png",
+        "sourceSize": [
+          105,
+          166
+        ],
+        "offset": [
+          6,
+          15
+        ]
+      },
+      {
+        "file": "right-1.png",
+        "source": "../character/sprite-35.png",
+        "sourceSize": [
+          102,
+          166
+        ],
+        "offset": [
+          8,
+          15
+        ]
+      },
+      {
+        "file": "right-2.png",
+        "source": "../character/sprite-36.png",
+        "sourceSize": [
+          102,
+          165
+        ],
+        "offset": [
+          8,
+          16
+        ]
+      },
+      {
+        "file": "right-3.png",
+        "source": "../character/sprite-37.png",
+        "sourceSize": [
+          103,
+          165
+        ],
+        "offset": [
+          7,
+          16
+        ]
+      }
+    ],
+    "up": [
+      {
+        "file": "up-0.png",
+        "source": "../character/sprite-43.png",
+        "sourceSize": [
+          105,
+          166
+        ],
+        "offset": [
+          6,
+          15
+        ]
+      },
+      {
+        "file": "up-1.png",
+        "source": "../character/sprite-44.png",
+        "sourceSize": [
+          104,
+          165
+        ],
+        "offset": [
+          7,
+          16
+        ]
+      },
+      {
+        "file": "up-2.png",
+        "source": "../character/sprite-45.png",
+        "sourceSize": [
+          103,
+          164
+        ],
+        "offset": [
+          7,
+          17
+        ]
+      },
+      {
+        "file": "up-3.png",
+        "source": "../character/sprite-46.png",
+        "sourceSize": [
+          103,
+          164
+        ],
+        "offset": [
+          7,
+          17
+        ]
+      }
+    ]
+  }
+}

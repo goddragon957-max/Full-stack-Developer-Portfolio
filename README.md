@@ -23,6 +23,7 @@ All pixel-art visuals used for the game are generated image assets, not hand-dra
 - `public/assets/generated-sheets/farmhouse-interior-room.png` — generated complete house interior map
 - `public/assets/generated-sheets/developer-farmer-character-sheet.png` — generated player character sheet
 - `public/assets/generated-sprites/character/` — extracted player sprites
+- `public/assets/generated-sprites/character-walk/` — normalized bottom-centered walking frames
 - `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png` — generated interior object sheet
 - `public/assets/generated-sprites/interior/` — extracted interior props
 
@@ -63,13 +64,14 @@ E / Space          Interact / enter / inspect
 - Fullscreen `100dvh` game shell instead of a scrolling webpage.
 - The game map is the primary full-screen surface.
 - Top HUD and right sidebar are intentionally removed.
-- Dialogue is a speech-bubble overlay on top of the game world.
+- Dialogue is a docked bottom bar so it does not cover the center of the map.
 - A gear button opens the only utility window.
 - The gear menu contains `MAP`, `ABOUT`, and `SETTINGS` tabs.
 - The MAP tab shows the current scene map, player position, and interactable nodes.
+- The SETTINGS tab keeps a compact map under the settings controls.
 - Pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
 - Movement is driven by a pressed-key `requestAnimationFrame` loop, not OS key repeat.
-- Player sprite changes through generated walking frames while moving.
+- Player sprite changes through normalized generated walking frames while moving.
 
 ## Verification
 
@@ -89,6 +91,8 @@ Browser checks:
 - `data-topbar-visible="false"`
 - `data-sidebar-visible="false"`
 - `data-overlay-layer="dialogue-and-menu"`
+- `data-dialogue-mode="bottom-bar"`
+- `data-bottom-dialogue-bar="game-chat"`
 - `data-settings-open`
 - `data-settings-tab`
 - `data-labels-visible`
@@ -98,12 +102,16 @@ Browser checks:
 - `data-intro-title="EOM SINYONG"`
 - `data-typed-title` reaches `EOM SINYONG`
 - `data-movement-mode="pressed-key-raf-loop"`
+- `data-sprite-normalization="bottom-centered-transparent-canvas"`
+- `data-walk-cycle="coherent-generated-frames"`
+- `data-world-scale-mode="pixel-locked-fit"`
 - `data-player-walking` and `data-player-frame` change while a movement key is held
 - `data-player-x` / `data-player-y` change with movement
 - `data-nearby-object` detects nearby objects
 - `data-active-dialogue` changes after pressing `E`
 - `data-journal-count` increases after inspecting portfolio objects
 - `data-harvest-count` increases after crop harvest
+- `data-settings-map="below-options"` appears in SETTINGS
 
 ## Rule
 

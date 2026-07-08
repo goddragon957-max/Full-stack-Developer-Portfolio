@@ -23,6 +23,8 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - `data-topbar-visible="false"`
   - `data-sidebar-visible="false"`
   - `data-overlay-layer="dialogue-and-menu"`
+  - `data-dialogue-mode="bottom-bar"`
+  - `data-bottom-dialogue-bar="game-chat"`
   - `data-settings-open`
   - `data-settings-tab`
   - `data-labels-visible`
@@ -57,14 +59,14 @@ Open the strict-port preview and verify in the browser:
 2. The title screen shows pixel/dot-style `EOM SINYONG` typing and a `START GAME` button.
 3. Pressing `Enter`, `Space`, or `E` changes `data-game-phase` to `playing` and removes `.intro-screen`.
 4. Game map is the full-screen surface; there is no top status bar and no right sidebar rail.
-5. Dialogue appears as an overlay speech bubble on top of the map, not as a page section.
+5. Dialogue appears as a docked bottom dialogue bar with `bottom-dialogue-bar`, not as a floating speech bubble over the map center.
 6. The gear button opens the settings/menu window.
 7. The gear window has `MAP`, `ABOUT`, and `SETTINGS` tabs.
 8. The MAP tab renders a mini-map with player marker and interactable object nodes.
-9. Settings toggles for object labels and Press-E hints mutate rendered UI state.
+9. SETTINGS renders object-label and Press-E toggles, then a compact map under those controls with `data-settings-map="below-options"`.
 10. Player uses generated character sprite, not CSS body parts.
 11. Holding a movement key changes `data-player-x` / `data-player-y` repeatedly without relying on OS key-repeat ticks.
-12. While holding movement, `data-player-walking="true"`, `data-player-frame` changes, and `data-player-sprite` changes across generated walking frames.
+12. While holding movement, `data-player-walking="true"`, `data-player-frame` changes, and `data-player-sprite` changes across normalized generated walking frames.
 13. Pressing `E` near farmhouse changes `data-current-scene` to `interior`.
 14. The interior scene displays `farmhouse-interior-room.png` as the actual room background.
 15. Interior hotspots exist for `SKILL`, `QUEST`, `SERVER`, `BIM`, `JOURNAL`, `MAIL`, and `EXIT`.
@@ -80,7 +82,7 @@ The first useful screenshot should read as:
 - a playable cozy pixel-art farming RPG;
 - generated pixel assets, not hand-made CSS placeholders;
 - the map/world occupying the whole screen;
-- dialogue, map, About, and Settings appearing as game overlays;
+- a bottom dialogue bar plus map, About, and Settings appearing as game overlays;
 - a small gear button as the only persistent utility control;
 - no top website/header bar and no right sidebar rail.
 

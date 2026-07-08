@@ -38,6 +38,7 @@ The portfolio must be embedded **inside the game**, not the other way around.
 - `public/assets/generated-sheets/developer-farmer-character-sheet.png`
 - `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png`
 - `public/assets/generated-sprites/character/`
+- `public/assets/generated-sprites/character-walk/` normalized bottom-centered walking frames
 - `public/assets/generated-sprites/interior/`
 
 ## Gameplay contract
@@ -46,8 +47,9 @@ The portfolio must be embedded **inside the game**, not the other way around.
 - Start with Enter/Space/E or the START GAME button.
 - The game map must fill the screen.
 - No top HUD/status bar and no right sidebar in the normal play view.
-- Dialogue appears as a speech-bubble overlay above the game world.
+- Dialogue appears as a docked bottom bar above the game world chrome, not as a floating bubble over the center of play.
 - A gear icon opens the only utility window, with MAP / ABOUT / SETTINGS tabs.
+- SETTINGS also shows a compact map below the settings controls.
 - Hold WASD/arrows for continuous movement driven by `requestAnimationFrame`, not OS key repeat.
 - Movement should change generated walking sprite frames.
 - Interact with E/Space.
@@ -61,7 +63,7 @@ The portfolio must be embedded **inside the game**, not the other way around.
 - Genre readability: cozy farming RPG immediately readable.
 - Character readability: generated player sprite visible and charmful.
 - Stage readability: outside farm and generated house interior are authored spaces.
-- HUD readability: persistent HUD rails are absent; gear menu, map overlay, and speech bubble read as game UI.
+- HUD readability: persistent HUD rails are absent; gear menu, map overlay, and bottom dialogue bar read as game UI.
 - Screenshot desirability: should look like a small playable game, not a portfolio website.
 
 ## Anti-regression rule

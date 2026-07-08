@@ -26,13 +26,15 @@ All pixel visuals should come from Codex/OpenAI-generated pixel-art assets and e
 
 CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake pixel-art characters/buildings that should be generated assets.
 
+Player walking frames are normalized into `public/assets/generated-sprites/character-walk/` on a shared bottom-centered transparent canvas. This keeps fullscreen play from exaggerating crop differences between generated frames.
+
 ## Game loop
 
 1. Player starts at a fullscreen pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
 2. Player starts the game with `Enter`, `Space`, `E`, or the `START GAME` button.
 3. The game world/map fills the whole viewport.
 4. No top HUD/status bar and no right sidebar are allowed in normal play.
-5. Dialogue appears as a speech-bubble overlay on top of the map.
+5. Dialogue appears as a docked bottom dialogue bar, leaving the map center playable.
 6. A gear button opens the only utility window.
 7. Gear window tabs: `MAP`, `ABOUT`, `SETTINGS`.
 8. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
@@ -45,7 +47,7 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
    - BIM blueprint table
    - JOURNAL shelf
    - MAIL table
-12. Speech-bubble dialogue and the gear-menu overlays expose the portfolio content.
+12. The bottom dialogue bar and the gear-menu overlays expose the portfolio content.
 
 ## Portfolio content mapping
 
@@ -65,6 +67,8 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 - `data-topbar-visible="false"`
 - `data-sidebar-visible="false"`
 - `data-overlay-layer="dialogue-and-menu"`
+- `data-dialogue-mode="bottom-bar"`
+- `data-bottom-dialogue-bar="game-chat"`
 - `data-settings-open`
 - `data-settings-tab`
 - `data-labels-visible`
@@ -79,11 +83,15 @@ CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake p
 - `data-player-walking`
 - `data-player-frame`
 - `data-movement-mode="pressed-key-raf-loop"`
+- `data-sprite-normalization="bottom-centered-transparent-canvas"`
+- `data-walk-cycle="coherent-generated-frames"`
+- `data-world-scale-mode="pixel-locked-fit"`
 - `data-nearby-object`
 - `data-active-dialogue`
 - `data-journal-count`
 - `data-harvest-count`
 - `data-generated-assets="codex-image-sheets-and-game-sprites"`
+- `data-settings-map="below-options"`
 
 ## Avoid
 

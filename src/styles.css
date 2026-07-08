@@ -58,6 +58,7 @@ main[data-app="loop-dog-lab"] {
     radial-gradient(circle at 86% 10%, rgba(111,189,85,.18), transparent 22vw),
     linear-gradient(180deg, #2b1c11 0%, #61411f 52%, #1c130d 100%);
   word-break: keep-all;
+  --dialogue-bar-height: 120px;
 }
 .game-shell {
   position: absolute;
@@ -77,13 +78,14 @@ main[data-app="loop-dog-lab"] {
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: clamp(10px, 2vw, 28px);
+  padding: clamp(10px, 2vw, 28px) clamp(10px, 2vw, 28px) calc(var(--dialogue-bar-height) + clamp(14px, 2vw, 28px));
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(95, 58, 31, .11) 1px, transparent 1px),
     linear-gradient(180deg, rgba(95, 58, 31, .11) 1px, transparent 1px),
     #e0b568;
   background-size: 32px 32px;
+  --world-scale: .875;
 }
 .tile-world {
   position: relative;
@@ -99,7 +101,7 @@ main[data-app="loop-dog-lab"] {
     0 8px 0 rgba(58,38,23,.38),
     0 18px 36px rgba(36, 21, 11, .28);
   overflow: hidden;
-  transform: scale(1.18);
+  transform: scale(var(--world-scale));
   transform-origin: center;
 }
 .tile {
@@ -214,29 +216,27 @@ main[data-app="loop-dog-lab"] {
 .player-sprite {
   position: absolute;
   z-index: 30;
-  width: 40px;
-  height: auto;
-  translate: -4px -38px;
-  transition: left .082s steps(2, end), top .082s steps(2, end);
+  width: 48px;
+  height: 74px;
+  translate: -8px -50px;
+  object-fit: contain;
+  object-position: center bottom;
   filter: drop-shadow(0 4px 0 rgba(58,38,23,.22));
   image-rendering: pixelated;
   user-select: none;
   -webkit-user-drag: none;
 }
 .player-sprite.is-walking {
-  animation: player-pixel-bob .184s steps(2, end) infinite;
+  filter: drop-shadow(0 4px 0 rgba(58,38,23,.22)) saturate(1.04);
 }
 .interior-world .player-sprite {
-  width: 44px;
+  width: 48px;
+  height: 74px;
 }
 .facing-left,
 .facing-right,
 .facing-up,
 .facing-down { transform: none; }
-@keyframes player-pixel-bob {
-  0%, 100% { translate: -4px -38px; }
-  50% { translate: -4px -41px; }
-}
 
 .game-overlay-layer {
   position: absolute;
@@ -271,32 +271,33 @@ main[data-app="loop-dog-lab"] {
 
 .dialogue-box {
   position: absolute;
-  left: 50%;
-  bottom: clamp(16px, 3vw, 30px);
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 84;
-  width: min(760px, calc(100vw - 32px));
-  min-height: 116px;
-  translate: -50% 0;
-  padding: 15px 18px 13px;
+  width: 100%;
+  min-height: var(--dialogue-bar-height);
+  padding: 14px clamp(16px, 4vw, 48px) 13px;
   color: #2d2114;
   background: rgba(255, 247, 216, .97);
-  border: 5px solid #5f3a1f;
+  border: 0;
+  border-top: 5px solid #5f3a1f;
   box-shadow:
-    0 5px 0 rgba(58, 38, 23, .45),
-    0 18px 42px rgba(34, 20, 10, .28),
+    0 -5px 0 rgba(58, 38, 23, .45),
+    0 -18px 42px rgba(34, 20, 10, .24),
     inset 0 0 0 4px rgba(255, 222, 132, .4);
 }
 .dialogue-box::after {
-  content: '';
+  content: 'DIALOGUE';
   position: absolute;
-  left: 50%;
-  bottom: -20px;
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 247, 216, .97);
-  border-right: 5px solid #5f3a1f;
-  border-bottom: 5px solid #5f3a1f;
-  transform: translateX(-50%) rotate(45deg);
+  right: clamp(12px, 3vw, 32px);
+  top: -20px;
+  padding: 3px 7px;
+  color: #fff7d8;
+  background: #5f3a1f;
+  border: 2px solid #f3c56d;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  text-transform: uppercase;
 }
 .dialogue-box span,
 .dialogue-box em,
@@ -324,15 +325,15 @@ main[data-app="loop-dog-lab"] {
 .dialogue-box strong {
   display: block;
   margin: 5px 0 7px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.1;
   font-weight: 950;
 }
 .dialogue-box p {
   margin: 0;
   color: #4b3620;
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 13.5px;
+  line-height: 1.45;
   font-weight: 720;
 }
 .dialogue-box p + p { margin-top: 4px; }
@@ -529,11 +530,22 @@ main[data-app="loop-dog-lab"] {
   height: 18px;
   accent-color: #9cff82;
 }
+.settings-map-panel {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+.settings-map-panel .map-title-row {
+  margin-bottom: 0;
+}
+.settings-map-panel .mini-map {
+  height: 142px;
+}
 
 .touch-pad {
   position: absolute;
   left: 50%;
-  bottom: 162px;
+  bottom: calc(var(--dialogue-bar-height) + 18px);
   z-index: 82;
   display: none;
   grid-template-columns: repeat(5, 48px);
@@ -659,31 +671,28 @@ main[data-app="loop-dog-lab"] {
 }
 
 @media (min-width: 1440px) and (min-height: 780px) {
-  .tile-world { transform: scale(1.4); }
+  .game-viewport { --world-scale: 1.25; }
 }
 @media (max-height: 620px) {
-  .tile-world { transform: scale(1.03); }
-  .dialogue-box { min-height: 104px; }
+  .game-viewport { --world-scale: .75; }
+  .farm-game { --dialogue-bar-height: 112px; }
 }
 @media (max-width: 980px) {
-  .tile-world { transform: scale(.94); }
+  .game-viewport { --world-scale: .75; }
   .touch-pad { display: grid; }
   .settings-window { top: 72px; }
 }
 @media (max-width: 620px) {
-  .game-viewport { padding: 8px 8px 132px; }
+  .farm-game { --dialogue-bar-height: 148px; }
+  .game-viewport { padding: 8px 8px calc(var(--dialogue-bar-height) + 10px); }
   .tile-world {
-    transform: scale(.72);
+    transform: scale(var(--world-scale));
     transform-origin: center;
   }
+  .game-viewport { --world-scale: .625; }
   .dialogue-box {
-    left: 9px;
-    right: 9px;
-    bottom: 8px;
-    width: auto;
-    min-height: 126px;
-    padding: 11px;
-    translate: 0 0;
+    min-height: var(--dialogue-bar-height);
+    padding: 11px 10px 10px;
   }
   .dialogue-box::after { display: none; }
   .dialogue-box p { font-size: 12.5px; }
@@ -694,7 +703,7 @@ main[data-app="loop-dog-lab"] {
     top: 64px;
     width: auto;
   }
-  .touch-pad { bottom: 140px; grid-template-columns: repeat(5, 43px); }
+  .touch-pad { bottom: calc(var(--dialogue-bar-height) + 12px); grid-template-columns: repeat(5, 43px); }
   .touch-pad button { width: 43px; height: 40px; }
   .intro-card { padding: 22px 16px; }
 }

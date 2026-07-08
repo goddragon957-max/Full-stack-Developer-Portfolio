@@ -305,30 +305,30 @@ const treeSprites = [
   { src: '/assets/game-sprites/sprite-56.png', x: 21, y: 9, size: 70 },
 ];
 
-const playerWalkSprites: Record<Direction, string[]> = {
+const normalizedCharacterWalkSprites: Record<Direction, string[]> = {
   down: [
-    '/assets/generated-sprites/character/sprite-11.png',
-    '/assets/generated-sprites/character/sprite-12.png',
-    '/assets/generated-sprites/character/sprite-13.png',
-    '/assets/generated-sprites/character/sprite-16.png',
+    '/assets/generated-sprites/character-walk/down-0.png',
+    '/assets/generated-sprites/character-walk/down-1.png',
+    '/assets/generated-sprites/character-walk/down-2.png',
+    '/assets/generated-sprites/character-walk/down-3.png',
   ],
   left: [
-    '/assets/generated-sprites/character/sprite-31.png',
-    '/assets/generated-sprites/character/sprite-32.png',
-    '/assets/generated-sprites/character/sprite-33.png',
-    '/assets/generated-sprites/character/sprite-34.png',
+    '/assets/generated-sprites/character-walk/left-0.png',
+    '/assets/generated-sprites/character-walk/left-1.png',
+    '/assets/generated-sprites/character-walk/left-2.png',
+    '/assets/generated-sprites/character-walk/left-3.png',
   ],
   right: [
-    '/assets/generated-sprites/character/sprite-35.png',
-    '/assets/generated-sprites/character/sprite-36.png',
-    '/assets/generated-sprites/character/sprite-37.png',
-    '/assets/generated-sprites/character/sprite-38.png',
+    '/assets/generated-sprites/character-walk/right-0.png',
+    '/assets/generated-sprites/character-walk/right-1.png',
+    '/assets/generated-sprites/character-walk/right-2.png',
+    '/assets/generated-sprites/character-walk/right-3.png',
   ],
   up: [
-    '/assets/generated-sprites/character/sprite-43.png',
-    '/assets/generated-sprites/character/sprite-44.png',
-    '/assets/generated-sprites/character/sprite-45.png',
-    '/assets/generated-sprites/character/sprite-46.png',
+    '/assets/generated-sprites/character-walk/up-0.png',
+    '/assets/generated-sprites/character-walk/up-1.png',
+    '/assets/generated-sprites/character-walk/up-2.png',
+    '/assets/generated-sprites/character-walk/up-3.png',
   ],
 };
 
@@ -385,11 +385,26 @@ export function PortfolioFarmGame() {
   const typedTitle = INTRO_TITLE.slice(0, typedNameLength);
   const allEntities = useMemo(() => [...outsideEntities, ...interiorEntities], []);
   const journalEntries = journal.map((title) => allEntities.find((entity) => entity.journalTitle === title)).filter(Boolean) as Entity[];
-  const playerFrames = playerWalkSprites[player.facing];
+  const playerFrames = normalizedCharacterWalkSprites[player.facing];
   const playerFrameIndex = player.walking ? player.step % playerFrames.length : 0;
   const playerSprite = playerFrames[playerFrameIndex];
   const mapEntities = currentEntities;
   const menuTabs: MenuTab[] = ['map', 'about', 'settings'];
+  const miniMap = (
+    <div className="mini-map" aria-label="Current game map">
+      <i className="map-road map-road-vertical" />
+      <i className="map-road map-road-horizontal" />
+      {mapEntities.map((entity) => (
+        <i
+          key={`${scene}-${entity.id}`}
+          className={`map-node node-${entity.kind} ${nearby?.id === entity.id ? 'is-nearby' : ''}`}
+          title={entity.name}
+          style={{ left: `${((entity.x + entity.w / 2) / WORLD_W) * 100}%`, top: `${((entity.y + entity.h / 2) / WORLD_H) * 100}%` }}
+        />
+      ))}
+      <i className="map-player" style={{ left: `${((player.x + 0.5) / WORLD_W) * 100}%`, top: `${((player.y + 0.5) / WORLD_H) * 100}%` }} />
+    </div>
+  );
 
   const startGame = useCallback(() => {
     setGameStarted(true);
@@ -588,6 +603,7 @@ export function PortfolioFarmGame() {
       data-topbar-visible="false"
       data-sidebar-visible="false"
       data-overlay-layer="dialogue-and-menu"
+      data-dialogue-mode="bottom-bar"
       data-game-phase={gameStarted ? 'playing' : 'intro'}
       data-intro-title={INTRO_TITLE}
       data-typed-title={typedTitle}
@@ -597,7 +613,10 @@ export function PortfolioFarmGame() {
       data-player-facing={player.facing}
       data-player-walking={player.walking ? 'true' : 'false'}
       data-player-frame={playerFrameIndex}
+      data-walk-cycle="coherent-generated-frames"
+      data-sprite-normalization="bottom-centered-transparent-canvas"
       data-movement-mode="pressed-key-raf-loop"
+      data-world-scale-mode="pixel-locked-fit"
       data-settings-open={menuOpen ? 'true' : 'false'}
       data-settings-tab={activeMenuTab}
       data-labels-visible={showLabels ? 'true' : 'false'}
@@ -627,7 +646,7 @@ export function PortfolioFarmGame() {
                   <b>{entity.label}</b>
                 </div>
               ))}
-              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
+              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-sprite-normalization="bottom-centered-transparent-canvas" />
             </div>
           ) : (
             <div className="tile-world interior-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
@@ -637,7 +656,7 @@ export function PortfolioFarmGame() {
                   <b>{entity.label}</b>
                 </div>
               ))}
-              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} />
+              <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-sprite-normalization="bottom-centered-transparent-canvas" />
             </div>
           )}
         </main>
@@ -677,19 +696,7 @@ export function PortfolioFarmGame() {
                     <span>{scene === 'outside' ? 'Developer Farm Map' : 'Farmhouse Interior Map'}</span>
                     <b>{player.x}, {player.y}</b>
                   </div>
-                  <div className="mini-map" aria-label="Current game map">
-                    <i className="map-road map-road-vertical" />
-                    <i className="map-road map-road-horizontal" />
-                    {mapEntities.map((entity) => (
-                      <i
-                        key={`${scene}-${entity.id}`}
-                        className={`map-node node-${entity.kind} ${nearby?.id === entity.id ? 'is-nearby' : ''}`}
-                        title={entity.name}
-                        style={{ left: `${((entity.x + entity.w / 2) / WORLD_W) * 100}%`, top: `${((entity.y + entity.h / 2) / WORLD_H) * 100}%` }}
-                      />
-                    ))}
-                    <i className="map-player" style={{ left: `${((player.x + 0.5) / WORLD_W) * 100}%`, top: `${((player.y + 0.5) / WORLD_H) * 100}%` }} />
-                  </div>
+                  {miniMap}
                   <p>노란 점은 현재 위치, 초록/갈색 점은 조사 가능한 포트폴리오 오브젝트입니다.</p>
                 </div>
               )}
@@ -721,12 +728,24 @@ export function PortfolioFarmGame() {
                     <span>Press-E hints</span>
                   </label>
                   <p>Controls: hold WASD/arrows · E/Space interact · gear opens this menu.</p>
+                  <div className="settings-map-panel" data-settings-map="below-options">
+                    <div className="map-title-row">
+                      <span>Settings map</span>
+                      <b>Map under settings</b>
+                    </div>
+                    {miniMap}
+                  </div>
                 </div>
               )}
             </section>
           )}
 
-          <div className="dialogue-box speech-bubble-layer" data-dialogue-box="game-dialogue">
+          <div
+            className="dialogue-box bottom-dialogue-bar"
+            data-dialogue-box="game-dialogue"
+            data-bottom-dialogue-bar="game-chat"
+            data-dialogue-mode="bottom-bar"
+          >
             <span>{nearby ? `Near: ${nearby.name}` : scene === 'outside' ? 'Explore farm' : 'Inside farmhouse'}</span>
             <strong>{dialogue ? dialogue.name : prompt}</strong>
             {dialogue ? dialogue.dialogue.map((line) => <p key={line}>{line}</p>) : <p>{prompt}</p>}

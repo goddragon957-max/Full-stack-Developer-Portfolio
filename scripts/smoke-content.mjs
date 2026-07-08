@@ -28,12 +28,18 @@ const required = [
   'START GAME',
   'requestAnimationFrame',
   'pressedDirectionsRef',
-  'playerWalkSprites',
+  'normalizedCharacterWalkSprites',
+  'data-sprite-normalization="bottom-centered-transparent-canvas"',
+  'data-walk-cycle="coherent-generated-frames"',
+  'data-world-scale-mode="pixel-locked-fit"',
   'data-current-scene',
   'data-layout-mode="full-screen-map-with-overlay-ui"',
   'data-topbar-visible="false"',
   'data-sidebar-visible="false"',
   'data-overlay-layer="dialogue-and-menu"',
+  'data-dialogue-mode="bottom-bar"',
+  'data-bottom-dialogue-bar="game-chat"',
+  'bottom-dialogue-bar',
   'data-settings-open',
   'data-settings-tab',
   'data-labels-visible',
@@ -45,7 +51,9 @@ const required = [
   'data-map-panel="portfolio-world-map"',
   'data-about-panel="portfolio-about"',
   'data-settings-panel="game-options"',
-  'speech-bubble-layer',
+  'data-settings-map="below-options"',
+  'Settings map',
+  'Map under settings',
   'gear-button',
   'settings-window',
   'mini-map',
@@ -63,6 +71,7 @@ const required = [
   'game-sprites',
   'generated-sheets/farmhouse-interior-room.png',
   'generated-sprites/character',
+  'generated-sprites/character-walk',
   'developer-farmer-character-sheet.png',
   'Press E',
   'tile-world',
@@ -108,6 +117,7 @@ const forbiddenPublic = [
   'className="game-layout"',
   'className="quest-journal"',
   'hud-controls',
+  'speech-bubble-layer',
 ];
 
 const missing = required.filter((item) => !joined.includes(item));
@@ -134,10 +144,11 @@ const requiredFiles = [
   'public/assets/game-sprites/sprite-24.png',
   'public/assets/game-sprites/sprite-51.png',
   'public/assets/generated-sprites/character/manifest.json',
+  'public/assets/generated-sprites/character/sprite-10.png',
   'public/assets/generated-sprites/character/sprite-11.png',
   'public/assets/generated-sprites/character/sprite-12.png',
   'public/assets/generated-sprites/character/sprite-13.png',
-  'public/assets/generated-sprites/character/sprite-16.png',
+  'public/assets/generated-sprites/character/sprite-30.png',
   'public/assets/generated-sprites/character/sprite-31.png',
   'public/assets/generated-sprites/character/sprite-32.png',
   'public/assets/generated-sprites/character/sprite-33.png',
@@ -145,11 +156,27 @@ const requiredFiles = [
   'public/assets/generated-sprites/character/sprite-35.png',
   'public/assets/generated-sprites/character/sprite-36.png',
   'public/assets/generated-sprites/character/sprite-37.png',
-  'public/assets/generated-sprites/character/sprite-38.png',
   'public/assets/generated-sprites/character/sprite-43.png',
   'public/assets/generated-sprites/character/sprite-44.png',
   'public/assets/generated-sprites/character/sprite-45.png',
   'public/assets/generated-sprites/character/sprite-46.png',
+  'public/assets/generated-sprites/character-walk/manifest.json',
+  'public/assets/generated-sprites/character-walk/down-0.png',
+  'public/assets/generated-sprites/character-walk/down-1.png',
+  'public/assets/generated-sprites/character-walk/down-2.png',
+  'public/assets/generated-sprites/character-walk/down-3.png',
+  'public/assets/generated-sprites/character-walk/left-0.png',
+  'public/assets/generated-sprites/character-walk/left-1.png',
+  'public/assets/generated-sprites/character-walk/left-2.png',
+  'public/assets/generated-sprites/character-walk/left-3.png',
+  'public/assets/generated-sprites/character-walk/right-0.png',
+  'public/assets/generated-sprites/character-walk/right-1.png',
+  'public/assets/generated-sprites/character-walk/right-2.png',
+  'public/assets/generated-sprites/character-walk/right-3.png',
+  'public/assets/generated-sprites/character-walk/up-0.png',
+  'public/assets/generated-sprites/character-walk/up-1.png',
+  'public/assets/generated-sprites/character-walk/up-2.png',
+  'public/assets/generated-sprites/character-walk/up-3.png',
 ];
 const missingFiles = requiredFiles.filter((path) => !existsSync(path));
 if (missingFiles.length) {
@@ -167,6 +194,16 @@ const rejectedFiles = [
 const leftovers = rejectedFiles.filter((path) => existsSync(path));
 if (leftovers.length) {
   console.error(`Rejected legacy files still exist: ${leftovers.join(', ')}`);
+  process.exit(1);
+}
+
+const forbiddenWalkSources = [
+  '/assets/generated-sprites/character/sprite-16.png',
+  '/assets/generated-sprites/character/sprite-38.png',
+];
+const badWalkSources = forbiddenWalkSources.filter((item) => game.includes(item));
+if (badWalkSources.length) {
+  console.error(`Forbidden mixed-crop walking sprite sources found in game component: ${badWalkSources.join(', ')}`);
   process.exit(1);
 }
 
