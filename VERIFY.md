@@ -22,6 +22,8 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - `data-mobile-fit-mode="camera-fullscreen-safe-area"`
   - `data-camera-mode="player-centered-fullscreen"`
   - `data-right-rail-fallback="inactive"`
+  - `data-map-renderer="single-generated-map-image"`
+  - `data-world-map-image="developer-farm-map"`
   - `data-layout-mode="full-screen-map-with-overlay-ui"`
   - `data-topbar-visible="false"`
   - `data-sidebar-visible="false"`
@@ -48,6 +50,7 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - `data-harvest-count`
   - `data-generated-assets="codex-image-sheets-and-game-sprites"`
 - Generated asset files exist:
+  - generated outdoor map image
   - outdoor generated sheet
   - extracted outdoor sprites
   - generated farmhouse interior room
@@ -79,6 +82,7 @@ Open the strict-port preview and verify in the browser:
 19. Browser console has zero fatal JavaScript errors.
 20. On a narrow mobile viewport around `390x844`, the game uses a cropped player-centered camera rather than shrinking the entire map, the bottom dialogue bar stays docked, and mobile touch controls are hidden during intro / visible during play.
 21. On mobile play state, the world uses player-centered camera positioning instead of shrinking the whole map to fit; movement should change the world camera `left/top` while keeping `overflowX=0`.
+22. The outside scene uses `developer-farm-map.png` as one terrain image layer; the old brown/red tile-world border and empty viewport margins are not visible.
 
 ## Visual QA gate
 

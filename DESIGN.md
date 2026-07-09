@@ -89,6 +89,8 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 - `data-mobile-fit-mode="camera-fullscreen-safe-area"`
 - `data-camera-mode="player-centered-fullscreen"`
 - `data-right-rail-fallback="inactive"`
+- `data-map-renderer="single-generated-map-image"`
+- `data-world-map-image="developer-farm-map"`
 - `data-nearby-object`
 - `data-active-dialogue`
 - `data-journal-count`

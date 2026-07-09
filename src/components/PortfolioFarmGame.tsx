@@ -59,7 +59,8 @@ const INTRO_TITLE = 'EOM SINYONG';
 const MOVE_INTERVAL_MS = 92;
 const MOBILE_CAMERA_BREAKPOINT = 620;
 const MOBILE_DIALOGUE_BAR_HEIGHT = 136;
-const MOBILE_SAFE_PAD = 8;
+const DESKTOP_DIALOGUE_BAR_HEIGHT = 120;
+const SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT = 112;
 
 const keyMap: Record<string, Direction | undefined> = {
   ArrowUp: 'up',
@@ -309,12 +310,6 @@ const interiorEntities: Entity[] = [
   },
 ];
 
-const treeSprites = [
-  { src: '/assets/game-sprites/sprite-56.png', x: 1, y: 8, size: 76 },
-  { src: '/assets/game-sprites/sprite-63.png', x: 20, y: 2, size: 82 },
-  { src: '/assets/game-sprites/sprite-56.png', x: 21, y: 9, size: 70 },
-];
-
 const normalizedCharacterWalkSprites: Record<Direction, string[]> = {
   down: [
     '/assets/generated-sprites/character-walk/down-0.png',
@@ -342,16 +337,6 @@ const normalizedCharacterWalkSprites: Record<Direction, string[]> = {
   ],
 };
 
-function tileType(x: number, y: number) {
-  if ((x === 8 || x === 9) && y > 0 && y < 15) return 'path';
-  if (y === 7 && x > 1 && x < 23) return 'path';
-  if (x >= 17 && x <= 21 && y >= 1 && y <= 3) return 'grass2';
-  if (x >= 10 && x <= 15 && y >= 9 && y <= 12) return 'soil';
-  if ((x + y) % 7 === 0) return 'flower';
-  if ((x * 3 + y) % 11 === 0) return 'grass2';
-  return 'grass';
-}
-
 function distanceToEntity(player: Player, entity: Entity) {
   const cx = entity.x + entity.w / 2;
   const cy = entity.y + entity.h / 2;
@@ -378,10 +363,10 @@ function getInitialViewport(): ViewportSize {
   return { width: window.innerWidth, height: window.innerHeight };
 }
 
-function mobileCameraScale(width: number) {
-  if (width <= 340) return 0.78;
-  if (width <= 380) return 0.84;
-  return 0.9;
+function getDialogueBarHeight(viewport: ViewportSize) {
+  if (viewport.width <= MOBILE_CAMERA_BREAKPOINT) return MOBILE_DIALOGUE_BAR_HEIGHT;
+  if (viewport.height <= 620) return SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT;
+  return DESKTOP_DIALOGUE_BAR_HEIGHT;
 }
 
 function getWorldCameraStyle(player: Player, viewport: ViewportSize): CSSProperties {
@@ -390,26 +375,23 @@ function getWorldCameraStyle(player: Player, viewport: ViewportSize): CSSPropert
     height: WORLD_PIXEL_H,
   } as CSSProperties & Record<string, string | number>;
 
-  if (viewport.width > MOBILE_CAMERA_BREAKPOINT) {
-    return style;
-  }
-
-  const scale = mobileCameraScale(viewport.width);
-  const availableWidth = Math.max(240, viewport.width - MOBILE_SAFE_PAD * 2);
-  const availableHeight = Math.max(240, viewport.height - MOBILE_DIALOGUE_BAR_HEIGHT - MOBILE_SAFE_PAD * 2);
+  const dialogueHeight = getDialogueBarHeight(viewport);
+  const availableWidth = Math.max(320, viewport.width);
+  const availableHeight = Math.max(260, viewport.height - dialogueHeight);
+  const scale = Math.max(availableWidth / WORLD_PIXEL_W, availableHeight / WORLD_PIXEL_H);
   const scaledWorldW = WORLD_PIXEL_W * scale;
   const scaledWorldH = WORLD_PIXEL_H * scale;
   const playerCenterX = (player.x + 0.5) * TILE * scale;
   const playerCenterY = (player.y + 0.5) * TILE * scale;
 
-  const desiredLeft = MOBILE_SAFE_PAD + availableWidth / 2 - playerCenterX;
-  const desiredTop = MOBILE_SAFE_PAD + availableHeight / 2 - playerCenterY;
+  const desiredLeft = availableWidth / 2 - playerCenterX;
+  const desiredTop = availableHeight / 2 - playerCenterY;
   const left = scaledWorldW <= availableWidth
-    ? MOBILE_SAFE_PAD + (availableWidth - scaledWorldW) / 2
-    : clamp(desiredLeft, viewport.width - MOBILE_SAFE_PAD - scaledWorldW, MOBILE_SAFE_PAD);
+    ? (availableWidth - scaledWorldW) / 2
+    : clamp(desiredLeft, viewport.width - scaledWorldW, 0);
   const top = scaledWorldH <= availableHeight
-    ? MOBILE_SAFE_PAD + (availableHeight - scaledWorldH) / 2
-    : clamp(desiredTop, viewport.height - MOBILE_DIALOGUE_BAR_HEIGHT - MOBILE_SAFE_PAD - scaledWorldH, MOBILE_SAFE_PAD);
+    ? (availableHeight - scaledWorldH) / 2
+    : clamp(desiredTop, viewport.height - dialogueHeight - scaledWorldH, 0);
 
   style['--world-scale'] = String(scale);
   style['--camera-left'] = `${left.toFixed(2)}px`;
@@ -707,15 +689,8 @@ export function PortfolioFarmGame() {
       <div className="game-shell">
         <main className="game-viewport" aria-label="Playable cozy farming RPG map" data-game-surface="full-screen-map">
           {scene === 'outside' ? (
-            <div className="tile-world outside-world" style={worldCameraStyle}>
-              {Array.from({ length: WORLD_W * WORLD_H }).map((_, index) => {
-                const x = index % WORLD_W;
-                const y = Math.floor(index / WORLD_W);
-                return <i key={`${x}-${y}`} className={`tile tile-${tileType(x, y)}`} data-tile-x={x} data-tile-y={y} />;
-              })}
-              {treeSprites.map((tree, index) => (
-                <img key={`${tree.src}-${index}`} className="sprite tree-sprite" src={tree.src} alt="" aria-hidden="true" style={{ left: tree.x * TILE, top: tree.y * TILE, width: tree.size }} />
-              ))}
+            <div className="tile-world outside-world" style={worldCameraStyle} data-map-renderer="single-generated-map-image">
+              <img className="world-map-image" src="/assets/generated-sheets/developer-farm-map.png" alt="Generated pixel farm map" aria-hidden="true" data-world-map-image="developer-farm-map" />
               {outsideEntities.map((entity) => (
                 <div key={entity.id} className={`game-entity entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
                   {entity.sprite && <img className="sprite generated-sprite" src={entity.sprite} alt="" aria-hidden="true" />}

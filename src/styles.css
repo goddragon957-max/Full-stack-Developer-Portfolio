@@ -67,76 +67,57 @@ main[data-app="loop-dog-lab"] {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: #e0b568;
+  background: #14210f;
   image-rendering: pixelated;
 }
 .game-viewport {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: block;
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: clamp(10px, 2vw, 28px) clamp(10px, 2vw, 28px) calc(var(--dialogue-bar-height) + clamp(14px, 2vw, 28px));
+  padding: 0 0 var(--dialogue-bar-height);
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(95, 58, 31, .11) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(95, 58, 31, .11) 1px, transparent 1px),
-    #e0b568;
-  background-size: 32px 32px;
-  --world-scale: .875;
+    linear-gradient(180deg, rgba(20, 33, 15, .15), rgba(20, 33, 15, .55)),
+    #14210f;
+  --world-scale: 1;
 }
 .tile-world {
-  position: relative;
+  position: absolute;
+  left: var(--camera-left, 0px);
+  top: var(--camera-top, 0px);
   display: grid;
   grid-template-columns: repeat(24, 32px);
   grid-template-rows: repeat(16, 32px);
   width: 768px;
   height: 512px;
-  border: 5px solid #6f441f;
+  border: 0;
   background: var(--grass);
-  box-shadow:
-    inset 0 0 0 4px rgba(255,255,255,.2),
-    0 8px 0 rgba(58,38,23,.38),
-    0 18px 36px rgba(36, 21, 11, .28);
+  box-shadow: none;
   overflow: hidden;
   transform: scale(var(--world-scale));
-  transform-origin: center;
+  transform-origin: left top;
+  transition: left .09s steps(2, end), top .09s steps(2, end);
 }
-.tile {
-  width: 32px;
-  height: 32px;
-  position: relative;
-}
-.tile-grass,
-.tile-grass2,
-.tile-flower,
-.tile-path,
-.tile-soil {
-  background-size: 32px 32px;
-  background-position: center;
-  background-repeat: repeat;
-  image-rendering: pixelated;
-}
-.tile-grass { background-image: url('/assets/game-sprites/sprite-50.png'); background-color: #78c85c; }
-.tile-grass2 { background-image: url('/assets/game-sprites/sprite-55.png'); background-color: #70bd55; }
-.tile-flower { background-image: url('/assets/game-sprites/sprite-54.png'); background-color: #78c85c; }
-.tile-path { background-image: url('/assets/game-sprites/sprite-48.png'); background-color: var(--path); }
-.tile-soil { background-image: url('/assets/game-sprites/sprite-47.png'); background-color: var(--soil); }
-
-.sprite,
-.generated-sprite,
-.tree-sprite {
+.world-map-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   image-rendering: pixelated;
   user-select: none;
   -webkit-user-drag: none;
-}
-.tree-sprite {
-  position: absolute;
-  z-index: 8;
-  transform: translateY(-24px);
   pointer-events: none;
+}
+.sprite,
+.generated-sprite {
+  image-rendering: pixelated;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 .game-entity {
   position: absolute;
@@ -673,14 +654,14 @@ main[data-app="loop-dog-lab"] {
 }
 
 @media (min-width: 1440px) and (min-height: 780px) {
-  .game-viewport { --world-scale: 1.25; }
+  .game-viewport { --world-scale: 1; }
 }
 @media (max-height: 620px) {
-  .game-viewport { --world-scale: .75; }
+  .game-viewport { --world-scale: 1; }
   .farm-game { --dialogue-bar-height: 112px; }
 }
 @media (max-width: 980px) {
-  .game-viewport { --world-scale: .75; }
+  .game-viewport { --world-scale: 1; }
   .touch-pad { display: grid; }
   .settings-window { top: 72px; }
   .is-intro .touch-pad { display: none; }
@@ -689,16 +670,8 @@ main[data-app="loop-dog-lab"] {
   .farm-game { --dialogue-bar-height: 136px; }
   .game-viewport {
     display: block;
-    padding: 8px 8px calc(var(--dialogue-bar-height) + 10px);
-    --world-scale: .9;
-  }
-  .tile-world {
-    position: absolute;
-    left: var(--camera-left, 8px);
-    top: var(--camera-top, 8px);
-    transform: scale(var(--world-scale));
-    transform-origin: left top;
-    transition: left .09s steps(2, end), top .09s steps(2, end);
+    padding: 0 0 var(--dialogue-bar-height);
+    --world-scale: 1;
   }
   .dialogue-box {
     height: var(--dialogue-bar-height);
@@ -718,12 +691,12 @@ main[data-app="loop-dog-lab"] {
   .intro-card { padding: 22px 16px; }
 }
 @media (max-width: 380px) {
-  .game-viewport { --world-scale: .84; }
+  .game-viewport { --world-scale: 1; }
   .touch-pad { grid-template-columns: repeat(5, 39px); gap: 6px; }
   .touch-pad button { width: 39px; height: 38px; }
 }
 @media (max-width: 340px) {
-  .game-viewport { --world-scale: .78; }
+  .game-viewport { --world-scale: 1; }
   .touch-pad { grid-template-columns: repeat(5, 35px); gap: 5px; }
   .touch-pad button { width: 35px; height: 36px; }
 }

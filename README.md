@@ -19,6 +19,7 @@ This is **not** a portfolio page with game decoration. The portfolio content is 
 All pixel-art visuals used for the game are generated image assets, not hand-drawn CSS placeholders:
 
 - `public/assets/cozy-farming-village-tileset-4x3.png` — generated outdoor farming asset sheet
+- `public/assets/generated-sheets/developer-farm-map.png` — generated single-image outside farm map, used as the fullscreen terrain layer
 - `public/assets/game-sprites/` — extracted outdoor sprites from the generated asset sheet
 - `public/assets/generated-sheets/farmhouse-interior-room.png` — generated complete house interior map
 - `public/assets/generated-sheets/developer-farmer-character-sheet.png` — generated player character sheet
@@ -26,6 +27,12 @@ All pixel-art visuals used for the game are generated image assets, not hand-dra
 - `public/assets/generated-sprites/character-walk/` — normalized bottom-centered walking frames
 - `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png` — generated interior object sheet
 - `public/assets/generated-sprites/interior/` — extracted interior props
+
+Regenerate the outside map image after changing terrain layout or tile sprite choices:
+
+```bash
+python3 scripts/generate-map-image.py
+```
 
 ## Game Structure
 
@@ -108,6 +115,8 @@ Browser checks:
 - `data-mobile-fit-mode="camera-fullscreen-safe-area"`
 - `data-camera-mode="player-centered-fullscreen"`
 - `data-right-rail-fallback="inactive"`
+- `data-map-renderer="single-generated-map-image"`
+- `data-world-map-image="developer-farm-map"`
 - `data-player-walking` and `data-player-frame` change while a movement key is held
 - `data-player-x` / `data-player-y` change with movement
 - `data-nearby-object` detects nearby objects
