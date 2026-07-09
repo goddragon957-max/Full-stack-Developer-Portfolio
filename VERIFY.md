@@ -19,7 +19,9 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - `data-ui-pass="portfolio-inside-farming-rpg"`
   - `data-game-world="playable-cozy-farm-rpg"`
   - `data-screen-mode="fullscreen-game-shell"`
-  - `data-mobile-fit-mode="scaled-map-safe-area"`
+  - `data-mobile-fit-mode="camera-fullscreen-safe-area"`
+  - `data-camera-mode="player-centered-fullscreen"`
+  - `data-right-rail-fallback="inactive"`
   - `data-layout-mode="full-screen-map-with-overlay-ui"`
   - `data-topbar-visible="false"`
   - `data-sidebar-visible="false"`
@@ -75,7 +77,8 @@ Open the strict-port preview and verify in the browser:
 17. Pressing `E` near `SKILL` or another interior object changes `data-active-dialogue` and increases `data-journal-count`.
 18. Dialogue text exposes portfolio content through the object, not through a permanent portfolio section panel.
 19. Browser console has zero fatal JavaScript errors.
-20. On a narrow mobile viewport around `390x844`, the scaled map fits horizontally, the bottom dialogue bar stays docked, and mobile touch controls are hidden during intro / visible during play.
+20. On a narrow mobile viewport around `390x844`, the game uses a cropped player-centered camera rather than shrinking the entire map, the bottom dialogue bar stays docked, and mobile touch controls are hidden during intro / visible during play.
+21. On mobile play state, the world uses player-centered camera positioning instead of shrinking the whole map to fit; movement should change the world camera `left/top` while keeping `overflowX=0`.
 
 ## Visual QA gate
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 type SceneId = 'outside' | 'interior';
 type EntityId =
@@ -27,6 +27,11 @@ type Player = {
   step: number;
 };
 
+type ViewportSize = {
+  width: number;
+  height: number;
+};
+
 type Entity = {
   id: EntityId;
   scene: SceneId;
@@ -48,8 +53,13 @@ type Entity = {
 const TILE = 32;
 const WORLD_W = 24;
 const WORLD_H = 16;
+const WORLD_PIXEL_W = WORLD_W * TILE;
+const WORLD_PIXEL_H = WORLD_H * TILE;
 const INTRO_TITLE = 'EOM SINYONG';
 const MOVE_INTERVAL_MS = 92;
+const MOBILE_CAMERA_BREAKPOINT = 620;
+const MOBILE_DIALOGUE_BAR_HEIGHT = 136;
+const MOBILE_SAFE_PAD = 8;
 
 const keyMap: Record<string, Direction | undefined> = {
   ArrowUp: 'up',
@@ -359,6 +369,54 @@ function addUnique(list: string[], item: string) {
   return list.includes(item) ? list : [...list, item];
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getInitialViewport(): ViewportSize {
+  if (typeof window === 'undefined') return { width: 1280, height: 720 };
+  return { width: window.innerWidth, height: window.innerHeight };
+}
+
+function mobileCameraScale(width: number) {
+  if (width <= 340) return 0.78;
+  if (width <= 380) return 0.84;
+  return 0.9;
+}
+
+function getWorldCameraStyle(player: Player, viewport: ViewportSize): CSSProperties {
+  const style = {
+    width: WORLD_PIXEL_W,
+    height: WORLD_PIXEL_H,
+  } as CSSProperties & Record<string, string | number>;
+
+  if (viewport.width > MOBILE_CAMERA_BREAKPOINT) {
+    return style;
+  }
+
+  const scale = mobileCameraScale(viewport.width);
+  const availableWidth = Math.max(240, viewport.width - MOBILE_SAFE_PAD * 2);
+  const availableHeight = Math.max(240, viewport.height - MOBILE_DIALOGUE_BAR_HEIGHT - MOBILE_SAFE_PAD * 2);
+  const scaledWorldW = WORLD_PIXEL_W * scale;
+  const scaledWorldH = WORLD_PIXEL_H * scale;
+  const playerCenterX = (player.x + 0.5) * TILE * scale;
+  const playerCenterY = (player.y + 0.5) * TILE * scale;
+
+  const desiredLeft = MOBILE_SAFE_PAD + availableWidth / 2 - playerCenterX;
+  const desiredTop = MOBILE_SAFE_PAD + availableHeight / 2 - playerCenterY;
+  const left = scaledWorldW <= availableWidth
+    ? MOBILE_SAFE_PAD + (availableWidth - scaledWorldW) / 2
+    : clamp(desiredLeft, viewport.width - MOBILE_SAFE_PAD - scaledWorldW, MOBILE_SAFE_PAD);
+  const top = scaledWorldH <= availableHeight
+    ? MOBILE_SAFE_PAD + (availableHeight - scaledWorldH) / 2
+    : clamp(desiredTop, viewport.height - MOBILE_DIALOGUE_BAR_HEIGHT - MOBILE_SAFE_PAD - scaledWorldH, MOBILE_SAFE_PAD);
+
+  style['--world-scale'] = String(scale);
+  style['--camera-left'] = `${left.toFixed(2)}px`;
+  style['--camera-top'] = `${top.toFixed(2)}px`;
+  return style;
+}
+
 export function PortfolioFarmGame() {
   const [gameStarted, setGameStarted] = useState(false);
   const [typedNameLength, setTypedNameLength] = useState(0);
@@ -371,6 +429,7 @@ export function PortfolioFarmGame() {
   const [activeMenuTab, setActiveMenuTab] = useState<MenuTab>('map');
   const [showLabels, setShowLabels] = useState(true);
   const [showHints, setShowHints] = useState(true);
+  const [viewport, setViewport] = useState<ViewportSize>(getInitialViewport);
 
   const pressedDirectionsRef = useRef<Direction[]>([]);
   const moveFrameRef = useRef<number | null>(null);
@@ -390,6 +449,7 @@ export function PortfolioFarmGame() {
   const playerSprite = playerFrames[playerFrameIndex];
   const mapEntities = currentEntities;
   const menuTabs: MenuTab[] = ['map', 'about', 'settings'];
+  const worldCameraStyle = useMemo(() => getWorldCameraStyle(player, viewport), [player, viewport]);
   const miniMap = (
     <div className="mini-map" aria-label="Current game map">
       <i className="map-road map-road-vertical" />
@@ -495,6 +555,19 @@ export function PortfolioFarmGame() {
   useEffect(() => {
     gameStartedRef.current = gameStarted;
   }, [gameStarted]);
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setViewport({ width: window.innerWidth, height: window.innerHeight });
+    };
+    updateViewport();
+    window.addEventListener('resize', updateViewport, { passive: true });
+    window.visualViewport?.addEventListener('resize', updateViewport, { passive: true });
+    return () => {
+      window.removeEventListener('resize', updateViewport);
+      window.visualViewport?.removeEventListener('resize', updateViewport);
+    };
+  }, []);
 
   useEffect(() => {
     movePlayerRef.current = movePlayer;
@@ -617,7 +690,9 @@ export function PortfolioFarmGame() {
       data-sprite-normalization="bottom-centered-transparent-canvas"
       data-movement-mode="pressed-key-raf-loop"
       data-world-scale-mode="pixel-locked-fit"
-      data-mobile-fit-mode="scaled-map-safe-area"
+      data-mobile-fit-mode="camera-fullscreen-safe-area"
+      data-camera-mode="player-centered-fullscreen"
+      data-right-rail-fallback="inactive"
       data-settings-open={menuOpen ? 'true' : 'false'}
       data-settings-tab={activeMenuTab}
       data-labels-visible={showLabels ? 'true' : 'false'}
@@ -632,7 +707,7 @@ export function PortfolioFarmGame() {
       <div className="game-shell">
         <main className="game-viewport" aria-label="Playable cozy farming RPG map" data-game-surface="full-screen-map">
           {scene === 'outside' ? (
-            <div className="tile-world outside-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
+            <div className="tile-world outside-world" style={worldCameraStyle}>
               {Array.from({ length: WORLD_W * WORLD_H }).map((_, index) => {
                 const x = index % WORLD_W;
                 const y = Math.floor(index / WORLD_W);
@@ -650,7 +725,7 @@ export function PortfolioFarmGame() {
               <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-sprite-normalization="bottom-centered-transparent-canvas" />
             </div>
           ) : (
-            <div className="tile-world interior-world" style={{ width: WORLD_W * TILE, height: WORLD_H * TILE }}>
+            <div className="tile-world interior-world" style={worldCameraStyle}>
               <img className="interior-room-bg" src="/assets/generated-sheets/farmhouse-interior-room.png" alt="Generated cozy developer farmhouse interior room" />
               {interiorEntities.map((entity) => (
                 <div key={entity.id} className={`game-entity interior-hotspot entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
