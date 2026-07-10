@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "operation": "one-pixel outer alpha contraction",
+  "targets": {
+    "game-sprites/sprite-18.png": {
+      "sha256": "88f0748f06d39880e54b93b0e9801be0c13567dac3ddbeacc15a4ec3b8cd201d",
+      "size": [
+        225,
+        204
+      ],
+      "removedPixels": 1713,
+      "opaquePixelsBefore": 31836
+    },
+    "game-sprites/sprite-19.png": {
+      "sha256": "80cdf44bc417ffb6a86159228c9aa87f5521fd6d749355fc7a9997adbe91ac7c",
+      "size": [
+        246,
+        202
+      ],
+      "removedPixels": 1799,
+      "opaquePixelsBefore": 33513
+    },
+    "game-sprites/sprite-20.png": {
+      "sha256": "65d7087ad0eb40159547579d61eca3865c5507690f4a3ff957ed87871a5817ea",
+      "size": [
+        162,
+        198
+      ],
+      "removedPixels": 788,
+      "opaquePixelsBefore": 23474
+    },
+    "game-sprites/sprite-24.png": {
+      "sha256": "409aa1af706cc212cd567666f91597dfeee66610cc8f9699c599a065144e19fe",
+      "size": [
+        168,
+        193
+      ],
+      "removedPixels": 768,
+      "opaquePixelsBefore": 23328
+    },
+    "game-sprites/sprite-25.png": {
+      "sha256": "eb9c6e181a1d82802d05800bda4f4cafbf56098c2437880d54c66d9bab3febbd",
+      "size": [
+        48,
+        48
+      ],
+      "removedPixels": 304,
+      "opaquePixelsBefore": 1525
+    },
+    "game-sprites/sprite-51.png": {
+      "sha256": "aacfba64589bd887914c157c89e877095921dd5d441e406037c44530ded14fb5",
+      "size": [
+        234,
+        194
+      ],
+      "removedPixels": 1465,
+      "opaquePixelsBefore": 38750
+    },
+    "game-sprites/sprite-56.png": {
+      "sha256": "7cd79209272dba253a5243a66da62383655f82db78252f02d34ecc1f6adc5a65",
+      "size": [
+        161,
+        177
+      ],
+      "removedPixels": 924,
+      "opaquePixelsBefore": 17111
+    },
+    "game-sprites/sprite-63.png": {
+      "sha256": "4a3f26590b1ee61e85c09e0f696a1fc6bb41cac05e820236777821c6b9a58e24",
+      "size": [
+        146,
+        167
+      ],
+      "removedPixels": 834,
+      "opaquePixelsBefore": 14250
+    },
+    "generated-sprites/interior/sprite-75.png": {
+      "sha256": "887451156327bdc3e4cc21dd7a90f1120bf2f21d8ff968a2ad8c927d74a3967c",
+      "size": [
+        110,
+        164
+      ],
+      "removedPixels": 599,
+      "opaquePixelsBefore": 13051
+    },
+    "generated-sprites/character-walk/down-0.png": {
+      "sha256": "6c0b7068ae4d83f8dca625351fd66cb8fcd664f158a342004b8a1bdbd531ffc6",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 791,
+      "opaquePixelsBefore": 12311
+    },
+    "generated-sprites/character-walk/down-1.png": {
+      "sha256": "96d1ece6eafe84da6faabcf622deccf92115d54ce640d2614c44fb782f484f1b",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 767,
+      "opaquePixelsBefore": 12217
+    },
+    "generated-sprites/character-walk/down-2.png": {
+      "sha256": "91dba55a197ace86dbd598aeadc5e6b245e3671b57b2df0677b7b9ba446d3a9c",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 756,
+      "opaquePixelsBefore": 12062
+    },
+    "generated-sprites/character-walk/down-3.png": {
+      "sha256": "eb9517b44797c8bd8e74e5ddbe9cbf7a8212d9628e76c2e71b10fe371ef0bd8e",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 771,
+      "opaquePixelsBefore": 12374
+    },
+    "generated-sprites/character-walk/left-0.png": {
+      "sha256": "f9780aaba0233ec411f72cff45e922b86760b9bc38ebb24b042d89b762a9deb1",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 826,
+      "opaquePixelsBefore": 10343
+    },
+    "generated-sprites/character-walk/left-1.png": {
+      "sha256": "f9f2f06d1e7fef3944870f0d7400e732cd1c55f676ff8a6f4878091d74c62133",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 837,
+      "opaquePixelsBefore": 10328
+    },
+    "generated-sprites/character-walk/left-2.png": {
+      "sha256": "8cd744e35064500cee0a79d9847d6377f9bf61547387fefdc3e573d13eb8b9b6",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 774,
+      "opaquePixelsBefore": 9871
+    },
+    "generated-sprites/character-walk/left-3.png": {
+      "sha256": "9b6b7fef578284d8d7952e4df22ae64cc5527bd27eaa65b3f959435c550e40ce",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 780,
+      "opaquePixelsBefore": 10083
+    },
+    "generated-sprites/character-walk/right-0.png": {
+      "sha256": "71254f37da4cf76555a0cff46bca1391fbeda38e090e8cb9c82d1a2b3fcb08c1",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 803,
+      "opaquePixelsBefore": 10112
+    },
+    "generated-sprites/character-walk/right-1.png": {
+      "sha256": "6a28132eb792680e7b3d98f692d90371a701107fd35254e664e60fb4f4ef8370",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 738,
+      "opaquePixelsBefore": 9981
+    },
+    "generated-sprites/character-walk/right-2.png": {
+      "sha256": "4f4d0b0ae6e346926b07d267b8349ccf805c5fdc9ff25f932fdf980df723a189",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 768,
+      "opaquePixelsBefore": 9900
+    },
+    "generated-sprites/character-walk/right-3.png": {
+      "sha256": "7677eae91fd6728d55137fc3194a43e1ff83ba0f12d92cb8e44f0df23956cc4c",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 752,
+      "opaquePixelsBefore": 9859
+    },
+    "generated-sprites/character-walk/up-0.png": {
+      "sha256": "baa19332b4c73ccdb3709df6910417ed19b321a3462968f82ca31369c8a2edea",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 711,
+      "opaquePixelsBefore": 10460
+    },
+    "generated-sprites/character-walk/up-1.png": {
+      "sha256": "088346710727dc4d2e4698adb49fb53278228410c583e289bed017eeb62d73dc",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 705,
+      "opaquePixelsBefore": 10298
+    },
+    "generated-sprites/character-walk/up-2.png": {
+      "sha256": "b253eb2607888fda2cc314b9b9cc384aa990c6020853d525fd6f504533e1128a",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 673,
+      "opaquePixelsBefore": 10225
+    },
+    "generated-sprites/character-walk/up-3.png": {
+      "sha256": "3b9c8b6cf8e6e661120afa2dba931b7f333da632139616dfa798659c970eaa80",
+      "size": [
+        118,
+        181
+      ],
+      "removedPixels": 668,
+      "opaquePixelsBefore": 10260
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const app = readFileSync('src/App.tsx', 'utf8');
 const game = readFileSync('src/components/PortfolioFarmGame.tsx', 'utf8');
@@ -34,22 +35,44 @@ const required = [
   'data-world-scale-mode="pixel-locked-fit"',
   'data-mobile-fit-mode="camera-fullscreen-safe-area"',
   'data-camera-mode="player-centered-fullscreen"',
-  'data-right-rail-fallback="inactive"',
+  'data-map-grid="32x22"',
+  'data-collision-mode="entity-bounds"',
+  'data-depth-sorting="y-axis-feet"',
+  'data-right-inventory-bar="persistent"',
+  '--inventory-rail-width',
   'data-map-renderer="single-generated-map-image"',
   'data-world-map-image="developer-farm-map"',
   'world-map-image',
   '--camera-left',
   '--camera-top',
   'data-current-scene',
-  'data-layout-mode="full-screen-map-with-overlay-ui"',
+  'data-layout-mode="full-screen-map-with-right-inventory-bar"',
   'data-topbar-visible="false"',
-  'data-sidebar-visible="false"',
+  'data-sidebar-visible="true"',
   'data-overlay-layer="dialogue-and-menu"',
   'data-dialogue-mode="bottom-bar"',
   'data-bottom-dialogue-bar="game-chat"',
   'bottom-dialogue-bar',
   'data-settings-open',
   'data-settings-tab',
+  'data-inventory-open',
+  'data-inventory-panel="right-game-bar"',
+  'data-inventory-slot',
+  'data-player-status="inventory-rail"',
+  'data-item-pickup',
+  'data-item-pickup-visible',
+  'data-item-pickup-toast="inventory-unlock"',
+  'ITEM ACQUIRED',
+  'inventory-player-status',
+  'is-acquired',
+  'knownInventoryIdsRef',
+  'data-selected-inventory-item',
+  'data-inventory-count',
+  'INVENTORY',
+  'inventory-rail',
+  'inventory-rail-journal',
+  'inventory-rail-objective',
+  'inventory-grid',
   'data-labels-visible',
   'data-hints-visible',
   'data-game-surface="full-screen-map"',
@@ -72,6 +95,15 @@ const required = [
   'data-player-y',
   'data-nearby-object',
   'data-active-dialogue',
+  'data-dialogue-open',
+  'data-label-display-mode="nearby-only-default"',
+  'data-quest-stage',
+  'data-quest-objective',
+  'visit-workshop',
+  'harvest-project-crops',
+  'inspect-server-barn',
+  'return-to-board',
+  'complete',
   'data-journal-count',
   'data-harvest-count',
   'data-generated-assets="codex-image-sheets-and-game-sprites"',
@@ -86,6 +118,7 @@ const required = [
   'tile-world',
   'interior-world',
   'dialogue-box',
+  'is-collapsed',
   'Java',
   'Spring Boot',
   'React',
@@ -148,6 +181,12 @@ const requiredFiles = [
   'public/assets/generated-sheets/developer-farm-map.png',
   'public/assets/generated-sheets/developer-farmer-character-sheet.png',
   'public/assets/generated-sheets/developer-farmhouse-interior-sheet.png',
+  'public/assets/pixellab/terrain/manifest.json',
+  'public/assets/pixellab/terrain/grass-path-flat/tileset.png',
+  'public/assets/pixellab/terrain/grass-path-flat/metadata.json',
+  'public/assets/pixellab/terrain/grass-soil-flat-v2/tileset.png',
+  'public/assets/pixellab/terrain/grass-soil-flat-v2/metadata.json',
+  'public/assets/sprite-matte-cleanup.json',
   'public/assets/game-sprites/manifest.json',
   'public/assets/game-sprites/sprite-18.png',
   'public/assets/game-sprites/sprite-19.png',
@@ -204,6 +243,96 @@ const rejectedFiles = [
 const leftovers = rejectedFiles.filter((path) => existsSync(path));
 if (leftovers.length) {
   console.error(`Rejected legacy files still exist: ${leftovers.join(', ')}`);
+  process.exit(1);
+}
+
+const matteManifest = JSON.parse(readFileSync('public/assets/sprite-matte-cleanup.json', 'utf8'));
+const matteEntries = Object.entries(matteManifest.targets ?? {});
+if (matteEntries.length !== 25) {
+  console.error(`Expected 25 cleaned runtime sprite entries, found ${matteEntries.length}`);
+  process.exit(1);
+}
+
+const staleMatteEntries = matteEntries.filter(([relativePath, entry]) => {
+  const assetPath = `public/assets/${relativePath}`;
+  if (!existsSync(assetPath)) return true;
+  const digest = createHash('sha256').update(readFileSync(assetPath)).digest('hex');
+  return digest !== entry.sha256;
+});
+
+if (staleMatteEntries.length) {
+  console.error(`Runtime sprite matte cleanup is stale: ${staleMatteEntries.map(([path]) => path).join(', ')}`);
+  process.exit(1);
+}
+
+function readPngSize(path) {
+  const png = readFileSync(path);
+  const signature = png.subarray(1, 4).toString('ascii');
+  if (signature !== 'PNG') {
+    throw new Error(`${path} is not a PNG image`);
+  }
+  return {
+    width: png.readUInt32BE(16),
+    height: png.readUInt32BE(20),
+  };
+}
+
+const displayImageSizes = [
+  ['public/assets/generated-sheets/developer-farm-map.png', 512, 352],
+  ['public/assets/generated-sheets/farmhouse-interior-room.png', 384, 256],
+];
+
+const wrongDisplayImageSizes = displayImageSizes
+  .map(([path, width, height]) => ({ path, width, height, actual: readPngSize(path) }))
+  .filter(({ width, height, actual }) => actual.width !== width || actual.height !== height);
+
+if (wrongDisplayImageSizes.length) {
+  const details = wrongDisplayImageSizes
+    .map(({ path, width, height, actual }) => `${path} expected ${width}x${height}, got ${actual.width}x${actual.height}`)
+    .join('; ');
+  console.error(`Display game image resolution is too large: ${details}`);
+  process.exit(1);
+}
+
+const terrainTilesetSizes = [
+  ['public/assets/pixellab/terrain/grass-path-flat/tileset.png', 64, 64],
+  ['public/assets/pixellab/terrain/grass-soil-flat-v2/tileset.png', 64, 64],
+];
+
+const wrongTerrainTilesetSizes = terrainTilesetSizes
+  .map(([path, width, height]) => ({ path, width, height, actual: readPngSize(path) }))
+  .filter(({ width, height, actual }) => actual.width !== width || actual.height !== height);
+
+if (wrongTerrainTilesetSizes.length) {
+  const details = wrongTerrainTilesetSizes
+    .map(({ path, width, height, actual }) => `${path} expected ${width}x${height}, got ${actual.width}x${actual.height}`)
+    .join('; ');
+  console.error(`PixelLab terrain tileset dimensions changed: ${details}`);
+  process.exit(1);
+}
+
+const terrainMetadataPaths = [
+  'public/assets/pixellab/terrain/grass-path-flat/metadata.json',
+  'public/assets/pixellab/terrain/grass-soil-flat-v2/metadata.json',
+];
+const terrainMetadata = terrainMetadataPaths.map((path) => ({
+  path,
+  data: JSON.parse(readFileSync(path, 'utf8')),
+}));
+const invalidTerrainMetadata = terrainMetadata.filter(({ data }) => (
+  data.transition_size !== 0
+  || data.tile_size?.width !== 16
+  || data.tile_size?.height !== 16
+  || data.tileset_data?.total_tiles !== 16
+));
+
+if (invalidTerrainMetadata.length) {
+  console.error(`Invalid flat PixelLab Wang metadata: ${invalidTerrainMetadata.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+if (terrainMetadata[0].data.base_tile_ids?.lower !== terrainMetadata[1].data.base_tile_ids?.lower) {
+  console.error('PixelLab terrain families must share the same grass base tile ID');
   process.exit(1);
 }
 

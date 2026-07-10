@@ -23,6 +23,9 @@ All pixel visuals should come from Codex/OpenAI-generated pixel-art assets and e
 - extracted character sprites: `public/assets/generated-sprites/character/`
 - generated interior object sheet: `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png`
 - extracted interior props: `public/assets/generated-sprites/interior/`
+- PixelLab MCP flat Wang terrain sets: `public/assets/pixellab/terrain/grass-path-flat/` and `public/assets/pixellab/terrain/grass-soil-flat-v2/`
+
+The outdoor floor is assembled from PixelLab's 16x16 flat corner-based Wang metadata, then palette-matched without dithering to the existing outdoor source sheet. Keep the runtime map at `512x352`; improve detail through coherent transitions and sparse props rather than increasing the display image resolution.
 
 CSS is allowed for layout, HUD, hotspots, and dialogue boxes, but not for fake pixel-art characters/buildings that should be generated assets.
 
@@ -33,21 +36,27 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 1. Player starts at a fullscreen pixel title screen with `EOM SINYONG` typed in a dot/pixel style.
 2. Player starts the game with `Enter`, `Space`, `E`, or the `START GAME` button.
 3. The game world/map fills the whole viewport.
-4. No top HUD/status bar and no right sidebar are allowed in normal play.
+4. No top HUD/status bar or website-style portfolio navigation is allowed; normal play reserves a permanent right column for the game inventory.
 5. Dialogue appears as a docked bottom dialogue bar, leaving the map center playable.
-6. A gear button opens the only utility window.
+6. A gear button opens the game menu over the map area.
 7. Gear window tabs: `MAP`, `ABOUT`, `SETTINGS`.
-8. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
-9. Player presses `E`/`Space` near objects.
-10. Farmhouse interaction enters the generated interior room.
-11. Inside the house, portfolio content is unlocked by inspecting objects:
+8. Inventory is a persistent full-height game HUD bar on the right. It uses a stable 4x3 slot grid and fills with quest items, harvested project records, server logs, and milestones as the player progresses.
+9. The inventory bar shows the generated farmer portrait and current scene. Newly unlocked item IDs auto-select, highlight their slot, and show a short `ITEM ACQUIRED` banner; quantity-only updates do not replay the banner.
+10. Player holds WASD/arrows to move through a RAF-driven input loop, not OS key repeat.
+11. Outdoor exploration uses a `32x22` map with entity-bound collision and feet-based Y depth sorting.
+12. Object labels are hidden by default; a compact `E` prompt appears only near an interactable object.
+13. Player presses `E`/`Space` near objects.
+14. The first quest starts at the mailbox and follows workshop → 3 crop harvests → server barn → community board.
+15. Farmhouse interaction enters the generated interior room.
+16. Inside the house, portfolio content is unlocked by inspecting objects:
    - SKILL desk
    - QUEST board
    - SERVER shelf
    - BIM blueprint table
    - JOURNAL shelf
    - MAIL table
-12. The bottom dialogue bar and the gear-menu overlays expose the portfolio content.
+17. The bottom dialogue bar collapses to a compact objective strip when no conversation is active.
+18. The bottom dialogue bar, persistent inventory bar, and gear-menu overlays expose the portfolio content.
 
 ## Portfolio content mapping
 
@@ -63,14 +72,23 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 - `data-ui-pass="portfolio-inside-farming-rpg"`
 - `data-game-world="playable-cozy-farm-rpg"`
 - `data-screen-mode="fullscreen-game-shell"`
-- `data-layout-mode="full-screen-map-with-overlay-ui"`
+- `data-layout-mode="full-screen-map-with-right-inventory-bar"`
 - `data-topbar-visible="false"`
-- `data-sidebar-visible="false"`
+- `data-sidebar-visible="true"`
 - `data-overlay-layer="dialogue-and-menu"`
 - `data-dialogue-mode="bottom-bar"`
 - `data-bottom-dialogue-bar="game-chat"`
 - `data-settings-open`
 - `data-settings-tab`
+- `data-inventory-open`
+- `data-inventory-count`
+- `data-selected-inventory-item`
+- `data-inventory-panel="right-game-bar"`
+- `data-inventory-slot`
+- `data-player-status="inventory-rail"`
+- `data-item-pickup`
+- `data-item-pickup-visible`
+- `data-item-pickup-toast="inventory-unlock"`
 - `data-labels-visible`
 - `data-hints-visible`
 - `data-game-phase`
@@ -88,11 +106,18 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 - `data-world-scale-mode="pixel-locked-fit"`
 - `data-mobile-fit-mode="camera-fullscreen-safe-area"`
 - `data-camera-mode="player-centered-fullscreen"`
-- `data-right-rail-fallback="inactive"`
+- `data-map-grid="32x22"`
+- `data-collision-mode="entity-bounds"`
+- `data-depth-sorting="y-axis-feet"`
+- `data-right-inventory-bar="persistent"`
 - `data-map-renderer="single-generated-map-image"`
 - `data-world-map-image="developer-farm-map"`
 - `data-nearby-object`
 - `data-active-dialogue`
+- `data-dialogue-open`
+- `data-label-display-mode="nearby-only-default"`
+- `data-quest-stage`
+- `data-quest-objective`
 - `data-journal-count`
 - `data-harvest-count`
 - `data-generated-assets="codex-image-sheets-and-game-sprites"`
@@ -101,7 +126,7 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 ## Avoid
 
 - static portfolio landing hero/header as the main structure;
-- side panel that simply lists portfolio sections;
+- permanently visible side panel that simply lists portfolio sections;
 - landmark buttons as primary navigation;
 - hand-made CSS pixel art for major game objects;
 - copied Stardew Valley assets, names, UI, characters, or text;

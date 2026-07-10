@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "source": "PixelLab MCP",
+  "logicalTileSize": {
+    "width": 16,
+    "height": 16
+  },
+  "runtimeMap": {
+    "width": 512,
+    "height": 352,
+    "grid": "32x22"
+  },
+  "families": {
+    "grassPath": {
+      "tilesetId": "403d30ed-6dd3-41c2-859e-501bb544c4a3",
+      "folder": "grass-path-flat",
+      "transitionSize": 0,
+      "tileCount": 16,
+      "role": "runtime"
+    },
+    "grassSoil": {
+      "tilesetId": "def7530f-ac9e-49d2-b909-a317a8768024",
+      "folder": "grass-soil-flat-v2",
+      "transitionSize": 0,
+      "tileCount": 16,
+      "role": "runtime"
+    }
+  }
+}
