@@ -24,6 +24,8 @@ All pixel visuals should come from Codex/OpenAI-generated pixel-art assets and e
 - generated interior object sheet: `public/assets/generated-sheets/developer-farmhouse-interior-sheet.png`
 - extracted interior props: `public/assets/generated-sprites/interior/`
 - PixelLab MCP flat Wang terrain sets: `public/assets/pixellab/terrain/grass-path-flat/` and `public/assets/pixellab/terrain/grass-soil-flat-v2/`
+- Farm Loop ground, tool, and crop-stage sprites: `public/assets/farm-loop/`
+- Farm Loop asset manifest: `public/assets/farm-loop/manifest.json`
 
 The outdoor floor is assembled from PixelLab's 16x16 flat corner-based Wang metadata, then palette-matched without dithering to the existing outdoor source sheet. Keep the runtime map at `512x352`; improve detail through coherent transitions and sparse props rather than increasing the display image resolution.
 
@@ -57,6 +59,12 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
    - MAIL table
 17. The bottom dialogue bar collapses to a compact objective strip when no conversation is active.
 18. The bottom dialogue bar, persistent inventory bar, and gear-menu overlays expose the portfolio content.
+19. The central farm patch contains six independent `32x32` plots with the state sequence `untilled -> tilled -> planted -> watered -> growing-1 -> growing-2 -> ready`.
+20. Tool slots select hoe, seeds, or watering can through pointer/touch input and keyboard shortcuts `1`, `2`, and `3`.
+21. Frontend, Backend, and BIM crops use distinct generated sprite families and a short timer after watering.
+22. Harvesting a ready plot returns it to `tilled`, adds the crop to the permanent inventory, and unlocks the matching portfolio record.
+23. Farm fields, selected tool and seed, crop inventory, and first-harvest state persist under `portfolio-farm-loop-v1` in `localStorage`.
+24. `RESET FARM` resets only the Farm Loop state and does not reset the current quest or the rest of the game world.
 
 ## Portfolio content mapping
 
@@ -120,6 +128,20 @@ Player walking frames are normalized into `public/assets/generated-sprites/chara
 - `data-quest-objective`
 - `data-journal-count`
 - `data-harvest-count`
+- `data-farm-loop="v1"`
+- `data-farm-storage="localStorage"`
+- `data-farm-storage-key="portfolio-farm-loop-v1"`
+- `data-farm-plot-count="6"`
+- `data-selected-farm-tool`
+- `data-selected-seed`
+- `data-farm-ready-count`
+- `data-farm-harvest-total`
+- `data-farm-first-harvest`
+- `data-farm-plot-id`
+- `data-farm-stage`
+- `data-farm-crop`
+- `data-farm-toolbelt="three-tools"`
+- `data-reset-farm="farm-state-only"`
 - `data-generated-assets="codex-image-sheets-and-game-sprites"`
 - `data-settings-map="below-options"`
 

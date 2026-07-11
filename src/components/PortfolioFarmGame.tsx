@@ -1,6 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { Backpack, BookOpen, CheckCircle2, Hammer, Mail, Server, Sprout, type LucideIcon } from 'lucide-react';
+import { Backpack, BookOpen, CheckCircle2, Hammer, Mail, RotateCcw, Server, Sprout, type LucideIcon } from 'lucide-react';
 import { experiences, hero, skillGroups } from '../data/portfolio';
+import {
+  FARM_CROPS,
+  FARM_CROP_INFO,
+  FARM_STORAGE_KEY,
+  FARM_TOOL_INFO,
+  FARM_TOOLS,
+  advanceFarmState,
+  clearFarmState,
+  getFarmCropAsset,
+  getFarmGroundAsset,
+  getNearestFarmPlot,
+  interactWithFarmPlot,
+  loadFarmState,
+  persistFarmState,
+  type CropType,
+  type FarmPlotStage,
+  type FarmState,
+  type FarmTool,
+} from '../game/farmLoop';
 
 const CONTACT_EMAIL = 'cvb7412@naver.com';
 // TODO: GitHub 주소 입력 시 RESUME 뷰에 링크가 노출됩니다.
@@ -31,8 +50,17 @@ type QuestStage =
   | 'inspect-server-barn'
   | 'return-to-board'
   | 'complete';
-type InventoryItemId = 'field-journal' | 'quest-note' | 'tool-kit' | 'project-crops' | 'server-log' | 'completion-badge';
-type InventoryTone = 'journal' | 'quest' | 'tools' | 'harvest' | 'server' | 'complete';
+type InventoryItemId =
+  | 'field-journal'
+  | 'quest-note'
+  | 'tool-kit'
+  | 'project-crops'
+  | 'server-log'
+  | 'completion-badge'
+  | 'frontend-harvest'
+  | 'backend-harvest'
+  | 'bim-harvest';
+type InventoryTone = 'journal' | 'quest' | 'tools' | 'harvest' | 'server' | 'complete' | 'frontend' | 'backend' | 'bim';
 
 type Player = {
   x: number;
@@ -100,6 +128,12 @@ const keyMap: Record<string, Direction | undefined> = {
   KeyD: 'right',
 };
 
+const farmToolKeyMap: Record<string, FarmTool | undefined> = {
+  Digit1: 'hoe',
+  Digit2: 'seeds',
+  Digit3: 'watering-can',
+};
+
 type InventoryItem = {
   id: InventoryItemId;
   name: string;
@@ -108,6 +142,27 @@ type InventoryItem = {
   tone: InventoryTone;
   icon: LucideIcon;
   quantity?: number;
+};
+
+type JournalEntry = {
+  id: string;
+  journalTitle: string;
+};
+
+const farmInventoryItemIds: Record<CropType, InventoryItemId> = {
+  frontend: 'frontend-harvest',
+  backend: 'backend-harvest',
+  bim: 'bim-harvest',
+};
+
+const farmStageLabels: Record<FarmPlotStage, string> = {
+  untilled: '갈지 않은 밭',
+  tilled: '심을 준비 완료',
+  planted: '씨앗 심음',
+  watered: '물주기 완료',
+  'growing-1': '새싹 성장 중',
+  'growing-2': '성장 중',
+  ready: '수확 가능',
 };
 
 const questLabels: Record<QuestStage, string> = {
@@ -241,14 +296,15 @@ const outsideEntities: Entity[] = [
     w: 4,
     h: 3,
     range: 2,
-    sprite: '/assets/game-sprites/sprite-51.png',
-    label: 'HARVEST',
-    prompt: '작물에 작업 기록 열매가 맺혀 있다.',
+    label: 'FARM',
+    prompt: '가까운 밭 칸에서 도구를 선택하고 E를 눌러 농사를 시작하세요.',
     journalTitle: '수확물: 운영 기능과 리팩터링',
     dialogue: ['작업 기록 열매를 수확했다: 운영 기능 추가, 관리자 화면, 목록/입력 UI, 외부 API 연동.', '이 게임에서는 포트폴리오가 카드가 아니라 발견물이다.'],
     tags: ['Project crop', 'REST API', 'Admin UI'],
   },
 ];
+
+const farmPatchEntity = outsideEntities.find((entity) => entity.id === 'cropPatch') as Entity;
 
 const interiorEntities: Entity[] = [
   {
@@ -534,6 +590,7 @@ export function PortfolioFarmGame() {
   const [activeMenuTab, setActiveMenuTab] = useState<MenuTab>('map');
   const [showLabels, setShowLabels] = useState(false);
   const [showHints, setShowHints] = useState(true);
+  const [farmState, setFarmState] = useState<FarmState>(() => loadFarmState());
   const [viewport, setViewport] = useState<ViewportSize>(getInitialViewport);
 
   const pressedDirectionsRef = useRef<Direction[]>([]);
@@ -549,9 +606,23 @@ export function PortfolioFarmGame() {
 
   const currentEntities = scene === 'outside' ? outsideEntities : interiorEntities;
   const nearby = useMemo(() => getNearestEntity(player, currentEntities), [player, currentEntities]);
+  const nearbyFarmPlot = useMemo(
+    () => scene === 'outside' ? getNearestFarmPlot(player, farmState.plots) : null,
+    [farmState.plots, player, scene],
+  );
   const typedTitle = INTRO_TITLE.slice(0, typedNameLength);
   const allEntities = useMemo(() => [...outsideEntities, ...interiorEntities], []);
-  const journalEntries = journal.map((title) => allEntities.find((entity) => entity.journalTitle === title)).filter(Boolean) as Entity[];
+  const entityJournalEntries = journal
+    .map((title) => allEntities.find((entity) => entity.journalTitle === title))
+    .filter(Boolean) as Entity[];
+  const farmJournalEntries = FARM_CROPS
+    .filter((crop) => farmState.inventory[crop] > 0)
+    .map<JournalEntry>((crop) => ({ id: `farm-${crop}`, journalTitle: FARM_CROP_INFO[crop].portfolioTitle }));
+  const journalEntries: JournalEntry[] = [...entityJournalEntries, ...farmJournalEntries];
+  const totalJournalCount = journal.length + farmJournalEntries.length;
+  const totalJournalEntries = allEntities.length + FARM_CROPS.length;
+  const readyFarmPlotCount = farmState.plots.filter((plot) => plot.stage === 'ready').length;
+  const totalFarmHarvest = FARM_CROPS.reduce((total, crop) => total + farmState.inventory[crop], 0);
   const playerFrames = normalizedCharacterWalkSprites[player.facing];
   const playerFrameIndex = player.walking ? player.step % playerFrames.length : 0;
   const playerSprite = playerFrames[playerFrameIndex];
@@ -567,7 +638,7 @@ export function PortfolioFarmGame() {
         id: 'field-journal',
         name: '농장 수첩',
         category: 'RECORD',
-        description: `조사한 포트폴리오 기록 ${journal.length}개가 정리되어 있다.`,
+        description: `조사한 포트폴리오 기록 ${totalJournalCount}개가 정리되어 있다.`,
         tone: 'journal',
         icon: BookOpen,
         unlocked: true,
@@ -618,10 +689,20 @@ export function PortfolioFarmGame() {
         icon: CheckCircle2,
         unlocked: questStage === 'complete',
       },
+      ...FARM_CROPS.map((crop): InventoryItem & { unlocked: boolean } => ({
+        id: farmInventoryItemIds[crop],
+        name: FARM_CROP_INFO[crop].label,
+        category: 'HARVEST',
+        description: FARM_CROP_INFO[crop].portfolioDescription,
+        tone: crop,
+        icon: Sprout,
+        quantity: farmState.inventory[crop],
+        unlocked: farmState.inventory[crop] > 0,
+      })),
     ];
 
     return items.filter((item) => item.unlocked);
-  }, [harvestCount, journal.length, questStage, questStageIndex]);
+  }, [farmState.inventory, harvestCount, questStage, questStageIndex, totalJournalCount]);
   const inventorySlots = useMemo(
     () => Array.from({ length: 12 }, (_, index) => inventoryItems[index] ?? null),
     [inventoryItems],
@@ -706,7 +787,47 @@ export function PortfolioFarmGame() {
     unlock(outsideEntities[0]);
   }, [unlock]);
 
+  const interactWithNearbyFarmPlot = useCallback(() => {
+    if (!nearbyFarmPlot) return false;
+
+    const result = interactWithFarmPlot(farmState, nearbyFarmPlot.id);
+    setFarmState(result.state);
+    const dialogueLines = [result.message];
+    let dialogueName = `Farm Plot ${nearbyFarmPlot.id.replace('plot-', '')}`;
+
+    if (result.harvestedCrop) {
+      const cropInfo = FARM_CROP_INFO[result.harvestedCrop];
+      dialogueName = cropInfo.label;
+      dialogueLines.push(cropInfo.portfolioDescription);
+      if (result.firstOfType) {
+        dialogueLines.push(`포트폴리오 기록 해금: ${cropInfo.portfolioTitle}`);
+      }
+
+      if (questStage === 'harvest-project-crops') {
+        const nextHarvestCount = Math.min(harvestCount + 1, 3);
+        setHarvestCount(nextHarvestCount);
+        if (nextHarvestCount === 3) {
+          setQuestStage('inspect-server-barn');
+          dialogueLines.push('프로젝트 작물 3개를 모두 수확했습니다. 다음은 남쪽 서버 헛간입니다.');
+        } else {
+          dialogueLines.push(`퀘스트 수확 진행: ${nextHarvestCount}/3`);
+        }
+      }
+    }
+
+    setDialogue({
+      ...farmPatchEntity,
+      name: dialogueName,
+      prompt: result.message,
+      dialogue: dialogueLines,
+      tags: result.harvestedCrop ? [result.harvestedCrop, 'Harvest', 'Portfolio unlock'] : [farmState.selectedTool, nearbyFarmPlot.stage],
+    });
+    return true;
+  }, [farmState, harvestCount, nearbyFarmPlot, questStage]);
+
   const interact = useCallback(() => {
+    if (scene === 'outside' && interactWithNearbyFarmPlot()) return;
+
     const target = nearby;
     if (!target) {
       setDialogue({
@@ -754,18 +875,6 @@ export function PortfolioFarmGame() {
       return;
     }
 
-    if (target.id === 'cropPatch' && questStage === 'harvest-project-crops') {
-      const nextHarvestCount = Math.min(harvestCount + 1, 3);
-      setHarvestCount(nextHarvestCount);
-      if (nextHarvestCount === 3) {
-        setQuestStage('inspect-server-barn');
-      }
-      unlock(target, nextHarvestCount === 3
-        ? ['프로젝트 작물 3개를 모두 수확했다.', '다음 단계: 남쪽 서버 헛간의 운영 기록을 점검하자.']
-        : [`프로젝트 작물을 수확했다. (${nextHarvestCount}/3)`, '밭 옆에서 E를 눌러 남은 기록도 수확하자.']);
-      return;
-    }
-
     if (target.id === 'barn' && questStage === 'inspect-server-barn') {
       setQuestStage('return-to-board');
       unlock(target, [
@@ -790,7 +899,7 @@ export function PortfolioFarmGame() {
     }
 
     unlock(target);
-  }, [currentEntities, enterHouse, harvestCount, leaveHouse, nearby, questObjective, questStage, scene, unlock]);
+  }, [currentEntities, enterHouse, interactWithNearbyFarmPlot, leaveHouse, nearby, questObjective, questStage, scene, unlock]);
 
   useEffect(() => {
     if (typedNameLength >= INTRO_TITLE.length) return undefined;
@@ -803,6 +912,17 @@ export function PortfolioFarmGame() {
   useEffect(() => {
     gameStartedRef.current = gameStarted;
   }, [gameStarted]);
+
+  useEffect(() => {
+    persistFarmState(farmState);
+  }, [farmState]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setFarmState((current) => advanceFarmState(current));
+    }, 250);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const newItem = inventoryItems.find((item) => !knownInventoryIdsRef.current.has(item.id));
@@ -916,6 +1036,13 @@ export function PortfolioFarmGame() {
         return;
       }
 
+      const farmTool = farmToolKeyMap[event.code];
+      if (farmTool) {
+        event.preventDefault();
+        setFarmState((current) => current.selectedTool === farmTool ? current : { ...current, selectedTool: farmTool });
+        return;
+      }
+
       const direction = keyMap[event.code];
       if (direction) {
         event.preventDefault();
@@ -954,7 +1081,10 @@ export function PortfolioFarmGame() {
     };
   }, []);
 
-  const prompt = nearby?.prompt ?? (scene === 'outside' ? questObjective : '집 안 물건 옆에서 E를 눌러 포트폴리오 기록을 조사하세요.');
+  const farmPrompt = nearbyFarmPlot
+    ? `밭 ${nearbyFarmPlot.id.replace('plot-', '')} · ${farmStageLabels[nearbyFarmPlot.stage]} · ${FARM_TOOL_INFO[farmState.selectedTool].label}`
+    : null;
+  const prompt = farmPrompt ?? nearby?.prompt ?? (scene === 'outside' ? questObjective : '집 안 물건 옆에서 E를 눌러 포트폴리오 기록을 조사하세요.');
 
   return (
     <section
@@ -997,15 +1127,24 @@ export function PortfolioFarmGame() {
       data-selected-inventory-item={selectedInventoryItem?.id ?? ''}
       data-item-pickup={acquiredItemId ?? ''}
       data-item-pickup-visible={acquiredItem ? 'true' : 'false'}
+      data-farm-loop="v1"
+      data-farm-storage="localStorage"
+      data-farm-storage-key={FARM_STORAGE_KEY}
+      data-farm-plot-count={farmState.plots.length}
+      data-selected-farm-tool={farmState.selectedTool}
+      data-selected-seed={farmState.selectedSeed}
+      data-farm-ready-count={readyFarmPlotCount}
+      data-farm-harvest-total={totalFarmHarvest}
+      data-farm-first-harvest={farmState.firstHarvested ? 'true' : 'false'}
       data-labels-visible={showLabels ? 'true' : 'false'}
       data-label-display-mode="nearby-only-default"
       data-hints-visible={showHints ? 'true' : 'false'}
-      data-nearby-object={nearby?.id ?? ''}
+      data-nearby-object={nearbyFarmPlot?.id ?? nearby?.id ?? ''}
       data-active-dialogue={dialogue?.id ?? ''}
       data-dialogue-open={dialogueOpen ? 'true' : 'false'}
       data-quest-stage={questStage}
       data-quest-objective={questObjective}
-      data-journal-count={journal.length}
+      data-journal-count={totalJournalCount}
       data-harvest-count={harvestCount}
       data-resume-open={resumeOpen ? 'true' : 'false'}
       data-generated-assets="codex-image-sheets-and-game-sprites"
@@ -1022,6 +1161,25 @@ export function PortfolioFarmGame() {
                   <b>{entity.label}</b>
                 </div>
               ))}
+              {farmState.plots.map((plot, index) => {
+                const cropAsset = getFarmCropAsset(plot);
+                return (
+                  <div
+                    key={plot.id}
+                    className={`farm-plot stage-${plot.stage} crop-${plot.crop ?? 'empty'} ${nearbyFarmPlot?.id === plot.id ? 'is-nearby' : ''}`}
+                    style={{ left: plot.x * TILE, top: plot.y * TILE, zIndex: 12 + (plot.y + 1) * 10 }}
+                    aria-label={`밭 ${index + 1}: ${farmStageLabels[plot.stage]}`}
+                    data-farm-plot-id={plot.id}
+                    data-farm-stage={plot.stage}
+                    data-farm-crop={plot.crop ?? ''}
+                    data-farm-nearby={nearbyFarmPlot?.id === plot.id ? 'true' : 'false'}
+                  >
+                    <img className="farm-plot-ground" src={getFarmGroundAsset(plot.stage)} alt="" aria-hidden="true" />
+                    {cropAsset && <img className="farm-crop-sprite" src={cropAsset} alt="" aria-hidden="true" />}
+                    <span>{index + 1}</span>
+                  </div>
+                );
+              })}
               <img className={`player-sprite facing-${player.facing} ${player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE, zIndex: getPlayerDepth(player) }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-sprite-normalization="bottom-centered-transparent-canvas" />
             </div>
           ) : (
@@ -1086,8 +1244,9 @@ export function PortfolioFarmGame() {
                   <p>엄신용 포트폴리오는 웹 섹션이 아니라 농장 RPG 안의 발견물로 배치되어 있습니다.</p>
                   <dl>
                     <div><dt>Scene</dt><dd>{scene === 'outside' ? 'Developer Farm' : 'Farmhouse Interior'}</dd></div>
-                    <div><dt>Journal</dt><dd>{journal.length}/{allEntities.length}</dd></div>
-                    <div><dt>Harvest</dt><dd>{harvestCount}/3</dd></div>
+                    <div><dt>Journal</dt><dd>{totalJournalCount}/{totalJournalEntries}</dd></div>
+                    <div><dt>Quest harvest</dt><dd>{harvestCount}/3</dd></div>
+                    <div><dt>Farm harvest</dt><dd>{totalFarmHarvest}</dd></div>
                   </dl>
                   <ul>
                     {journalEntries.slice(0, 5).map((entry) => (
@@ -1110,7 +1269,26 @@ export function PortfolioFarmGame() {
                     <input type="checkbox" checked={showHints} onChange={(event) => setShowHints(event.currentTarget.checked)} />
                     <span>Press-E hints</span>
                   </label>
-                  <p>Controls: hold WASD/arrows · E/Space interact · gear opens this menu.</p>
+                  <button
+                    type="button"
+                    className="farm-reset-button"
+                    data-reset-farm="farm-state-only"
+                    onClick={() => {
+                      const resetState = clearFarmState();
+                      setFarmState(resetState);
+                      setDialogue({
+                        ...farmPatchEntity,
+                        name: 'Farm Reset',
+                        prompt: '농장 상태만 초기화했습니다.',
+                        dialogue: ['6개 밭, 선택 도구, 수확 재고와 최초 수확 기록을 초기화했습니다.', '기존 퀘스트와 포트폴리오 탐색 기록은 유지됩니다.'],
+                        tags: ['Farm Loop', 'Reset'],
+                      });
+                    }}
+                  >
+                    <RotateCcw aria-hidden="true" />
+                    <span>RESET FARM</span>
+                  </button>
+                  <p>Controls: hold WASD/arrows · E/Space interact · 1/2/3 farm tools · gear opens this menu.</p>
                   <div className="settings-map-panel" data-settings-map="below-options">
                     <div className="map-title-row">
                       <span>Settings map</span>
@@ -1161,6 +1339,45 @@ export function PortfolioFarmGame() {
                   <small>{scene === 'outside' ? 'DEVELOPER FARM' : 'FARMHOUSE'}</small>
                 </div>
               </div>
+
+              <section className="farm-toolbelt" aria-label="Farm toolbelt" data-farm-toolbelt="three-tools">
+                <header>
+                  <span>TOOLBELT</span>
+                  <strong>{FARM_TOOL_INFO[farmState.selectedTool].label}</strong>
+                </header>
+                <div className="farm-tool-row" role="toolbar" aria-label="Farm tools">
+                  {FARM_TOOLS.map((tool) => (
+                    <button
+                      key={tool}
+                      type="button"
+                      className={farmState.selectedTool === tool ? 'is-active' : ''}
+                      aria-label={`${FARM_TOOL_INFO[tool].shortcut} · ${FARM_TOOL_INFO[tool].label}`}
+                      aria-pressed={farmState.selectedTool === tool}
+                      title={`${FARM_TOOL_INFO[tool].shortcut} · ${FARM_TOOL_INFO[tool].label}`}
+                      data-farm-tool={tool}
+                      onClick={() => setFarmState((current) => ({ ...current, selectedTool: tool }))}
+                    >
+                      <img src={FARM_TOOL_INFO[tool].asset} alt="" aria-hidden="true" />
+                      <kbd>{FARM_TOOL_INFO[tool].shortcut}</kbd>
+                    </button>
+                  ))}
+                </div>
+                <div className="farm-seed-selector" aria-label="Seed type" data-selected-seed={farmState.selectedSeed}>
+                  {FARM_CROPS.map((crop) => (
+                    <button
+                      key={crop}
+                      type="button"
+                      className={farmState.selectedSeed === crop ? 'is-active' : ''}
+                      aria-label={`${FARM_CROP_INFO[crop].label} 선택`}
+                      aria-pressed={farmState.selectedSeed === crop}
+                      data-seed-type={crop}
+                      onClick={() => setFarmState((current) => ({ ...current, selectedTool: 'seeds', selectedSeed: crop }))}
+                    >
+                      {FARM_CROP_INFO[crop].shortLabel}
+                    </button>
+                  ))}
+                </div>
+              </section>
 
               <div className="inventory-summary">
                 <span>{inventoryItems.length}/12 SLOTS</span>
@@ -1223,7 +1440,7 @@ export function PortfolioFarmGame() {
                 <p>{questObjective}</p>
                 <div>
                   <span>DISCOVERED</span>
-                  <b>{journal.length}/{allEntities.length}</b>
+                  <b>{totalJournalCount}/{totalJournalEntries}</b>
                 </div>
               </div>
           </aside>
@@ -1236,10 +1453,12 @@ export function PortfolioFarmGame() {
             data-bottom-dialogue-bar="game-chat"
             data-dialogue-mode="bottom-bar"
           >
-            <span>{dialogue ? (nearby ? `Near: ${nearby.name}` : dialogue.name) : `QUEST · ${questLabels[questStage]}`}</span>
+            <span>{dialogue
+              ? (nearbyFarmPlot ? `Near: Farm Plot ${nearbyFarmPlot.id.replace('plot-', '')}` : nearby ? `Near: ${nearby.name}` : dialogue.name)
+              : `QUEST · ${questLabels[questStage]}`}</span>
             <strong>{dialogue ? dialogue.name : prompt}</strong>
             {dialogue && dialogue.dialogue.map((line) => <p key={line}>{line}</p>)}
-            <em>{nearby ? '[E] 조사 / 입장' : dialogue ? '이동하면 대화 닫기' : 'WASD / 방향키로 이동'}</em>
+            <em>{nearbyFarmPlot ? '[E] 농사' : nearby ? '[E] 조사 / 입장' : dialogue ? '이동하면 대화 닫기' : 'WASD / 방향키로 이동'}</em>
           </div>
 
           <nav className="touch-pad" aria-label="Mobile game controls">

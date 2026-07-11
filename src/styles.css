@@ -173,6 +173,65 @@ main[data-app="loop-dog-lab"] {
 }
 .farm-game[data-labels-visible="false"] .game-entity b { display: none; }
 .farm-game[data-hints-visible="false"] .game-entity.is-nearby::after { display: none; }
+.farm-plot {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+.farm-plot-ground,
+.farm-crop-sprite {
+  position: absolute;
+  inset: 0;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.farm-crop-sprite { z-index: 2; }
+.farm-plot > span {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 3;
+  width: 10px;
+  height: 10px;
+  display: grid;
+  place-items: center;
+  color: #fff7d8;
+  background: rgba(58, 38, 23, .82);
+  border: 1px solid #f3c56d;
+  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-plot.is-nearby {
+  outline: 3px solid #fff19c;
+  outline-offset: -3px;
+}
+.farm-plot.is-nearby::after {
+  content: 'E';
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  z-index: 4;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  translate: -50% 0;
+  color: #3a2617;
+  background: #fff19c;
+  border: 2px solid #6f441f;
+  border-radius: 50%;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-plot.stage-ready {
+  outline: 3px solid #9fe089;
+  outline-offset: -3px;
+}
+.farm-game[data-hints-visible="false"] .farm-plot.is-nearby::after { display: none; }
 .interior-world {
   display: block;
   background: #2e1c12;
@@ -433,6 +492,91 @@ main[data-app="loop-dog-lab"] {
   color: #e7d595;
   font-size: 8px;
 }
+.farm-toolbelt {
+  padding: 8px 10px 9px;
+  color: #fff3c9;
+  background: #563720;
+  border-bottom: 4px solid #9b6731;
+}
+.farm-toolbelt > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-toolbelt > header span { color: #9fe089; }
+.farm-toolbelt > header strong {
+  overflow: hidden;
+  color: #ffd770;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.farm-tool-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.farm-tool-row button {
+  position: relative;
+  aspect-ratio: 1.15;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  color: #3a2617;
+  background: #d9b66b;
+  border: 3px solid #8c5b2e;
+  box-shadow: inset 0 0 0 2px rgba(255,245,203,.32), 0 2px 0 rgba(0,0,0,.3);
+}
+.farm-tool-row button.is-active {
+  background: #fff0a8;
+  border-color: #9fe089;
+  outline: 2px solid #2e542b;
+}
+.farm-tool-row img {
+  width: min(34px, 72%);
+  height: min(34px, 72%);
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.farm-tool-row kbd {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  min-width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  color: #fff7d8;
+  background: #3a2617;
+  border: 1px solid #f3c56d;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-seed-selector {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 7px;
+}
+.farm-seed-selector button {
+  min-width: 0;
+  height: 25px;
+  padding: 0 3px;
+  color: #302116;
+  background: #d4d0a0;
+  border: 2px solid #3a2617;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-seed-selector button[data-seed-type="frontend"] { background: #80d8df; }
+.farm-seed-selector button[data-seed-type="backend"] { background: #f2c85a; }
+.farm-seed-selector button[data-seed-type="bim"] { background: #b29bdc; }
+.farm-seed-selector button.is-active {
+  outline: 2px solid #fff3bd;
+  outline-offset: -4px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.3);
+}
 .inventory-summary {
   display: flex;
   align-items: center;
@@ -480,6 +624,9 @@ main[data-app="loop-dog-lab"] {
 .inventory-slot[data-item-tone="harvest"] { background: #9bd875; }
 .inventory-slot[data-item-tone="server"] { background: #b9a9de; }
 .inventory-slot[data-item-tone="complete"] { background: #f6c94d; }
+.inventory-slot[data-item-tone="frontend"] { background: #80d8df; }
+.inventory-slot[data-item-tone="backend"] { background: #f2c85a; }
+.inventory-slot[data-item-tone="bim"] { background: #b29bdc; }
 .inventory-slot.is-empty {
   opacity: .58;
   background: #d2ad65;
@@ -672,6 +819,9 @@ main[data-app="loop-dog-lab"] {
 .item-pickup-toast > div[data-item-tone="harvest"] { background: #9bd875; }
 .item-pickup-toast > div[data-item-tone="server"] { background: #b9a9de; }
 .item-pickup-toast > div[data-item-tone="complete"] { background: #f6c94d; }
+.item-pickup-toast > div[data-item-tone="frontend"] { background: #80d8df; }
+.item-pickup-toast > div[data-item-tone="backend"] { background: #f2c85a; }
+.item-pickup-toast > div[data-item-tone="bim"] { background: #b29bdc; }
 .item-pickup-toast svg {
   width: 27px;
   height: 27px;
@@ -944,6 +1094,26 @@ main[data-app="loop-dog-lab"] {
   height: 18px;
   accent-color: #9cff82;
 }
+.farm-reset-button {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff1c7;
+  background: #7d3f2a;
+  border: 3px solid #f3c56d;
+  box-shadow: 0 3px 0 rgba(0,0,0,.3);
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-reset-button svg {
+  width: 17px;
+  height: 17px;
+}
+.farm-reset-button:active {
+  translate: 0 2px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.3);
+}
 .settings-map-panel {
   display: grid;
   gap: 8px;
@@ -1145,6 +1315,38 @@ main[data-app="loop-dog-lab"] {
     border-width: 2px;
   }
   .inventory-player-status > div { display: none; }
+  .farm-toolbelt {
+    padding: 5px 4px 6px;
+    border-bottom-width: 3px;
+  }
+  .farm-toolbelt > header { display: none; }
+  .farm-tool-row { gap: 3px; }
+  .farm-tool-row button {
+    aspect-ratio: 1;
+    padding: 2px;
+    border-width: 2px;
+  }
+  .farm-tool-row img {
+    width: 24px;
+    height: 24px;
+  }
+  .farm-tool-row kbd {
+    right: 1px;
+    bottom: 1px;
+    min-width: 11px;
+    height: 11px;
+    font-size: 6px;
+  }
+  .farm-seed-selector {
+    gap: 3px;
+    margin-top: 5px;
+  }
+  .farm-seed-selector button {
+    height: 19px;
+    padding: 0;
+    border-width: 1px;
+    font-size: 7px;
+  }
   .inventory-summary {
     display: block;
     padding: 7px 6px;

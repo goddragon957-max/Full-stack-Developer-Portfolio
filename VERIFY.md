@@ -65,6 +65,19 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - `data-quest-objective`
   - `data-journal-count`
   - `data-harvest-count`
+  - `data-farm-loop="v1"`
+  - `data-farm-storage-key="portfolio-farm-loop-v1"`
+  - `data-farm-plot-count="6"`
+  - `data-selected-farm-tool`
+  - `data-selected-seed`
+  - `data-farm-ready-count`
+  - `data-farm-harvest-total`
+  - `data-farm-first-harvest`
+  - `data-farm-plot-id`
+  - `data-farm-stage`
+  - `data-farm-crop`
+  - `data-farm-toolbelt="three-tools"`
+  - `data-reset-farm="farm-state-only"`
   - `data-generated-assets="codex-image-sheets-and-game-sprites"`
 - Generated asset files exist:
   - generated outdoor map image
@@ -76,6 +89,8 @@ npm run preview -- --host 0.0.0.0 --port 4193 --strictPort
   - PixelLab grass-to-path and grass-to-soil flat Wang tilesets plus metadata
 - Runtime image sizes are `512x352` for the outdoor map and `384x256` for the farmhouse interior.
 - PixelLab runtime terrain sheets are each `64x64`, containing 16 logical `16x16` corner combinations.
+- Farm Loop manifest declares exactly three crops, five crop sprite stages, three tools, and `32x32` logical assets.
+- Every PNG under `public/assets/farm-loop/ground`, `tools`, and `crops` is exactly `32x32`.
 
 ## Browser play checks
 
@@ -108,6 +123,16 @@ Open the strict-port preview and verify in the browser:
 25. On a narrow mobile viewport around `390x844`, the game uses a cropped player-centered camera rather than shrinking the entire map, the bottom dialogue bar stays docked, and mobile touch controls are hidden during intro / visible during play.
 26. On mobile play state, the world uses player-centered camera positioning instead of shrinking the whole map to fit; movement should change the world camera `left/top` while keeping `overflowX=0`.
 27. The outside scene uses `developer-farm-map.png` as one terrain image layer; the old brown/red tile-world border and empty viewport margins are not visible.
+28. The central patch renders exactly six independent plots and each exposes `data-farm-stage` and `data-farm-crop`.
+29. Selecting hoe, seeds, and watering can works through both the right-rail buttons and keyboard keys `1`, `2`, and `3`; selected states are visually distinct.
+30. Invalid actions keep the plot unchanged and display a short Korean game message explaining the required previous action.
+31. A real cycle completes as `untilled -> tilled -> planted -> watered -> growing-1 -> growing-2 -> ready -> tilled` using nearby `E` interactions.
+32. Frontend, Backend, and BIM selections use distinct crop colors and all five crop sprite files per crop family.
+33. Harvesting inserts the matching crop into the right inventory, selects it, reuses `ITEM ACQUIRED`, and unlocks only grounded portfolio technology text.
+34. Reloading preserves plot stage/crop, selected tool/seed, crop quantities, and first-harvest state.
+35. `RESET FARM` returns all six plots to `untilled`, clears crop inventory and first-harvest state, and leaves the quest stage unchanged; the reset persists after reload.
+36. At `1440x900` and `390x844`, body horizontal overflow is zero and the inventory rail does not overlap the map, dialogue, or mobile touch controls.
+37. At `390x844`, all three farm tool buttons and all three seed-type buttons remain touch-accessible without scrolling the inventory rail.
 
 ## Visual QA gate
 

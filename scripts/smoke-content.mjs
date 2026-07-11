@@ -3,13 +3,14 @@ import { createHash } from 'node:crypto';
 
 const app = readFileSync('src/App.tsx', 'utf8');
 const game = readFileSync('src/components/PortfolioFarmGame.tsx', 'utf8');
+const farmLoop = readFileSync('src/game/farmLoop.ts', 'utf8');
 const css = readFileSync('src/styles.css', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const readme = readFileSync('README.md', 'utf8');
 const verify = readFileSync('VERIFY.md', 'utf8');
 const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${game}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
+const joined = `${app}\n${game}\n${farmLoop}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
 const publicJoined = `${app}\n${game}\n${css}`;
 
 const required = [
@@ -66,6 +67,34 @@ const required = [
   'inventory-player-status',
   'is-acquired',
   'knownInventoryIdsRef',
+  'data-farm-loop="v1"',
+  'data-farm-plot-count',
+  'data-farm-stage',
+  'data-farm-crop',
+  'data-selected-farm-tool',
+  'data-selected-seed',
+  'data-farm-storage="localStorage"',
+  'data-farm-first-harvest',
+  'data-farm-tool',
+  'data-seed-type',
+  'data-reset-farm="farm-state-only"',
+  'portfolio-farm-loop-v1',
+  'farm-toolbelt',
+  'farm-plot',
+  'RESET FARM',
+  'Digit1',
+  'Digit2',
+  'Digit3',
+  'untilled',
+  'tilled',
+  'planted',
+  'watered',
+  'growing-1',
+  'growing-2',
+  'ready',
+  'frontend-harvest',
+  'backend-harvest',
+  'bim-harvest',
   'data-selected-inventory-item',
   'data-inventory-count',
   'INVENTORY',
@@ -176,6 +205,8 @@ if (forbidden.length) {
 
 const requiredFiles = [
   'src/components/PortfolioFarmGame.tsx',
+  'src/game/farmLoop.ts',
+  'scripts/generate-farm-loop-assets.py',
   'public/assets/cozy-farming-village-tileset-4x3.png',
   'public/assets/generated-sheets/farmhouse-interior-room.png',
   'public/assets/generated-sheets/developer-farm-map.png',
@@ -226,6 +257,28 @@ const requiredFiles = [
   'public/assets/generated-sprites/character-walk/up-1.png',
   'public/assets/generated-sprites/character-walk/up-2.png',
   'public/assets/generated-sprites/character-walk/up-3.png',
+  'public/assets/farm-loop/manifest.json',
+  'public/assets/farm-loop/ground/untilled.png',
+  'public/assets/farm-loop/ground/tilled.png',
+  'public/assets/farm-loop/ground/watered.png',
+  'public/assets/farm-loop/tools/hoe.png',
+  'public/assets/farm-loop/tools/seeds.png',
+  'public/assets/farm-loop/tools/watering-can.png',
+  'public/assets/farm-loop/crops/frontend/planted.png',
+  'public/assets/farm-loop/crops/frontend/watered.png',
+  'public/assets/farm-loop/crops/frontend/growing-1.png',
+  'public/assets/farm-loop/crops/frontend/growing-2.png',
+  'public/assets/farm-loop/crops/frontend/ready.png',
+  'public/assets/farm-loop/crops/backend/planted.png',
+  'public/assets/farm-loop/crops/backend/watered.png',
+  'public/assets/farm-loop/crops/backend/growing-1.png',
+  'public/assets/farm-loop/crops/backend/growing-2.png',
+  'public/assets/farm-loop/crops/backend/ready.png',
+  'public/assets/farm-loop/crops/bim/planted.png',
+  'public/assets/farm-loop/crops/bim/watered.png',
+  'public/assets/farm-loop/crops/bim/growing-1.png',
+  'public/assets/farm-loop/crops/bim/growing-2.png',
+  'public/assets/farm-loop/crops/bim/ready.png',
 ];
 const missingFiles = requiredFiles.filter((path) => !existsSync(path));
 if (missingFiles.length) {
@@ -308,6 +361,28 @@ if (wrongTerrainTilesetSizes.length) {
     .map(({ path, width, height, actual }) => `${path} expected ${width}x${height}, got ${actual.width}x${actual.height}`)
     .join('; ');
   console.error(`PixelLab terrain tileset dimensions changed: ${details}`);
+  process.exit(1);
+}
+
+const farmLoopAssetPaths = requiredFiles.filter((path) => path.startsWith('public/assets/farm-loop/') && path.endsWith('.png'));
+const wrongFarmLoopAssetSizes = farmLoopAssetPaths
+  .map((path) => ({ path, actual: readPngSize(path) }))
+  .filter(({ actual }) => actual.width !== 32 || actual.height !== 32);
+
+if (wrongFarmLoopAssetSizes.length) {
+  console.error(`Farm Loop assets must stay on a 32x32 logical canvas: ${wrongFarmLoopAssetSizes.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const farmLoopManifest = JSON.parse(readFileSync('public/assets/farm-loop/manifest.json', 'utf8'));
+if (
+  farmLoopManifest.version !== 1
+  || farmLoopManifest.logical_size !== 32
+  || farmLoopManifest.crops?.length !== 3
+  || farmLoopManifest.crop_stages?.length !== 5
+  || farmLoopManifest.tools?.length !== 3
+) {
+  console.error('Farm Loop asset manifest is incomplete or incompatible');
   process.exit(1);
 }
 
