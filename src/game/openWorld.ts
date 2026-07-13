@@ -43,6 +43,7 @@ export const OPEN_WORLD_STORAGE_KEY = 'portfolio-open-world-v1';
 export const OPEN_WORLD_SAVE_VERSION = 1;
 export const WORLD_WIDTH = 32;
 export const WORLD_HEIGHT = 22;
+export const REGION_TRANSITION_SWAP_MS = 360;
 
 export const REGION_IDS: RegionId[] = ['farm-village', 'whisper-forest', 'river-coast', 'mine-foothill'];
 
@@ -91,14 +92,14 @@ const cells = (axis: 'x' | 'y', fixed: number, from: number, to: number) => (
 );
 
 export const REGION_EXITS: RegionExit[] = [
-  { id: 'village-east', from: 'farm-village', to: 'whisper-forest', edge: 'right', cells: cells('x', 31, 7, 9), arrival: { x: 1, y: 11, facing: 'right' } },
-  { id: 'forest-west', from: 'whisper-forest', to: 'farm-village', edge: 'left', cells: cells('x', 0, 9, 12), arrival: { x: 30, y: 8, facing: 'left' } },
-  { id: 'forest-north', from: 'whisper-forest', to: 'river-coast', edge: 'up', cells: cells('y', 0, 16, 18), arrival: { x: 18, y: 20, facing: 'up' } },
-  { id: 'coast-south', from: 'river-coast', to: 'whisper-forest', edge: 'down', cells: cells('y', 21, 17, 19), arrival: { x: 17, y: 1, facing: 'down' } },
-  { id: 'coast-east', from: 'river-coast', to: 'mine-foothill', edge: 'right', cells: cells('x', 31, 3, 6), arrival: { x: 1, y: 5, facing: 'right' } },
-  { id: 'mine-west', from: 'mine-foothill', to: 'river-coast', edge: 'left', cells: cells('x', 0, 4, 7), arrival: { x: 30, y: 5, facing: 'left' } },
-  { id: 'mine-south', from: 'mine-foothill', to: 'farm-village', edge: 'down', cells: cells('y', 21, 15, 17), arrival: { x: 8, y: 1, facing: 'down' } },
-  { id: 'village-north', from: 'farm-village', to: 'mine-foothill', edge: 'up', cells: cells('y', 0, 7, 9), arrival: { x: 16, y: 20, facing: 'up' } },
+  { id: 'village-east', from: 'farm-village', to: 'whisper-forest', edge: 'right', cells: cells('x', 31, 7, 9), arrival: { x: 2, y: 11, facing: 'right' } },
+  { id: 'forest-west', from: 'whisper-forest', to: 'farm-village', edge: 'left', cells: cells('x', 0, 9, 12), arrival: { x: 29, y: 8, facing: 'left' } },
+  { id: 'forest-north', from: 'whisper-forest', to: 'river-coast', edge: 'up', cells: cells('y', 0, 16, 18), arrival: { x: 18, y: 19, facing: 'up' } },
+  { id: 'coast-south', from: 'river-coast', to: 'whisper-forest', edge: 'down', cells: cells('y', 21, 17, 19), arrival: { x: 17, y: 2, facing: 'down' } },
+  { id: 'coast-east', from: 'river-coast', to: 'mine-foothill', edge: 'right', cells: cells('x', 31, 3, 6), arrival: { x: 2, y: 5, facing: 'right' } },
+  { id: 'mine-west', from: 'mine-foothill', to: 'river-coast', edge: 'left', cells: cells('x', 0, 4, 7), arrival: { x: 29, y: 5, facing: 'left' } },
+  { id: 'mine-south', from: 'mine-foothill', to: 'farm-village', edge: 'down', cells: cells('y', 21, 15, 17), arrival: { x: 8, y: 2, facing: 'down' } },
+  { id: 'village-north', from: 'farm-village', to: 'mine-foothill', edge: 'up', cells: cells('y', 0, 7, 9), arrival: { x: 16, y: 19, facing: 'up' } },
 ];
 
 export const FAST_TRAVEL_POSTS: Record<RegionId, { x: number; y: number }> = {
@@ -133,7 +134,18 @@ const MINE_BLOCKED_RECTS = [
   { x: 10, y: 17, w: 4, h: 3 }, { x: 20, y: 17, w: 4, h: 3 },
 ];
 
-export const REGION_COLLISION_RECTS: Record<Exclude<RegionId, 'farm-village'>, Array<{ x: number; y: number; w: number; h: number }>> = {
+const FARM_BLOCKED_RECTS = [
+  { x: 3, y: 2, w: 4, h: 4 },
+  { x: 12, y: 2, w: 5, h: 4 },
+  { x: 20, y: 2, w: 4, h: 4 },
+  { x: 24, y: 8, w: 4, h: 4 },
+  { x: 4, y: 17, w: 4, h: 4 },
+  { x: 27, y: 17, w: 4, h: 4 },
+  { x: 23, y: 14, w: 7, h: 6 },
+];
+
+export const REGION_COLLISION_RECTS: Record<RegionId, Array<{ x: number; y: number; w: number; h: number }>> = {
+  'farm-village': FARM_BLOCKED_RECTS,
   'whisper-forest': FOREST_BLOCKED_RECTS,
   'river-coast': COAST_BLOCKED_RECTS,
   'mine-foothill': MINE_BLOCKED_RECTS,
@@ -147,9 +159,9 @@ export function createInitialOpenWorldState(): OpenWorldState {
     fastTravelUnlocked: ['farm-village'],
     positions: {
       'farm-village': { x: 9, y: 7, facing: 'left' },
-      'whisper-forest': { x: 1, y: 11, facing: 'right' },
-      'river-coast': { x: 16, y: 20, facing: 'up' },
-      'mine-foothill': { x: 1, y: 5, facing: 'right' },
+      'whisper-forest': { x: 2, y: 11, facing: 'right' },
+      'river-coast': { x: 18, y: 19, facing: 'up' },
+      'mine-foothill': { x: 2, y: 5, facing: 'right' },
     },
     transitionCount: 0,
   };
@@ -159,7 +171,7 @@ function isRegionId(value: unknown): value is RegionId {
   return typeof value === 'string' && REGION_IDS.includes(value as RegionId);
 }
 
-function normalizePosition(value: unknown, fallback: WorldPosition): WorldPosition {
+function normalizePosition(region: RegionId, value: unknown, fallback: WorldPosition): WorldPosition {
   if (!value || typeof value !== 'object') return fallback;
   const position = value as Partial<WorldPosition>;
   const candidateX = Number(position.x);
@@ -167,11 +179,11 @@ function normalizePosition(value: unknown, fallback: WorldPosition): WorldPositi
   const facing = ['up', 'down', 'left', 'right'].includes(String(position.facing))
     ? position.facing as WorldDirection
     : fallback.facing;
-  return {
-    x: Math.max(0, Math.min(WORLD_WIDTH - 1, Number.isFinite(candidateX) ? Math.floor(candidateX) : fallback.x)),
-    y: Math.max(0, Math.min(WORLD_HEIGHT - 1, Number.isFinite(candidateY) ? Math.floor(candidateY) : fallback.y)),
+  return getSafeRegionPosition(region, {
+    x: Math.max(2, Math.min(WORLD_WIDTH - 3, Number.isFinite(candidateX) ? Math.floor(candidateX) : fallback.x)),
+    y: Math.max(2, Math.min(WORLD_HEIGHT - 3, Number.isFinite(candidateY) ? Math.floor(candidateY) : fallback.y)),
     facing,
-  };
+  }, fallback);
 }
 
 export function normalizeOpenWorldState(value: unknown): OpenWorldState {
@@ -188,7 +200,7 @@ export function normalizeOpenWorldState(value: unknown): OpenWorldState {
   const positionCandidate = candidate.positions && typeof candidate.positions === 'object' ? candidate.positions : {};
   const positions = Object.fromEntries(REGION_IDS.map((region) => [
     region,
-    normalizePosition((positionCandidate as Partial<Record<RegionId, WorldPosition>>)[region], initial.positions[region]),
+    normalizePosition(region, (positionCandidate as Partial<Record<RegionId, WorldPosition>>)[region], initial.positions[region]),
   ])) as Record<RegionId, WorldPosition>;
   return {
     version: OPEN_WORLD_SAVE_VERSION,
@@ -246,7 +258,7 @@ export function enterRegion(state: OpenWorldState, exit: RegionExit): RegionEntr
     currentRegion: exit.to,
     discovered,
     fastTravelUnlocked,
-    positions: { ...state.positions, [exit.to]: exit.arrival },
+    positions: { ...state.positions, [exit.to]: getSafeRegionPosition(exit.to, exit.arrival) },
     transitionCount: state.transitionCount + 1,
   };
   return { state: nextState, firstVisit, worldExplorer: firstVisit && discovered.length === REGION_IDS.length };
@@ -263,16 +275,38 @@ export function fastTravelTo(state: OpenWorldState, region: RegionId): OpenWorld
   return {
     ...state,
     currentRegion: region,
-    positions: { ...state.positions, [region]: FAST_TRAVEL_ARRIVALS[region] },
+    positions: { ...state.positions, [region]: getSafeRegionPosition(region, FAST_TRAVEL_ARRIVALS[region]) },
     transitionCount: state.transitionCount + 1,
   };
 }
 
 export function isRegionBlocked(region: RegionId, x: number, y: number) {
-  if (region === 'farm-village') return false;
   return REGION_COLLISION_RECTS[region].some((rect) => (
     x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
   ));
+}
+
+export function getSafeRegionPosition(region: RegionId, position: WorldPosition, fallback = createInitialOpenWorldState().positions[region]): WorldPosition {
+  const origin = {
+    x: Math.max(2, Math.min(WORLD_WIDTH - 3, Math.floor(position.x))),
+    y: Math.max(2, Math.min(WORLD_HEIGHT - 3, Math.floor(position.y))),
+    facing: position.facing,
+  };
+  if (!isRegionBlocked(region, origin.x, origin.y)) return origin;
+
+  const maxRadius = WORLD_WIDTH + WORLD_HEIGHT;
+  for (let radius = 1; radius <= maxRadius; radius += 1) {
+    for (let offsetX = -radius; offsetX <= radius; offsetX += 1) {
+      const offsetY = radius - Math.abs(offsetX);
+      for (const sign of offsetY === 0 ? [1] : [-1, 1]) {
+        const x = origin.x + offsetX;
+        const y = origin.y + offsetY * sign;
+        if (x < 2 || x > WORLD_WIDTH - 3 || y < 2 || y > WORLD_HEIGHT - 3) continue;
+        if (!isRegionBlocked(region, x, y)) return { x, y, facing: origin.facing };
+      }
+    }
+  }
+  return { ...fallback };
 }
 
 export function isNearFastTravelPost(region: RegionId, position: { x: number; y: number }, range = 1.8) {

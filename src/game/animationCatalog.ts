@@ -55,7 +55,7 @@ export const ANIMAL_SPRITES: Record<RemasterAnimalSpecies, Record<RemasterAnimal
 };
 
 export const CROP_SPRITES = Object.fromEntries(
-  ['frontend', 'backend', 'bim', 'tomato', 'corn', 'pumpkin'].map((crop) => [crop, Object.fromEntries(
+  ['potato', 'strawberry', 'carrot', 'tomato', 'corn', 'pumpkin'].map((crop) => [crop, Object.fromEntries(
     ['planted', 'watered', 'growing-1', 'growing-2', 'ready'].map((stage) => [stage, `${ROOT}/crops/${crop}/${stage}.png`]),
   )]),
 ) as Record<string, Record<string, string>>;
@@ -81,7 +81,7 @@ export const PRODUCT_SPRITES = {
 } as const;
 
 export const CROP_ITEM_SPRITES = Object.fromEntries(
-  ['frontend', 'backend', 'bim', 'tomato', 'corn', 'pumpkin'].map((crop) => [crop, `${ROOT}/items/crops/${crop}.png`]),
+  ['potato', 'strawberry', 'carrot', 'tomato', 'corn', 'pumpkin'].map((crop) => [crop, `${ROOT}/items/crops/${crop}.png`]),
 ) as Record<string, string>;
 
 export const FISH_SPRITES = Object.fromEntries(

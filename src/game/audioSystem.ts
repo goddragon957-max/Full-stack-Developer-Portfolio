@@ -5,6 +5,7 @@ export type AudioSettings = { muted: boolean; volume: number };
 
 export const AUDIO_STORAGE_KEY = 'portfolio-audio-v1';
 export const AUDIO_CROSSFADE_MS = 1000;
+export const AUDIO_INTERIOR_GAIN = 0.55;
 
 const TRACK_BY_REGION: Record<RegionId, AudioTrackId> = {
   'farm-village': 'village-day',
@@ -51,6 +52,7 @@ export class RegionAudioController {
   private active: HTMLAudioElement | null = null;
   private fadeTimer: number | null = null;
   private unlocked = false;
+  private interior = false;
   private settings: AudioSettings;
 
   constructor(settings: AudioSettings) {
@@ -63,7 +65,17 @@ export class RegionAudioController {
 
   updateSettings(settings: AudioSettings) {
     this.settings = settings;
-    if (this.active) this.active.volume = settings.muted ? 0 : settings.volume;
+    if (this.active) this.active.volume = this.getOutputVolume();
+  }
+
+  setInterior(interior: boolean) {
+    this.interior = interior;
+    if (this.active) this.active.volume = this.getOutputVolume();
+  }
+
+  private getOutputVolume() {
+    if (this.settings.muted) return 0;
+    return this.settings.volume * (this.interior ? AUDIO_INTERIOR_GAIN : 1);
   }
 
   transition(trackId: AudioTrackId) {
@@ -85,8 +97,9 @@ export class RegionAudioController {
     if (this.fadeTimer !== null) window.clearInterval(this.fadeTimer);
     this.fadeTimer = window.setInterval(() => {
       const progress = Math.min(1, (performance.now() - started) / AUDIO_CROSSFADE_MS);
-      next.volume = this.settings.muted ? 0 : this.settings.volume * progress;
-      if (previous) previous.volume = this.settings.muted ? 0 : this.settings.volume * (1 - progress);
+      const outputVolume = this.getOutputVolume();
+      next.volume = outputVolume * progress;
+      if (previous) previous.volume = outputVolume * (1 - progress);
       if (progress === 1) {
         if (previous) {
           previous.pause();

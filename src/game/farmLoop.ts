@@ -1,5 +1,6 @@
 export type FarmTool = 'hoe' | 'seeds' | 'watering-can';
-export type CropType = 'frontend' | 'backend' | 'bim' | 'tomato' | 'corn' | 'pumpkin';
+export type CropType = 'potato' | 'strawberry' | 'carrot' | 'tomato' | 'corn' | 'pumpkin';
+type LegacyCropType = 'frontend' | 'backend' | 'bim';
 export type CropQuality = 'normal' | 'silver' | 'gold';
 export type FarmPlotStage = 'untilled' | 'tilled' | 'planted' | 'watered' | 'growing-1' | 'growing-2' | 'ready';
 
@@ -16,7 +17,7 @@ export type FarmInventory = Record<CropType, number>;
 export type FarmQualityInventory = Record<CropType, Record<CropQuality, number>>;
 
 export type FarmState = {
-  version: 2;
+  version: 3;
   plots: FarmPlot[];
   selectedTool: FarmTool;
   selectedSeed: CropType;
@@ -36,12 +37,12 @@ export type FarmInteractionResult = {
 };
 
 export const FARM_STORAGE_KEY = 'portfolio-farm-loop-v1';
-export const FARM_SAVE_VERSION = 2;
+export const FARM_SAVE_VERSION = 3;
 export const FARM_GROWTH_STEP_MS = 1000;
 
 export const FARM_TOOLS: FarmTool[] = ['hoe', 'seeds', 'watering-can'];
-export const FARM_CROPS: CropType[] = ['frontend', 'backend', 'bim', 'tomato', 'corn', 'pumpkin'];
-export const FARM_GARDEN_CROPS: CropType[] = ['frontend', 'backend', 'bim'];
+export const FARM_CROPS: CropType[] = ['potato', 'strawberry', 'carrot', 'tomato', 'corn', 'pumpkin'];
+export const FARM_GARDEN_CROPS: CropType[] = ['potato', 'strawberry', 'carrot'];
 export const FARM_LIFE_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
 export const CROP_QUALITIES: CropQuality[] = ['normal', 'silver', 'gold'];
 export const FARM_PLOT_STAGES: FarmPlotStage[] = [
@@ -67,26 +68,26 @@ export const FARM_CROP_INFO: Record<CropType, {
   description: string;
   tone: string;
 }> = {
-  frontend: {
+  potato: {
     label: '감자',
     shortLabel: '감자',
     journalTitle: '농장 도감: 감자',
     description: '포슬포슬한 알이 흙 아래에서 단단하게 여문 감자.',
-    tone: 'frontend',
+    tone: 'potato',
   },
-  backend: {
+  strawberry: {
     label: '딸기',
     shortLabel: '딸기',
     journalTitle: '농장 도감: 딸기',
     description: '초록 잎 사이로 향긋하고 붉게 익은 딸기.',
-    tone: 'backend',
+    tone: 'strawberry',
   },
-  bim: {
+  carrot: {
     label: '당근',
     shortLabel: '당근',
     journalTitle: '농장 도감: 당근',
     description: '싱싱한 잎과 선명한 주황빛 뿌리를 가진 당근.',
-    tone: 'bim',
+    tone: 'carrot',
   },
   tomato: {
     label: '토마토',
@@ -123,6 +124,22 @@ const FARM_PLOT_LAYOUT = [
 const stageSet = new Set<string>(FARM_PLOT_STAGES);
 const toolSet = new Set<string>(FARM_TOOLS);
 const cropSet = new Set<string>(FARM_CROPS);
+const LEGACY_CROP_MAP: Record<LegacyCropType, CropType> = {
+  frontend: 'potato',
+  backend: 'strawberry',
+  bim: 'carrot',
+};
+const LEGACY_CROP_BY_CANONICAL: Partial<Record<CropType, LegacyCropType>> = {
+  potato: 'frontend',
+  strawberry: 'backend',
+  carrot: 'bim',
+};
+
+export function migrateLegacyCropId(value: unknown): CropType | null {
+  if (typeof value !== 'string') return null;
+  if (cropSet.has(value)) return value as CropType;
+  return LEGACY_CROP_MAP[value as LegacyCropType] ?? null;
+}
 
 export function createInitialFarmState(): FarmState {
   const inventory = Object.fromEntries(FARM_CROPS.map((crop) => [crop, 0])) as FarmInventory;
@@ -141,7 +158,7 @@ export function createInitialFarmState(): FarmState {
       wateredAt: null,
     })),
     selectedTool: 'hoe',
-    selectedSeed: 'frontend',
+    selectedSeed: 'potato',
     inventory,
     qualityInventory,
     wateringStreak: 0,
@@ -155,9 +172,7 @@ function normalizePlot(value: unknown, fallback: FarmPlot): FarmPlot {
   const stage = typeof candidate.stage === 'string' && stageSet.has(candidate.stage)
     ? candidate.stage as FarmPlotStage
     : fallback.stage;
-  const crop = typeof candidate.crop === 'string' && cropSet.has(candidate.crop)
-    ? candidate.crop as CropType
-    : null;
+  const crop = migrateLegacyCropId(candidate.crop);
   const cropRequired = !['untilled', 'tilled'].includes(stage);
 
   return {
@@ -169,17 +184,22 @@ function normalizePlot(value: unknown, fallback: FarmPlot): FarmPlot {
 }
 
 function normalizeInventory(value: unknown): FarmInventory {
-  const candidate = value && typeof value === 'object' ? value as Partial<FarmInventory> : {};
+  const candidate = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   return Object.fromEntries(FARM_CROPS.map((crop) => [
     crop,
-    Math.max(0, Math.floor(Number(candidate[crop]) || 0)),
+    Math.max(0, Math.floor(Number(
+      candidate[crop] ?? candidate[LEGACY_CROP_BY_CANONICAL[crop] ?? ''],
+    ) || 0)),
   ])) as FarmInventory;
 }
 
 function normalizeQualityInventory(value: unknown, inventory: FarmInventory): FarmQualityInventory {
-  const candidate = value && typeof value === 'object' ? value as Partial<FarmQualityInventory> : {};
+  const candidate = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   return Object.fromEntries(FARM_CROPS.map((crop) => {
-    const saved = candidate[crop] ?? {} as Record<CropQuality, number>;
+    const savedValue = candidate[crop] ?? candidate[LEGACY_CROP_BY_CANONICAL[crop] ?? ''];
+    const saved = savedValue && typeof savedValue === 'object'
+      ? savedValue as Record<string, unknown>
+      : {};
     const quality = Object.fromEntries(CROP_QUALITIES.map((item) => [
       item,
       Math.max(0, Math.floor(Number(saved[item]) || 0)),
@@ -190,12 +210,12 @@ function normalizeQualityInventory(value: unknown, inventory: FarmInventory): Fa
   })) as FarmQualityInventory;
 }
 
-function normalizeFarmState(value: unknown): FarmState {
+export function normalizeFarmState(value: unknown): FarmState {
   const initial = createInitialFarmState();
   if (!value || typeof value !== 'object') return initial;
   const candidate = value as Partial<FarmState>;
   const version = Number((value as { version?: unknown }).version);
-  if (version !== 1 && version !== FARM_SAVE_VERSION) return initial;
+  if (![1, 2, FARM_SAVE_VERSION].includes(version)) return initial;
 
   const savedPlots = Array.isArray(candidate.plots) ? candidate.plots : [];
   const plots = initial.plots.map((fallback) => {
@@ -210,9 +230,7 @@ function normalizeFarmState(value: unknown): FarmState {
     selectedTool: typeof candidate.selectedTool === 'string' && toolSet.has(candidate.selectedTool)
       ? candidate.selectedTool as FarmTool
       : initial.selectedTool,
-    selectedSeed: typeof candidate.selectedSeed === 'string' && cropSet.has(candidate.selectedSeed)
-      ? candidate.selectedSeed as CropType
-      : initial.selectedSeed,
+    selectedSeed: migrateLegacyCropId(candidate.selectedSeed) ?? initial.selectedSeed,
     inventory,
     qualityInventory: normalizeQualityInventory(candidate.qualityInventory, inventory),
     wateringStreak: Math.max(0, Math.min(99, Math.floor(Number(candidate.wateringStreak) || 0))),

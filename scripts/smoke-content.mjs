@@ -204,9 +204,9 @@ const required = [
   'growing-1',
   'growing-2',
   'ready',
-  'frontend-harvest',
-  'backend-harvest',
-  'bim-harvest',
+  'potato-harvest',
+  'strawberry-harvest',
+  'carrot-harvest',
   'data-selected-inventory-item',
   'data-inventory-count',
   'INVENTORY',
@@ -222,10 +222,8 @@ const required = [
   'data-settings-window="game-menu"',
   'data-map-panel="mossbell-world-map"',
   'data-journal-panel="mossbell-journal"',
-  'data-settings-panel="game-options"',
-  'data-settings-map="below-options"',
-  'Settings map',
-  'Map under settings',
+  'data-audio-panel="game-audio"',
+  'data-reset-panel="isolated-game-resets"',
   'gear-button',
   'settings-window',
   'mini-map',
@@ -240,9 +238,9 @@ const required = [
   'data-label-display-mode="nearby-only-default"',
   'data-quest-stage',
   'data-quest-objective',
-  'visit-workshop',
-  'harvest-project-crops',
-  'inspect-server-barn',
+  'visit-seed-shop',
+  'harvest-village-crops',
+  'inspect-barn',
   'return-to-board',
   'complete',
   'data-journal-count',
@@ -330,7 +328,6 @@ const requiredFiles = [
   'scripts/test-interior-world.mjs',
   'scripts/process-gpt-remaster-assets.py',
   'scripts/assemble-gpt-remaster-maps.py',
-  'scripts/generate-farm-loop-assets.py',
   'scripts/generate-village-pulse-assets.py',
   'scripts/generate-fishing-assets.py',
   'scripts/generate-village-life-assets.py',
@@ -385,28 +382,6 @@ const requiredFiles = [
   'public/assets/generated-sprites/character-walk/up-1.png',
   'public/assets/generated-sprites/character-walk/up-2.png',
   'public/assets/generated-sprites/character-walk/up-3.png',
-  'public/assets/farm-loop/manifest.json',
-  'public/assets/farm-loop/ground/untilled.png',
-  'public/assets/farm-loop/ground/tilled.png',
-  'public/assets/farm-loop/ground/watered.png',
-  'public/assets/farm-loop/tools/hoe.png',
-  'public/assets/farm-loop/tools/seeds.png',
-  'public/assets/farm-loop/tools/watering-can.png',
-  'public/assets/farm-loop/crops/frontend/planted.png',
-  'public/assets/farm-loop/crops/frontend/watered.png',
-  'public/assets/farm-loop/crops/frontend/growing-1.png',
-  'public/assets/farm-loop/crops/frontend/growing-2.png',
-  'public/assets/farm-loop/crops/frontend/ready.png',
-  'public/assets/farm-loop/crops/backend/planted.png',
-  'public/assets/farm-loop/crops/backend/watered.png',
-  'public/assets/farm-loop/crops/backend/growing-1.png',
-  'public/assets/farm-loop/crops/backend/growing-2.png',
-  'public/assets/farm-loop/crops/backend/ready.png',
-  'public/assets/farm-loop/crops/bim/planted.png',
-  'public/assets/farm-loop/crops/bim/watered.png',
-  'public/assets/farm-loop/crops/bim/growing-1.png',
-  'public/assets/farm-loop/crops/bim/growing-2.png',
-  'public/assets/farm-loop/crops/bim/ready.png',
   'public/assets/village-pulse/manifest.json',
   'public/assets/village-pulse/npc/village-keeper/down-0.png',
   'public/assets/village-pulse/npc/village-keeper/down-1.png',
@@ -606,28 +581,6 @@ if (wrongTerrainTilesetSizes.length) {
     .map(({ path, width, height, actual }) => `${path} expected ${width}x${height}, got ${actual.width}x${actual.height}`)
     .join('; ');
   console.error(`PixelLab terrain tileset dimensions changed: ${details}`);
-  process.exit(1);
-}
-
-const farmLoopAssetPaths = requiredFiles.filter((path) => path.startsWith('public/assets/farm-loop/') && path.endsWith('.png'));
-const wrongFarmLoopAssetSizes = farmLoopAssetPaths
-  .map((path) => ({ path, actual: readPngSize(path) }))
-  .filter(({ actual }) => actual.width !== 32 || actual.height !== 32);
-
-if (wrongFarmLoopAssetSizes.length) {
-  console.error(`Farm Loop assets must stay on a 32x32 logical canvas: ${wrongFarmLoopAssetSizes.map(({ path }) => path).join(', ')}`);
-  process.exit(1);
-}
-
-const farmLoopManifest = JSON.parse(readFileSync('public/assets/farm-loop/manifest.json', 'utf8'));
-if (
-  farmLoopManifest.version !== 1
-  || farmLoopManifest.logical_size !== 32
-  || farmLoopManifest.crops?.length !== 3
-  || farmLoopManifest.crop_stages?.length !== 5
-  || farmLoopManifest.tools?.length !== 3
-) {
-  console.error('Farm Loop asset manifest is incomplete or incompatible');
   process.exit(1);
 }
 

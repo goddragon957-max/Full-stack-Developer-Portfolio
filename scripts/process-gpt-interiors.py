@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "public" / "assets" / "art-remaster-v1" / "source" / "interiors"
 RUNTIME_DIR = ROOT / "public" / "assets" / "art-remaster-v1" / "maps"
 MANIFEST_PATH = ROOT / "public" / "assets" / "art-remaster-v1" / "interiors" / "manifest.json"
+REMASTER_MANIFEST_PATH = ROOT / "public" / "assets" / "art-remaster-v1" / "manifest.json"
 SOURCE_SIZE = (1536, 1024)
 RUNTIME_SIZE = (384, 256)
 
@@ -90,6 +91,20 @@ def main() -> None:
             indent=2,
         )
         + "\n",
+        encoding="utf-8",
+    )
+    remaster_manifest = json.loads(REMASTER_MANIFEST_PATH.read_text(encoding="utf-8"))
+    remaster_manifest["interiors"] = [{
+        "id": record["id"],
+        "path": record["runtime"],
+        "source": record["source"],
+        "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
+        "width": record["runtime_size"]["width"],
+        "height": record["runtime_size"]["height"],
+        "sha256": record["runtime_sha256"],
+    } for record in records]
+    REMASTER_MANIFEST_PATH.write_text(
+        json.dumps(remaster_manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(f"processed {len(records)} GPT interiors at {RUNTIME_SIZE[0]}x{RUNTIME_SIZE[1]}")

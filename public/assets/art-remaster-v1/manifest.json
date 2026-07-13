@@ -117,25 +117,25 @@
     },
     {
       "id": "crops",
-      "path": "source/crops-sheet.png",
+      "path": "source/crops-sheet-pure-game.png",
       "generator": "OpenAI GPT Image built-in tool",
-      "prompt_summary": "Six crops across five growth stages",
+      "prompt_summary": "Potato, strawberry, carrot, tomato, corn and pumpkin across five growth stages",
       "grid": {
         "rows": 5,
         "columns": 6
       },
-      "sha256": "23a7704996500c69746f65d1dab0a0ede7848430d41d04b3cf63508745c2ea15"
+      "sha256": "096195c3cccbad992c4d7d161ee52c279e852f250ae1a91b06b3d72fbbe71d08"
     },
     {
       "id": "items",
-      "path": "source/items-sheet.png",
+      "path": "source/items-sheet-pure-game.png",
       "generator": "OpenAI GPT Image built-in tool",
-      "prompt_summary": "Harvest, ranch, forage, ore and fish icon pack",
+      "prompt_summary": "Pure farming RPG harvest, ranch, forage, ore and fish icon pack",
       "grid": {
         "rows": 5,
         "columns": 6
       },
-      "sha256": "0d214e142e9e4e99e7c5edcf23fd10d57dd2f0fee1e1d6fd48bc80adc71e28ab"
+      "sha256": "b2abae8d6ab0ccef39994d7928a4dada9d9647053b697ac6fe1c8d7e7125a325"
     },
     {
       "id": "gameplay",
@@ -3068,8 +3068,8 @@
       "sha256": "bc87ac3f85bed2d941d801560f558b4ac204c3b5fd94dea09a0c8c05d3eea97c"
     },
     {
-      "path": "crops/frontend/planted.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/potato/planted.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 0
@@ -3080,11 +3080,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "d56391a917235069544442dcf1e9caf1886d5c24fc97aab006a20602a5d615bb"
+      "sha256": "c3a3ee37d2f6e7860a5010a1e3ca40b7b193a08a286248317d3925e08fbdef44"
     },
     {
-      "path": "crops/backend/planted.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/strawberry/planted.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 1
@@ -3095,11 +3095,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "820d846169a0573bd318e4f6f06ad5091135f38d01b2e565b18aa4ff4646cf60"
+      "sha256": "62c2366e6aa1f17e535ab7427312fd9823993f1926161eab329b91f1e614f380"
     },
     {
-      "path": "crops/bim/planted.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/carrot/planted.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 2
@@ -3110,11 +3110,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "ba3d2f6f00d44b01f3989bcb5fc9a3e9ebd3ff3d854ffeb78d933ad9296cfe66"
+      "sha256": "00b3b91138a6591a6fd6f35328a60b8faaeed9adde858e2f492b03a8230ed1f3"
     },
     {
       "path": "crops/tomato/planted.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 3
@@ -3125,11 +3125,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "4c1a0545a2cfea0a7b41d3c13cc78d17abe9710c0f7e65eb94ad2bd7e8b7890d"
+      "sha256": "fe805d32d0dff6322967674778ccf8b5f1ad628dfa393cc63e1964f8c34e56f3"
     },
     {
       "path": "crops/corn/planted.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 4
@@ -3140,11 +3140,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "829ccde06937301ca0df43b0b41ca9d1a7c2cd68c054cdfd565ceb3a2c21ffd8"
+      "sha256": "dce1b342298021654033d43ade066a112033a727eb719af6b921ce3943d61c43"
     },
     {
       "path": "crops/pumpkin/planted.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 5
@@ -3155,11 +3155,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "a40bda3a49aafa34c6f636a46c327bd724b3bddd9cee809c118233d06110c40f"
+      "sha256": "d0bee80fee74ce9685f2438b7ced06c721404ddfd53b61d48b7283e3466d8878"
     },
     {
-      "path": "crops/frontend/watered.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/potato/watered.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 0
@@ -3170,11 +3170,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "00b2b0ec266552d4c65128b161eed2d3a4c1a36e2bd0134955de9bb4c4ffc5fe"
+      "sha256": "a1fe80d1b8c5e8df02389a16af0a9914469ca511bb156bec00f285950effc21a"
     },
     {
-      "path": "crops/backend/watered.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/strawberry/watered.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 1
@@ -3185,11 +3185,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "187d7540035f5e2675b781f772246fc8883f818e520907757d3f865fb4d24be0"
+      "sha256": "2d9e60cec658d912c32a6bde1944c027a25da31cff035bc4f0581e0e4454619c"
     },
     {
-      "path": "crops/bim/watered.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/carrot/watered.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 2
@@ -3200,11 +3200,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "454ef7ac44fbacf5a748c4d70d44eb214f1bb6f446d3b93d17e0874e8076c0aa"
+      "sha256": "c08c933903b0b081c27511ff84e491454a9f5068f3e5b9982eea48572d90ea01"
     },
     {
       "path": "crops/tomato/watered.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 3
@@ -3215,11 +3215,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "46ad8f0c16dc1e1e295a6823a2fb9c08834438a27b76e7a763ca2971ec8e721a"
+      "sha256": "d4a7408078f40e9c082101bc025d4c5934926b204a1f97c0f80d08804839c54b"
     },
     {
       "path": "crops/corn/watered.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 4
@@ -3230,11 +3230,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "6999ea686bb7a2c90267480c0d51c7098e72787f7295866ce01f4a89508c0f6f"
+      "sha256": "ed95cd29f93786285981803b9fa73951bf8376d9dbe8223d5440d2ddb902646b"
     },
     {
       "path": "crops/pumpkin/watered.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 5
@@ -3245,11 +3245,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "172add24bc6a9820d4af5c4595737d35d8d72401c52f869387945bfcfe902747"
+      "sha256": "24d40cc09e3b73a0333da0fad0808b1aaa33ae0a805ceee4c11f81e3d65b4d53"
     },
     {
-      "path": "crops/frontend/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/potato/growing-1.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 0
@@ -3260,11 +3260,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "522fac33f32291920d9037a2c3bffc7c39a70e56ee76914ec052a1cd2ceec65a"
+      "sha256": "b022c36074a0ea28a654d14549077e32cc607bbf615f45ff884e9d5a3d2cf915"
     },
     {
-      "path": "crops/backend/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/strawberry/growing-1.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 1
@@ -3275,11 +3275,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "0a203feaba9cc9874b2ddc11e869e614a06967a7019f8b6096fbc6f8702192b8"
+      "sha256": "b47ef0e1dfa2f1941144e440fcd6587a0f8c4e8154a4c6682ee527f0b36a9771"
     },
     {
-      "path": "crops/bim/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/carrot/growing-1.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 2
@@ -3290,11 +3290,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "19219052345c66effe50b21bc8918e4e4b2046286ddc5d01aecf0dbdd4d382fb"
+      "sha256": "25e15cd57dc1a08573ea6a70fb6bddadf864ecfa275345c266bbe862b73bf951"
     },
     {
       "path": "crops/tomato/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 3
@@ -3305,11 +3305,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "c5477695c2664f2f165f060df90da13e180de2717411443a9f6a97a56b88d565"
+      "sha256": "ba1b597cc2d29f967d7bfa64d18260ff54d1359dc0fb1048e5fb1c0acccf042c"
     },
     {
       "path": "crops/corn/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 4
@@ -3320,11 +3320,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "19d3f14bcc38ff3a74c2ca8537ca512db43e29bdbe023a297bfbcaf06ee26991"
+      "sha256": "c31093c7a6af2a3b985342f554843e20577097e7ddfe58ad3b4d439ddccec318"
     },
     {
       "path": "crops/pumpkin/growing-1.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 5
@@ -3335,11 +3335,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "98b05be8c2d8d05f475af1d8a3d8e3eba220a556a7eb72f9451ec22bf3c52238"
+      "sha256": "d126d7acd3e5ea62f67ffbc4f3982aec829ea9071b3491b64d9c8ed734105633"
     },
     {
-      "path": "crops/frontend/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/potato/growing-2.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 0
@@ -3350,11 +3350,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "c9ed8b34d8698eaf64c6fb388b564e0c5925d7bbb0401a08395c45393ffdba02"
+      "sha256": "7a199badcc27acc3c383f489dd946c1e96a46f50d2c804457a0370a2772d0a95"
     },
     {
-      "path": "crops/backend/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/strawberry/growing-2.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 1
@@ -3365,11 +3365,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "f0a5457a06b19faba3cfee946893a12136bf7a1a1be590187b4d694fa84ec86e"
+      "sha256": "37f3a1e47cc34c600f5c3f2c4d1f412029d10c8d1d431f10beeae2c5617aed34"
     },
     {
-      "path": "crops/bim/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/carrot/growing-2.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 2
@@ -3380,11 +3380,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "62f6a00b8f8346124ae8abe63e7709c15f0049fb684cd078b5ffdd57d6c989df"
+      "sha256": "e497f2a27bcd547a767f1a812b08abb78b2c88c5b26f649ad789087158c7afbb"
     },
     {
       "path": "crops/tomato/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 3
@@ -3395,11 +3395,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "863890ff6e31b394768e7388686959e5a6f6e054a86b7f457c22cb1a9d2ae08f"
+      "sha256": "09bc75f5a1b44a08e465044280a4c3b511ca6ac70b434191d080d712912cb0a0"
     },
     {
       "path": "crops/corn/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 4
@@ -3410,11 +3410,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "7e5eb34b6609c760bd68a9062af3e9adf36253e0a877b8217dff88b01b207f9a"
+      "sha256": "259407cb5efa9d61d87ab3d89428eb00c32e4221ea2518c071621cb8a3507eb1"
     },
     {
       "path": "crops/pumpkin/growing-2.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 5
@@ -3425,11 +3425,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "f3a1e6b887fac7f861780eaae544b22934a3951a1613fb53d882b9e804c48003"
+      "sha256": "b9a20ffdfd05072a471f10877c76cc4a8435c30e52c967754141cdf855dc14eb"
     },
     {
-      "path": "crops/frontend/ready.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/potato/ready.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 0
@@ -3440,11 +3440,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "ffde820ea3084cb91878b2af17526edbb742ee1652f28cd059c0b3779ad583fe"
+      "sha256": "67f0f30f9e8096c4282bdff91816e51c1970d767f254af1eaffcabf88af98b63"
     },
     {
-      "path": "crops/backend/ready.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/strawberry/ready.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 1
@@ -3455,11 +3455,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "e9998b07e9c5afb28bdfb4157a29f61915c5d3be5cef944a742462e775de256d"
+      "sha256": "c04f5b0c115f1345fbd9f32ebc7bd9232b98ae8462be32fcb30e005bfe1a22a3"
     },
     {
-      "path": "crops/bim/ready.png",
-      "source": "source/crops-sheet.png",
+      "path": "crops/carrot/ready.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 2
@@ -3470,11 +3470,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "9b9dfa5a1c36b79a69d8b00f415d6861a668e7541e90a50309058f187fb4e7b6"
+      "sha256": "2da4c87c996b08efe3cf8d303f7925f78ee8adff2f7e1d2b4fedcfe347c9d616"
     },
     {
       "path": "crops/tomato/ready.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 3
@@ -3485,11 +3485,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "030d47c14936ecb978787231a90b3357bbf95d4b699685b82f48f16742a80216"
+      "sha256": "94200317ea167ef3dac53f7391ed1172882d431c41159850420d8a9335e867bc"
     },
     {
       "path": "crops/corn/ready.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 4
@@ -3500,11 +3500,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "249c3123425b140ef8c27d8ad6b4a2b3383fb7a902e06dd55a48005934814769"
+      "sha256": "7091f3094a5199ac809818413531ec15e417080e929076de9d97a37aaf3db9f8"
     },
     {
       "path": "crops/pumpkin/ready.png",
-      "source": "source/crops-sheet.png",
+      "source": "source/crops-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 5
@@ -3515,11 +3515,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "6cf30c122b4f7a5395946c16b67d9f1b83c3a5020236e499ce72fd2a55902979"
+      "sha256": "d8eca65867ec90cffa45a42bb44e4427fce4d7abc4812400be7f967181354c51"
     },
     {
-      "path": "items/crops/frontend.png",
-      "source": "source/items-sheet.png",
+      "path": "items/crops/potato.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 0
@@ -3530,11 +3530,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "710b12f3ddd3882353d56b4d9237588485d1bf989b79bc09d7060d0426295709"
+      "sha256": "854e7115dbb25a84c982cbc5e4e427c1288f53b411d6ce65b95763bf005c7ac2"
     },
     {
-      "path": "items/crops/backend.png",
-      "source": "source/items-sheet.png",
+      "path": "items/crops/strawberry.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 1
@@ -3545,11 +3545,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "ed4c936e7d271409437aea7dfb7cb4da9d85305da1acf4746831bb03419b75f8"
+      "sha256": "4cb14812f92840c487e4913bb6c9fb5736af4389553d19ebf7da97168d1d1bea"
     },
     {
-      "path": "items/crops/bim.png",
-      "source": "source/items-sheet.png",
+      "path": "items/crops/carrot.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 2
@@ -3560,11 +3560,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "e42d55d42c971b592d5d4abe71e6010e8b62c9de351908dcd970e9630b47255a"
+      "sha256": "dcd3ab72e3ad2e104c2cc4b9801b275cc3740406e387ca9f288fafd36aed04a5"
     },
     {
       "path": "items/crops/tomato.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 3
@@ -3575,11 +3575,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "46b3620b387f3f685b65bd28fc467c094c59faa03115242fbf36c313c132539a"
+      "sha256": "23758dc50ca9ff4e195b534097c945bcf8f48916a451274307bee747c55a0d16"
     },
     {
       "path": "items/crops/corn.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 4
@@ -3590,11 +3590,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "5b2d4401e1b90646aedab5c1bab5e50ad90df66d1686901fe081415c6b76f3ee"
+      "sha256": "8130d2784eac8432944fe205db51d942a33cd26d56427b647f7c2a4f476e825d"
     },
     {
       "path": "items/crops/pumpkin.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 0,
         "column": 5
@@ -3605,11 +3605,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "b4bd21e1ae5eda15b0f0e111de31d31b8b0b9b4111ce714fd04204faa12756da"
+      "sha256": "47f09e5016e7c9479c7e0270a36af09924baf604a48ca8ec3f9346505ae163c8"
     },
     {
       "path": "items/products/egg.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 0
@@ -3620,11 +3620,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "ff196e5bf85ccff1563e35983d945a3d96fa78a86e7036726b4c89b7a9e7627e"
+      "sha256": "a683f8938a5a91d97d0f73191b788860b2f18cd1f1c5a7c51b94492f2edaac51"
     },
     {
       "path": "items/products/milk.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 1
@@ -3635,11 +3635,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "c408d33ca88820d0223bcffc01fed73a04f5039eb9f2d463f0908f3bb1a28dd6"
+      "sha256": "c1fe1aa2d7f111ea3c8a5030929955d3ca0f71fffa9f7d210e9af1faefe7af3f"
     },
     {
       "path": "items/products/golden-egg.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 2
@@ -3650,11 +3650,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "602006d7a1df8798dd9e79b4492cc566980e8fbbe3281681b2d5603705f61427"
+      "sha256": "6f027b499cd1c6dff47c7010ef04a7c406ff10fefcf3680be387eaba604427e7"
     },
     {
       "path": "items/forage/mushroom.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 3
@@ -3665,11 +3665,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "7509feec8be74d2676738b3d0359c6ff870cb2baf9cf50464b2409a0859a84c1"
+      "sha256": "bfbf6edbff4a5758bcf9be879a9eb9377678dfa73621745fcbb66d8333eaab61"
     },
     {
       "path": "items/forage/herb.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 4
@@ -3680,11 +3680,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "8d9d2982dc5bcd911d5f892b4313da2a057ae86282d57e8f37d634b985caab27"
+      "sha256": "ebdbb1ae0a057b7fb9ea997d9b0abfee6d4d13eb96f6b00556262e4f41395e31"
     },
     {
       "path": "items/forage/wild-berry.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 1,
         "column": 5
@@ -3695,11 +3695,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "6305f8429afabe74470f0c801d84d74d36ea9fd606643748e044b7230518dd8f"
+      "sha256": "02137b6491fe1fcda596363fc55ce8408bb8028388fb7696a41aef6e560f3072"
     },
     {
       "path": "items/forage/fern.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 0
@@ -3710,11 +3710,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "d34945e34498ea3bd92caa7c1a4eac1536b1b6565e075bacfdd8bdc8edb4e8e8"
+      "sha256": "7e6761692ac212f6fb31de45c15112fdf682a8c284b217be8ad249e879507415"
     },
     {
       "path": "items/forage/moon-bloom.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 1
@@ -3725,11 +3725,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "9952d19063c76157e3b16131e6b51d232643d8df7edbfac0075ad68ea2ae55f8"
+      "sha256": "be4c1bf600deb28361e3f143a37ef590ca95fcbc633cd11b2ee16fb7b3d6e700"
     },
     {
       "path": "items/ore/stone.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 2
@@ -3740,11 +3740,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "f9d9291beec1b73e7533140502407d9c559733d266684dc0ce4b8e9f8e7fc558"
+      "sha256": "e9eeab983a543afb4ff405769ccd76b4821c6135540a15a28471af76ea51781f"
     },
     {
       "path": "items/ore/copper-ore.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 3
@@ -3755,11 +3755,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "b0c0b1c34d17f588a0adc43395e44851250c304b187a5dd720f77e08fcd00df5"
+      "sha256": "6f20634b7467217e4f434146a1a9a82caeeaad1f1d7d8c30c4821d040a385abf"
     },
     {
       "path": "items/ore/iron-ore.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 4
@@ -3770,11 +3770,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "dabc0bc79429660e34e48b7b8510e1fad497737fe1fdfe5361d746a8ec6eb70b"
+      "sha256": "8a8a5d3a8fcb23d6aedd0654212a882b718fd5af9cffdebd65b40d9a49b38587"
     },
     {
       "path": "items/ore/star-crystal.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 2,
         "column": 5
@@ -3785,11 +3785,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "7663843b983486e374014fe33ef29dfea8a831ba0c9133f8985d24f73c47239f"
+      "sha256": "fcfaa2b9f38b36bd52dae1c40194a32d8cb48b26e7a8763a16d57777efce2fed"
     },
     {
       "path": "items/fish/bluegill.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 0
@@ -3800,11 +3800,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "1231ebc59af5125866cc0b79a6757fe3d19d36e7d0f14f5a81b24389daf8836a"
+      "sha256": "d5b2271a63d4e65b0460ab485128765e9a01407b394d45a5a7a91b78af95bd0c"
     },
     {
       "path": "items/fish/carp.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 1
@@ -3815,11 +3815,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "f367e23a48a98e9ca378c4093e3e2a1f613208c41f933e7157b798a5ab262573"
+      "sha256": "b85ad4344f76530c875b7ca0344da8b211c9b9e44b62dbf70b079176c4f62f92"
     },
     {
       "path": "items/fish/perch.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 2
@@ -3830,11 +3830,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "9a0e0ca46e2eb9d7930d597303a46d802b558a5ea56d887c88abe0aa1e0d1063"
+      "sha256": "e623eacc8073785cd3d85c6e0a5b0abcfb96b3c798bb21afc9e14243c5501b97"
     },
     {
       "path": "items/fish/koi.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 3
@@ -3845,11 +3845,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "28f12970d53cf24400996b0f44e314b06178fa549d1ee67140691a9e462e6578"
+      "sha256": "07a18466db209e790eda1e79518c1795aa5c4baa1e3ee36343ba1938c76c5489"
     },
     {
       "path": "items/fish/moonfin.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 4
@@ -3860,11 +3860,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "64d34e695521d146a9af167d5a1c04aee9276145500bbd5883aa481c5b0326e1"
+      "sha256": "e8fc248d4e1ff57ef212536b646e76eb4096062c2dcbd3217c97cbb85bd055c9"
     },
     {
       "path": "items/fish/river-trout.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 3,
         "column": 5
@@ -3875,11 +3875,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "a3b9b9a4051b042de7f00ed1ec4d4bb99f17c3830d4db7beb0f4ac772db8c2a5"
+      "sha256": "a97c3abeabcbcd01e1cb66d36c7b93382a30d66cbd478f5274384b150de0c448"
     },
     {
       "path": "items/fish/silver-dace.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 0
@@ -3890,11 +3890,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "040d243beca654ad821d31d2d51cd8c0070f1405ba358e41719710eaa7fc9d9b"
+      "sha256": "8626d0f76a1bd1917a266af6b02b800844480c22785c4ddc94be196e057fbb5a"
     },
     {
       "path": "items/fish/night-eel.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 1
@@ -3905,11 +3905,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "d40193293b10371a7e08e38d200749ff59f6b29d3093546f6a2eecf9f30cf523"
+      "sha256": "361dbc0693b4f59f062a9b9a0e2a239fd3ebe4f801861923b17afc8d75e7878b"
     },
     {
       "path": "items/fish/shore-sardine.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 2
@@ -3920,11 +3920,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "ce598b43f90af9767a48cd01f5380b6e014a016fd346d5e1a8c98584ff6e0df0"
+      "sha256": "ad86d7e00303358c562e27e6c8c7550b4c702dfff02a96a904ff8862457a2746"
     },
     {
       "path": "items/fish/coral-bream.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 3
@@ -3935,11 +3935,11 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "a3ec114cd50906860cd591cd5b394a809260b8f36d4528e00726e499c3ee1c60"
+      "sha256": "763299e27d599df6a4abdff17410a0f6ef5c2dbcd1787d26c602230ecf9e2d7d"
     },
     {
       "path": "items/fish/tide-ray.png",
-      "source": "source/items-sheet.png",
+      "source": "source/items-sheet-pure-game.png",
       "cell": {
         "row": 4,
         "column": 4
@@ -3950,7 +3950,7 @@
       },
       "alpha": true,
       "transparent_corners": true,
-      "sha256": "0ef3feaa5240d044ab03040bf78f91a6330a1faa9b31d9d13ea63651c2c1732c"
+      "sha256": "e8c973a6bc71b9363e8dc4232359e2879275d588c95a5a6b0fdd74600d94873f"
     },
     {
       "path": "items/tools/seeds.png",

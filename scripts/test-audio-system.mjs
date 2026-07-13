@@ -86,6 +86,7 @@ const moduleUrl = `data:text/javascript;base64,${Buffer.from(compiled).toString(
 const audio = await import(moduleUrl);
 
 assert(audio.AUDIO_CROSSFADE_MS === 1000, 'Crossfade must remain 1000ms');
+assert(audio.AUDIO_INTERIOR_GAIN > 0 && audio.AUDIO_INTERIOR_GAIN < 1, 'Interior music must keep playing at a reduced gain');
 assert(Object.values(audio.AUDIO_TRACKS).every((track) => track.available), 'All five tracks must be available');
 assert(audio.getAudioTrack('farm-village', false) === 'village-day', 'Village track mapping failed');
 assert(audio.getAudioTrack('whisper-forest', false) === 'forest-day', 'Forest track mapping failed');
@@ -117,8 +118,13 @@ advance(500);
 assert(village.paused && village.sourceCleared, 'Previous track must be released after crossfade');
 closeTo(forest.volume, 0.42, 'Forest track final volume');
 
+controller.setInterior(true);
+closeTo(forest.volume, 0.42 * audio.AUDIO_INTERIOR_GAIN, 'The current regional track must continue quietly indoors');
+
 controller.updateSettings({ muted: false, volume: 0.25 });
-closeTo(forest.volume, 0.25, 'Volume setting must update the active track');
+closeTo(forest.volume, 0.25 * audio.AUDIO_INTERIOR_GAIN, 'Volume setting must respect interior attenuation');
+controller.setInterior(false);
+closeTo(forest.volume, 0.25, 'Leaving a building must restore outdoor gain');
 audio.persistAudioSettings({ muted: false, volume: 0.25 });
 const restored = audio.loadAudioSettings();
 assert(restored.muted === false && restored.volume === 0.25, 'Audio settings must persist');

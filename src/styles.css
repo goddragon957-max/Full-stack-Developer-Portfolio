@@ -509,15 +509,17 @@ main[data-app="mossbell-farm"] {
   place-items: center;
   color: #fff7d8;
   background: #1f261b;
-  animation: region-pixel-fade .52s steps(5, end) both;
   pointer-events: none;
 }
+.region-transition-overlay.phase-out { animation: region-pixel-fade-out .36s steps(5, end) both; }
+.region-transition-overlay.phase-in { animation: region-pixel-fade-in .36s steps(5, end) both; }
 .region-transition-overlay span {
   padding: 8px 12px;
   border: 3px solid #f3c56d;
   font: 950 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-@keyframes region-pixel-fade { 0%, 100% { opacity: 0; } 35%, 65% { opacity: 1; } }
+@keyframes region-pixel-fade-out { from { opacity: 0; } to { opacity: 1; } }
+@keyframes region-pixel-fade-in { from { opacity: 1; } to { opacity: 0; } }
 .fishing-spot > kbd {
   position: absolute;
   left: 50%;
@@ -652,6 +654,24 @@ main[data-app="mossbell-farm"] {
   -webkit-user-drag: none;
   transition: left .085s linear, top .085s linear;
 }
+.interior-actor {
+  background: transparent;
+  box-shadow: none;
+}
+.interior-actor > img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 48px;
+  height: 64px;
+  translate: -50% 0;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+}
+.interior-actor.entity-indoorCow1 > img,
+.interior-actor.entity-indoorCow2 > img { width: 62px; height: 58px; }
+.interior-actor.is-nearby { background: rgba(255, 241, 156, .1); }
 .player-sprite.is-walking {
   filter: saturate(1.04);
 }
@@ -732,9 +752,9 @@ main[data-app="mossbell-farm"] {
 }
 .harvest-feedback span { color: #9fe089; font-size: 7px; font-weight: 950; }
 .harvest-feedback strong { margin-top: 4px; font-size: 9px; line-height: 1; }
-.harvest-feedback.crop-frontend { border-color: #80d8df; }
-.harvest-feedback.crop-backend { border-color: #f2c85a; }
-.harvest-feedback.crop-bim { border-color: #b29bdc; }
+.harvest-feedback.crop-potato { border-color: #d5af73; }
+.harvest-feedback.crop-strawberry { border-color: #e66f76; }
+.harvest-feedback.crop-carrot { border-color: #ee9b52; }
 .harvest-feedback i {
   position: absolute;
   z-index: 1;
@@ -1176,9 +1196,9 @@ main[data-app="mossbell-farm"] {
   border: 2px solid #3a2617;
   font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-.farm-seed-selector button[data-seed-type="frontend"] { background: #80d8df; }
-.farm-seed-selector button[data-seed-type="backend"] { background: #f2c85a; }
-.farm-seed-selector button[data-seed-type="bim"] { background: #b29bdc; }
+.farm-seed-selector button[data-seed-type="potato"] { background: #d5af73; }
+.farm-seed-selector button[data-seed-type="strawberry"] { background: #e66f76; }
+.farm-seed-selector button[data-seed-type="carrot"] { background: #ee9b52; }
 .farm-seed-selector button.is-active {
   outline: 2px solid #fff3bd;
   outline-offset: -4px;
@@ -1252,11 +1272,11 @@ main[data-app="mossbell-farm"] {
 .inventory-slot[data-item-tone="quest"] { background: #ffd770; }
 .inventory-slot[data-item-tone="tools"] { background: #e9a35f; }
 .inventory-slot[data-item-tone="harvest"] { background: #9bd875; }
-.inventory-slot[data-item-tone="server"] { background: #b9a9de; }
+.inventory-slot[data-item-tone="barn"] { background: #b9a9de; }
 .inventory-slot[data-item-tone="complete"] { background: #f6c94d; }
-.inventory-slot[data-item-tone="frontend"] { background: #80d8df; }
-.inventory-slot[data-item-tone="backend"] { background: #f2c85a; }
-.inventory-slot[data-item-tone="bim"] { background: #b29bdc; }
+.inventory-slot[data-item-tone="potato"] { background: #d5af73; }
+.inventory-slot[data-item-tone="strawberry"] { background: #e66f76; }
+.inventory-slot[data-item-tone="carrot"] { background: #ee9b52; }
 .inventory-slot[data-item-tone="tomato"] { background: #e97a68; }
 .inventory-slot[data-item-tone="corn"] { background: #f2cf5a; }
 .inventory-slot[data-item-tone="pumpkin"] { background: #d99a50; }
@@ -1579,11 +1599,11 @@ main[data-app="mossbell-farm"] {
 .item-pickup-toast > div[data-item-tone="quest"] { background: #ffd770; }
 .item-pickup-toast > div[data-item-tone="tools"] { background: #e9a35f; }
 .item-pickup-toast > div[data-item-tone="harvest"] { background: #9bd875; }
-.item-pickup-toast > div[data-item-tone="server"] { background: #b9a9de; }
+.item-pickup-toast > div[data-item-tone="barn"] { background: #b9a9de; }
 .item-pickup-toast > div[data-item-tone="complete"] { background: #f6c94d; }
-.item-pickup-toast > div[data-item-tone="frontend"] { background: #80d8df; }
-.item-pickup-toast > div[data-item-tone="backend"] { background: #f2c85a; }
-.item-pickup-toast > div[data-item-tone="bim"] { background: #b29bdc; }
+.item-pickup-toast > div[data-item-tone="potato"] { background: #d5af73; }
+.item-pickup-toast > div[data-item-tone="strawberry"] { background: #e66f76; }
+.item-pickup-toast > div[data-item-tone="carrot"] { background: #ee9b52; }
 .item-pickup-toast > div[data-item-tone="tomato"] { background: #e97a68; }
 .item-pickup-toast > div[data-item-tone="corn"] { background: #f2cf5a; }
 .item-pickup-toast > div[data-item-tone="pumpkin"] { background: #d99a50; }
@@ -1724,7 +1744,7 @@ main[data-app="mossbell-farm"] {
   border-color: #2d2114;
 }
 .map-panel,
-.about-panel,
+.journal-panel,
 .settings-panel {
   padding: 12px;
 }
@@ -1784,7 +1804,7 @@ main[data-app="mossbell-farm"] {
   box-shadow: 0 0 0 4px rgba(156,255,130,.45);
 }
 .map-panel p,
-.about-panel p,
+.journal-panel p,
 .settings-panel p {
   margin: 10px 0 0;
   color: #ffeec0;
@@ -1851,12 +1871,12 @@ main[data-app="mossbell-farm"] {
   font-size: 12px;
   line-height: 1.35;
 }
-.about-panel dl {
+.journal-panel dl {
   display: grid;
   gap: 8px;
   margin: 12px 0;
 }
-.about-panel dl div {
+.journal-panel dl div {
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -1864,17 +1884,17 @@ main[data-app="mossbell-farm"] {
   background: rgba(255, 247, 216, .1);
   border: 2px solid rgba(255, 215, 112, .35);
 }
-.about-panel dt {
+.journal-panel dt {
   color: #ffd770;
   font-weight: 950;
 }
-.about-panel dd {
+.journal-panel dd {
   margin: 0;
   color: #fff7d8;
   text-align: right;
   font-weight: 820;
 }
-.about-panel ul {
+.journal-panel ul {
   margin: 12px 0 0;
   padding-left: 18px;
   color: #fff7d8;
@@ -1882,16 +1902,7 @@ main[data-app="mossbell-farm"] {
   line-height: 1.45;
   font-weight: 780;
 }
-.about-resume-button {
-  width: auto;
-  min-height: 40px;
-  margin-top: 12px;
-  color: #2d2114;
-  background: #ffd770;
-  border: 3px solid #2d2114;
-  box-shadow: 0 3px 0 #1b1209;
-  font: 950 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-}
+.journal-panel h3 { margin: 12px 0 0; color: #9fe089; font-size: 11px; }
 .settings-panel {
   display: grid;
   gap: 10px;
@@ -2146,7 +2157,22 @@ main[data-app="mossbell-farm"] {
   font-weight: 950;
   letter-spacing: .08em;
 }
+.intro-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+.intro-start.is-continue { background: #ffd770; }
+.intro-start:disabled {
+  color: #8c775e;
+  background: #b6a787;
+  cursor: not-allowed;
+  filter: saturate(.45);
+  box-shadow: 0 4px 0 #1b1209;
+}
 .intro-start:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #1b1209; }
+.intro-start:disabled:hover { transform: none; box-shadow: 0 4px 0 #1b1209; }
 .intro-start:active { transform: translateY(4px); box-shadow: 0 2px 0 #1b1209; }
 .intro-card small {
   display: block;
@@ -2174,6 +2200,10 @@ main[data-app="mossbell-farm"] {
   .touch-pad { display: grid; }
   .settings-window { top: 72px; }
   .is-intro .touch-pad { display: none; }
+}
+@media (max-width: 480px) {
+  .intro-actions { flex-direction: column; align-items: stretch; }
+  .intro-start { width: 100%; }
 }
 @media (max-width: 620px) {
   .farm-game { --dialogue-bar-height: 136px; }
@@ -2486,145 +2516,3 @@ main[data-app="mossbell-farm"] {
   .firework-burst i,
   .celebration-banner { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
-/* Resume (recruiter text view) */
-.resume-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: grid;
-  place-items: center;
-  padding: clamp(10px, 3vw, 32px);
-  background: rgba(20, 12, 6, .72);
-}
-.resume-window {
-  width: min(760px, 100%);
-  max-height: min(860px, calc(100dvh - 32px));
-  display: flex;
-  flex-direction: column;
-  color: #fff3c9;
-  background: rgba(61, 38, 21, .98);
-  border: 5px solid #f3c56d;
-  box-shadow: 0 8px 0 rgba(25,15,7,.55), 0 28px 70px rgba(0,0,0,.4), inset 0 0 0 4px rgba(255,255,255,.08);
-}
-.resume-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  background: #3a2617;
-  border-bottom: 4px solid #9b6731;
-}
-.resume-header span {
-  display: block;
-  color: #8b5c21;
-  font: 950 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: #f3c56d;
-}
-.resume-header strong {
-  display: block;
-  margin-top: 5px;
-  color: #fff7d8;
-  font-size: 19px;
-  line-height: 1.1;
-  font-weight: 950;
-}
-.resume-close {
-  width: 38px;
-  height: 38px;
-  flex: none;
-  color: #fff7d8;
-  background: #6d4526;
-  border: 3px solid #f3c56d;
-  box-shadow: 0 3px 0 rgba(0,0,0,.28);
-  font-size: 24px;
-  font-weight: 950;
-  line-height: 1;
-}
-.resume-body {
-  overflow: auto;
-  padding: 16px 18px 20px;
-  font-size: 13.5px;
-  line-height: 1.55;
-}
-.resume-body h3 {
-  margin: 18px 0 8px;
-  color: #f3c56d;
-  font: 950 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.resume-lead {
-  margin: 0 0 6px;
-  color: #fff7d8;
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.35;
-}
-.resume-sub { margin: 0; color: #e8d3a8; }
-.resume-experiences,
-.resume-skills {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 12px;
-}
-.resume-experiences > li {
-  padding: 10px 12px;
-  background: rgba(35, 22, 12, .55);
-  border: 2px solid #9b6731;
-}
-.resume-exp-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px;
-}
-.resume-exp-head strong { color: #fff7d8; font-size: 15px; }
-.resume-exp-head span { color: #f3c56d; font-size: 12px; font-weight: 900; }
-.resume-experiences em {
-  display: block;
-  margin: 2px 0 4px;
-  color: #e8d3a8;
-  font-size: 12.5px;
-  font-style: normal;
-  font-weight: 800;
-}
-.resume-experiences p { margin: 0 0 6px; color: #f5e6c2; }
-.resume-experiences ul {
-  margin: 0;
-  padding-left: 16px;
-  display: grid;
-  gap: 2px;
-  color: #e8d3a8;
-  font-size: 12.5px;
-}
-.resume-skills > li {
-  display: grid;
-  gap: 2px;
-  padding: 8px 12px;
-  background: rgba(35, 22, 12, .55);
-  border: 2px solid #9b6731;
-}
-.resume-skills strong { color: #fff7d8; font-size: 13px; }
-.resume-skills span { color: #e8d3a8; font-size: 12.5px; }
-.resume-contact { margin: 0; display: flex; gap: 14px; }
-.resume-contact a { color: #f3c56d; font-weight: 900; text-decoration: underline; }
-.resume-footnote { margin: 14px 0 0; color: #b98d55; font-size: 11.5px; }
-
-.intro-resume-link {
-  display: block;
-  margin: 10px auto 0;
-  padding: 6px 10px;
-  color: #f3c56d;
-  background: transparent;
-  border: none;
-  font: 900 12.5px/1.2 inherit;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.intro-resume-link:hover { color: #fff7d8; }

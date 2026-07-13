@@ -37,8 +37,8 @@ SHEETS = {
     "player-actions": Sheet("player-actions-sheet.png", 5, 3, "Player hoe, watering, mining, fishing cast and fishing reel actions", True),
     "npc-portraits": Sheet("npc-portraits-sheet.png", 3, 5, "Five NPC dialogue portraits with neutral, happy and concerned expressions", dynamic_columns=True),
     "livestock": Sheet("livestock-sheet.png", 2, 6, "Chicken and cow state animation pack"),
-    "crops": Sheet("crops-sheet.png", 5, 6, "Six crops across five growth stages"),
-    "items": Sheet("items-sheet.png", 5, 6, "Harvest, ranch, forage, ore and fish icon pack"),
+    "crops": Sheet("crops-sheet-pure-game.png", 5, 6, "Potato, strawberry, carrot, tomato, corn and pumpkin across five growth stages"),
+    "items": Sheet("items-sheet-pure-game.png", 5, 6, "Pure farming RPG harvest, ranch, forage, ore and fish icon pack"),
     "gameplay": Sheet("gameplay-sheet.png", 3, 6, "Tools, soil states and ambient effect pack"),
     "world-props": Sheet("world-props-sheet.png", 3, 5, "Market, village, ranch, coast, mine and landmark prop pack", dynamic_columns=True),
 }
@@ -310,6 +310,8 @@ def process_hoe_icon(assets: list[dict]) -> None:
 
 
 def main() -> None:
+    manifest_path = ASSET_ROOT / "manifest.json"
+    existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
     assets: list[dict] = []
     process_style_props(assets)
     process_terrain_tiles(assets)
@@ -336,7 +338,7 @@ def main() -> None:
         [f"animals/cow/{state}.png" for state in animal_states],
     ], (48, 48), (46, 44), assets)
 
-    crop_names = ("frontend", "backend", "bim", "tomato", "corn", "pumpkin")
+    crop_names = ("potato", "strawberry", "carrot", "tomato", "corn", "pumpkin")
     crop_stages = ("planted", "watered", "growing-1", "growing-2", "ready")
     process_grid_pack("crops", [
         [f"crops/{crop}/{stage}.png" for crop in crop_names]
@@ -399,12 +401,23 @@ def main() -> None:
         "sha256": hashlib.sha256(hoe_source.read_bytes()).hexdigest(),
     })
 
-    expected_audio = ("village-day", "forest-day", "coast-day", "mine-day", "night")
-    audio = [{
-        "id": track,
-        "path": f"/assets/audio/{track}.mp3",
-        "present": (ROOT / "public" / "assets" / "audio" / f"{track}.mp3").exists(),
-    } for track in expected_audio]
+    audio_sources = {
+        "village-day": "Meadow Village Morning.m4a",
+        "forest-day": "Whispering Willow Stream.m4a",
+        "coast-day": "Sunlit Shoreline Drift.m4a",
+        "mine-day": "Crystal Foothill Echoes.m4a",
+        "night": "Starlight Harvest Home.m4a",
+    }
+    audio = []
+    for track, source_name in audio_sources.items():
+        runtime_path = ROOT / "public" / "assets" / "audio" / f"{track}.mp3"
+        audio.append({
+            "id": track,
+            "path": f"/assets/audio/{track}.mp3",
+            "source": f"mp4/{source_name}",
+            "present": runtime_path.exists(),
+            "sha256": hashlib.sha256(runtime_path.read_bytes()).hexdigest() if runtime_path.exists() else None,
+        })
 
     manifest = {
         "version": 1,
@@ -421,7 +434,10 @@ def main() -> None:
             "all_sprite_transparent_corners": all(asset["transparent_corners"] for asset in assets if not asset["path"].startswith("tiles/terrain/")),
         },
     }
-    (ASSET_ROOT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    for key in ("maps", "interiors"):
+        if key in existing_manifest:
+            manifest[key] = existing_manifest[key]
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Processed {len(assets)} GPT Image sprites into {ASSET_ROOT}")
 
 

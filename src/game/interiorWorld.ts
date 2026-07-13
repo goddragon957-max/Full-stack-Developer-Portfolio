@@ -1,4 +1,22 @@
 export type InteriorId = 'farmhouse' | 'shop' | 'barn' | 'hana-cottage' | 'jun-cottage';
+export type InteriorDayPhase = 'dawn' | 'day' | 'sunset' | 'night';
+export type InteriorActorId = 'shopKeeper' | 'indoorHana' | 'indoorJun' | 'indoorChicken1' | 'indoorChicken2' | 'indoorChicken3' | 'indoorCow1' | 'indoorCow2';
+
+export type InteriorActor = {
+  id: InteriorActorId;
+  kind: 'npc' | 'animal';
+  name: string;
+  label: string;
+  prompt: string;
+  dialogue: string[];
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  range: number;
+  spriteKind: 'lumi' | 'hana' | 'jun' | 'chicken' | 'cow';
+  facing: 'up' | 'down' | 'left' | 'right';
+};
 
 export type InteriorInteractionId =
   | 'exitDoor'
@@ -41,16 +59,21 @@ export type InteriorInfo = {
   shortLabel: string;
   mapAsset: string;
   entry: { x: number; y: number; facing: 'up' };
-  outsideReturn: { x: number; y: number; facing: 'down' | 'up' };
+  outsideReturn: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' };
   interactions: InteriorInteraction[];
 };
 
 export type InteriorSave = {
-  version: 1;
+  version: 2;
   currentInterior: InteriorId | null;
+  lastOutdoor: {
+    region: 'farm-village' | 'whisper-forest' | 'river-coast' | 'mine-foothill';
+    position: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' };
+  };
 };
 
 export const INTERIOR_STORAGE_KEY = 'mossbell-interior-v1';
+export const INTERIOR_SAVE_VERSION = 2;
 export const INTERIOR_IDS: InteriorId[] = ['farmhouse', 'shop', 'barn', 'hana-cottage', 'jun-cottage'];
 export const INTERIOR_WORLD_WIDTH = 24;
 export const INTERIOR_WORLD_HEIGHT = 16;
@@ -112,7 +135,7 @@ export const INTERIOR_INFO: Record<InteriorId, InteriorInfo> = {
     shortLabel: 'BARN',
     mapAsset: '/assets/art-remaster-v1/maps/barn-interior.png',
     entry: { x: 11, y: 13, facing: 'up' },
-    outsideReturn: { x: 6, y: 21, facing: 'up' },
+    outsideReturn: { x: 8, y: 20, facing: 'left' },
     interactions: [
       exitDoor(),
       { id: 'barnStalls', kind: 'inspect', name: 'Animal Stalls', label: 'STALLS', prompt: '밤이면 닭과 소가 편히 쉬는 깨끗한 우리다.', dialogue: ['짚이 새로 깔려 있고 물통도 가득 차 있다.'], x: 5, y: 2, w: 14, h: 5, range: 2.8, solid: true },
@@ -138,7 +161,7 @@ export const INTERIOR_INFO: Record<InteriorId, InteriorInfo> = {
     shortLabel: 'JUN',
     mapAsset: '/assets/art-remaster-v1/maps/jun-cottage-interior.png',
     entry: { x: 11, y: 13, facing: 'up' },
-    outsideReturn: { x: 29, y: 21, facing: 'up' },
+    outsideReturn: { x: 26, y: 20, facing: 'right' },
     interactions: [
       exitDoor(),
       { id: 'junBed', kind: 'bed', name: "Jun's Bed", label: 'BED', prompt: '붉은 누비이불이 포근하게 덮여 있다.', dialogue: ['침대 곁에는 이른 아침에 신을 장화가 놓여 있다.'], x: 3, y: 2, w: 5, h: 6, range: 2.4, solid: true },
@@ -157,6 +180,48 @@ const COMMON_BLOCKED_RECTS = [
   { x: 14, y: 15, w: 8, h: 1 },
 ];
 
+const DEFAULT_OUTDOOR: InteriorSave['lastOutdoor'] = {
+  region: 'farm-village',
+  position: { x: 9, y: 7, facing: 'left' },
+};
+
+const SHOP_KEEPER: InteriorActor = {
+  id: 'shopKeeper', kind: 'npc', name: '루미', label: 'SHOPKEEPER',
+  prompt: '루미가 씨앗 진열대를 정리하고 있다.',
+  dialogue: ['어서 와요. 씨앗은 돈 없이도 밭에서 원하는 종류를 골라 심을 수 있어요.', '감자와 당근은 다루기 쉽고, 딸기와 호박은 수확할 때 특히 뿌듯하답니다.'],
+  x: 15, y: 7, w: 1, h: 2, range: 2.2, spriteKind: 'lumi', facing: 'down',
+};
+
+const HANA_HOME: InteriorActor = {
+  id: 'indoorHana', kind: 'npc', name: '하나', label: 'HANA',
+  prompt: '하나가 내일 심을 씨앗을 고르고 있다.',
+  dialogue: ['오늘 밭은 잘 돌봤나요? 아침에는 흙이 마르기 전에 물을 주는 게 좋아요.', '푹 쉬고 나면 새 작물도 한층 자라 있을 거예요.'],
+  x: 12, y: 8, w: 1, h: 2, range: 2.2, spriteKind: 'hana', facing: 'down',
+};
+
+const JUN_HOME: InteriorActor = {
+  id: 'indoorJun', kind: 'npc', name: '준', label: 'JUN',
+  prompt: '준이 목장 수첩을 정리하고 있다.',
+  dialogue: ['동물들은 먹이를 먹고 쓰다듬어 주면 다음 날 더 기분 좋게 깨어나요.', '밤에는 모두 헛간으로 돌아가니 조용히 쉬게 해 주세요.'],
+  x: 11, y: 8, w: 1, h: 2, range: 2.2, spriteKind: 'jun', facing: 'down',
+};
+
+const BARN_ANIMALS: InteriorActor[] = [
+  { id: 'indoorChicken1', kind: 'animal', name: '병아리콩', label: 'SLEEPING', prompt: '닭이 짚 위에서 잠들어 있다.', dialogue: ['작은 날갯죽지가 숨결에 맞춰 천천히 움직인다.'], x: 7, y: 8, w: 1, h: 1, range: 1.8, spriteKind: 'chicken', facing: 'down' },
+  { id: 'indoorChicken2', kind: 'animal', name: '보리', label: 'SLEEPING', prompt: '닭이 짚 위에서 잠들어 있다.', dialogue: ['오늘도 배불리 먹은 듯 편안한 표정이다.'], x: 9, y: 9, w: 1, h: 1, range: 1.8, spriteKind: 'chicken', facing: 'left' },
+  { id: 'indoorChicken3', kind: 'animal', name: '메밀', label: 'SLEEPING', prompt: '닭이 짚 위에서 잠들어 있다.', dialogue: ['꼬리깃이 살짝 흔들리다 이내 고요해진다.'], x: 11, y: 8, w: 1, h: 1, range: 1.8, spriteKind: 'chicken', facing: 'right' },
+  { id: 'indoorCow1', kind: 'animal', name: '구름', label: 'SLEEPING', prompt: '소가 깨끗한 우리에서 쉬고 있다.', dialogue: ['따뜻한 숨이 짚 냄새와 섞여 포근하게 번진다.'], x: 15, y: 8, w: 2, h: 2, range: 2, spriteKind: 'cow', facing: 'left' },
+  { id: 'indoorCow2', kind: 'animal', name: '노을', label: 'SLEEPING', prompt: '소가 깨끗한 우리에서 쉬고 있다.', dialogue: ['내일 아침이면 다시 목장으로 나갈 준비를 마칠 것이다.'], x: 18, y: 9, w: 2, h: 2, range: 2, spriteKind: 'cow', facing: 'right' },
+];
+
+export function getInteriorActors(interiorId: InteriorId, phase: InteriorDayPhase): InteriorActor[] {
+  if (interiorId === 'shop' && phase !== 'night') return [SHOP_KEEPER];
+  if (interiorId === 'hana-cottage' && (phase === 'dawn' || phase === 'night')) return [HANA_HOME];
+  if (interiorId === 'jun-cottage' && (phase === 'dawn' || phase === 'night')) return [JUN_HOME];
+  if (interiorId === 'barn' && phase === 'night') return BARN_ANIMALS;
+  return [];
+}
+
 export function getInteriorIdForBuilding(buildingId: string) {
   return BUILDING_INTERIORS[buildingId] ?? null;
 }
@@ -169,28 +234,47 @@ export function isInteriorBlocked(interiorId: InteriorId, x: number, y: number) 
 }
 
 export function normalizeInteriorSave(value: unknown): InteriorSave {
-  if (!value || typeof value !== 'object') return { version: 1, currentInterior: null };
+  if (!value || typeof value !== 'object') return { version: INTERIOR_SAVE_VERSION, currentInterior: null, lastOutdoor: DEFAULT_OUTDOOR };
   const candidate = value as Partial<InteriorSave>;
   const currentInterior = INTERIOR_IDS.includes(candidate.currentInterior as InteriorId)
     ? candidate.currentInterior as InteriorId
     : null;
-  return { version: 1, currentInterior };
+  const savedOutdoor = candidate.lastOutdoor && typeof candidate.lastOutdoor === 'object' ? candidate.lastOutdoor : DEFAULT_OUTDOOR;
+  const region = ['farm-village', 'whisper-forest', 'river-coast', 'mine-foothill'].includes(String(savedOutdoor.region))
+    ? savedOutdoor.region as InteriorSave['lastOutdoor']['region']
+    : DEFAULT_OUTDOOR.region;
+  const savedPosition = savedOutdoor.position && typeof savedOutdoor.position === 'object' ? savedOutdoor.position : DEFAULT_OUTDOOR.position;
+  const facing = ['up', 'down', 'left', 'right'].includes(String(savedPosition.facing))
+    ? savedPosition.facing as InteriorSave['lastOutdoor']['position']['facing']
+    : DEFAULT_OUTDOOR.position.facing;
+  return {
+    version: INTERIOR_SAVE_VERSION,
+    currentInterior,
+    lastOutdoor: {
+      region,
+      position: {
+        x: Math.max(2, Math.min(29, Math.floor(Number(savedPosition.x)) || DEFAULT_OUTDOOR.position.x)),
+        y: Math.max(2, Math.min(19, Math.floor(Number(savedPosition.y)) || DEFAULT_OUTDOOR.position.y)),
+        facing,
+      },
+    },
+  };
 }
 
 export function loadInteriorSave(): InteriorSave {
-  if (typeof window === 'undefined') return { version: 1, currentInterior: null };
+  if (typeof window === 'undefined') return { version: INTERIOR_SAVE_VERSION, currentInterior: null, lastOutdoor: DEFAULT_OUTDOOR };
   try {
     const saved = window.localStorage.getItem(INTERIOR_STORAGE_KEY);
-    return saved ? normalizeInteriorSave(JSON.parse(saved)) : { version: 1, currentInterior: null };
+    return saved ? normalizeInteriorSave(JSON.parse(saved)) : { version: INTERIOR_SAVE_VERSION, currentInterior: null, lastOutdoor: DEFAULT_OUTDOOR };
   } catch {
-    return { version: 1, currentInterior: null };
+    return { version: INTERIOR_SAVE_VERSION, currentInterior: null, lastOutdoor: DEFAULT_OUTDOOR };
   }
 }
 
-export function persistInteriorSave(currentInterior: InteriorId | null) {
+export function persistInteriorSave(currentInterior: InteriorId | null, lastOutdoor: InteriorSave['lastOutdoor']) {
   if (typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(INTERIOR_STORAGE_KEY, JSON.stringify({ version: 1, currentInterior } satisfies InteriorSave));
+    window.localStorage.setItem(INTERIOR_STORAGE_KEY, JSON.stringify({ version: INTERIOR_SAVE_VERSION, currentInterior, lastOutdoor } satisfies InteriorSave));
   } catch {
     // A storage failure should not block entering or leaving a building.
   }
