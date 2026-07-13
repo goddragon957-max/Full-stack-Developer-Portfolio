@@ -41,7 +41,7 @@ export const FARM_GROWTH_STEP_MS = 1000;
 
 export const FARM_TOOLS: FarmTool[] = ['hoe', 'seeds', 'watering-can'];
 export const FARM_CROPS: CropType[] = ['frontend', 'backend', 'bim', 'tomato', 'corn', 'pumpkin'];
-export const FARM_PORTFOLIO_CROPS: CropType[] = ['frontend', 'backend', 'bim'];
+export const FARM_GARDEN_CROPS: CropType[] = ['frontend', 'backend', 'bim'];
 export const FARM_LIFE_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
 export const CROP_QUALITIES: CropQuality[] = ['normal', 'silver', 'gold'];
 export const FARM_PLOT_STAGES: FarmPlotStage[] = [
@@ -63,50 +63,50 @@ export const FARM_TOOL_INFO: Record<FarmTool, { label: string; shortcut: string;
 export const FARM_CROP_INFO: Record<CropType, {
   label: string;
   shortLabel: string;
-  portfolioTitle: string;
-  portfolioDescription: string;
+  journalTitle: string;
+  description: string;
   tone: string;
 }> = {
   frontend: {
-    label: 'Frontend 작물',
-    shortLabel: 'FE',
-    portfolioTitle: 'Frontend 수확: React/TypeScript',
-    portfolioDescription: 'React와 TypeScript로 운영 화면과 입력·목록 UI를 다룬 기록.',
+    label: '감자',
+    shortLabel: '감자',
+    journalTitle: '농장 도감: 감자',
+    description: '포슬포슬한 알이 흙 아래에서 단단하게 여문 감자.',
     tone: 'frontend',
   },
   backend: {
-    label: 'Backend 작물',
-    shortLabel: 'BE',
-    portfolioTitle: 'Backend 수확: Java/Spring Boot/PostgreSQL',
-    portfolioDescription: 'Java, Spring Boot, PostgreSQL과 MyBatis로 API와 데이터 흐름을 다룬 기록.',
+    label: '딸기',
+    shortLabel: '딸기',
+    journalTitle: '농장 도감: 딸기',
+    description: '초록 잎 사이로 향긋하고 붉게 익은 딸기.',
     tone: 'backend',
   },
   bim: {
-    label: 'BIM 작물',
-    shortLabel: 'BIM',
-    portfolioTitle: 'BIM 수확: AWP/BIM/xeokit/XKT',
-    portfolioDescription: 'AWP와 BIM 업무 흐름, xeokit·XKT·tile/LOD·clipping 검증 기록.',
+    label: '당근',
+    shortLabel: '당근',
+    journalTitle: '농장 도감: 당근',
+    description: '싱싱한 잎과 선명한 주황빛 뿌리를 가진 당근.',
     tone: 'bim',
   },
   tomato: {
     label: '토마토',
     shortLabel: '토마토',
-    portfolioTitle: '농장 도감: 토마토',
-    portfolioDescription: '햇빛을 받아 붉게 익은 마을 밭의 토마토.',
+    journalTitle: '농장 도감: 토마토',
+    description: '햇빛을 받아 붉게 익은 마을 밭의 토마토.',
     tone: 'tomato',
   },
   corn: {
     label: '옥수수',
     shortLabel: '옥수수',
-    portfolioTitle: '농장 도감: 옥수수',
-    portfolioDescription: '키가 곧게 자라 황금빛 알을 맺은 옥수수.',
+    journalTitle: '농장 도감: 옥수수',
+    description: '키가 곧게 자라 황금빛 알을 맺은 옥수수.',
     tone: 'corn',
   },
   pumpkin: {
     label: '호박',
     shortLabel: '호박',
-    portfolioTitle: '농장 도감: 호박',
-    portfolioDescription: '넓은 잎 아래 묵직하게 여문 주황빛 호박.',
+    journalTitle: '농장 도감: 호박',
+    description: '넓은 잎 아래 묵직하게 여문 주황빛 호박.',
     tone: 'pumpkin',
   },
 };

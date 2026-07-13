@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "visual_source": "gpt-image",
+  "reference_assets": [
+    "maps/farmhouse-interior.png",
+    "style/style-anchor.png"
+  ],
+  "interiors": [
+    {
+      "id": "farmhouse-interior",
+      "file": "farmhouse-interior.png",
+      "prompt_summary": "Player farmhouse with bed, chest, hearth, kitchen, dining table, rug, and bottom exit.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "source": "source/interiors/farmhouse-interior.png",
+      "runtime": "maps/farmhouse-interior.png",
+      "source_size": {
+        "width": 1536,
+        "height": 1024
+      },
+      "runtime_size": {
+        "width": 384,
+        "height": 256
+      },
+      "resize": "nearest-neighbor",
+      "source_sha256": "d87f2430e315a61ced191ecbbd2788aa7f9730f03c718e1133dc4940e54e8fcf",
+      "runtime_sha256": "c579efd5d94d5f55db442cfbabae14b7547dc89c5109d5bc469e8658bc105753"
+    },
+    {
+      "id": "shop-interior",
+      "file": "shop-interior.png",
+      "prompt_summary": "Cozy seed shop with wall shelves, counter, clear central aisle, and bottom exit.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "source": "source/interiors/shop-interior.png",
+      "runtime": "maps/shop-interior.png",
+      "source_size": {
+        "width": 1536,
+        "height": 1024
+      },
+      "runtime_size": {
+        "width": 384,
+        "height": 256
+      },
+      "resize": "nearest-neighbor",
+      "source_sha256": "197e7ca233ca01dcfe85c11da6629f37b37c8de213858df9110344b70d84abbe",
+      "runtime_sha256": "d9df98073e6da284bdc46f6bca5cbbddc3a5c7783ed24a4b2a881d9009c013dc"
+    },
+    {
+      "id": "barn-interior",
+      "file": "barn-interior.png",
+      "prompt_summary": "Working barn with two stalls, feed storage, clear center aisle, and bottom double door.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "source": "source/interiors/barn-interior.png",
+      "runtime": "maps/barn-interior.png",
+      "source_size": {
+        "width": 1536,
+        "height": 1024
+      },
+      "runtime_size": {
+        "width": 384,
+        "height": 256
+      },
+      "resize": "nearest-neighbor",
+      "source_sha256": "7e5b982522daae84c98cc48392bf819c8105d767a5a7d6f8beef2fb0d5548ef3",
+      "runtime_sha256": "d868d563d6adc7086d1ac0555a4c0422ca1b94ecc980551c4c1413134783e698"
+    },
+    {
+      "id": "hana-cottage-interior",
+      "file": "hana-cottage-interior.png",
+      "prompt_summary": "Farmer cottage with bed, gardening desk, planters, stove, and clear center route.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "source": "source/interiors/hana-cottage-interior.png",
+      "runtime": "maps/hana-cottage-interior.png",
+      "source_size": {
+        "width": 1536,
+        "height": 1024
+      },
+      "runtime_size": {
+        "width": 384,
+        "height": 256
+      },
+      "resize": "nearest-neighbor",
+      "source_sha256": "60f6e20ee20e2f60e8a1d4edb75d2e3d3da11af47e3d371b573a68001eb19bf6",
+      "runtime_sha256": "fa67ac07cedb1e461fd9d0d03f738a12b1d690b00242347a69daf03ce9448a21"
+    },
+    {
+      "id": "jun-cottage-interior",
+      "file": "jun-cottage-interior.png",
+      "prompt_summary": "Rancher cottage with bed, fireplace, ranch tools, milk cans, and clear center route.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "source": "source/interiors/jun-cottage-interior.png",
+      "runtime": "maps/jun-cottage-interior.png",
+      "source_size": {
+        "width": 1536,
+        "height": 1024
+      },
+      "runtime_size": {
+        "width": 384,
+        "height": 256
+      },
+      "resize": "nearest-neighbor",
+      "source_sha256": "979d89377c877fd39afeaa1ed15d996fbc9b11b653062038aa54bf60b89d056d",
+      "runtime_sha256": "6a5605e952bfb5bd60a5ebdc286291ceb32486ee5a18da052263eef9377ac45e"
+    }
+  ]
+}

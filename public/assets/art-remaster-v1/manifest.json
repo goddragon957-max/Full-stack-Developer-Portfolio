@@ -4540,11 +4540,47 @@
     {
       "id": "farmhouse-interior",
       "path": "maps/farmhouse-interior.png",
-      "source": "source/maps/farmhouse-interior-room.png",
-      "source_policy": "Existing OpenAI-generated pixel room reused without code-drawn replacement",
+      "source": "source/interiors/farmhouse-interior.png",
+      "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
       "width": 384,
       "height": 256,
-      "sha256": "d6eaab3f982babb484f10e1d5a3e8511e28a54600b1e1b704fe9e10d4e4b0acb"
+      "sha256": "c579efd5d94d5f55db442cfbabae14b7547dc89c5109d5bc469e8658bc105753"
+    },
+    {
+      "id": "shop-interior",
+      "path": "maps/shop-interior.png",
+      "source": "source/interiors/shop-interior.png",
+      "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
+      "width": 384,
+      "height": 256,
+      "sha256": "d9df98073e6da284bdc46f6bca5cbbddc3a5c7783ed24a4b2a881d9009c013dc"
+    },
+    {
+      "id": "barn-interior",
+      "path": "maps/barn-interior.png",
+      "source": "source/interiors/barn-interior.png",
+      "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
+      "width": 384,
+      "height": 256,
+      "sha256": "d868d563d6adc7086d1ac0555a4c0422ca1b94ecc980551c4c1413134783e698"
+    },
+    {
+      "id": "hana-cottage-interior",
+      "path": "maps/hana-cottage-interior.png",
+      "source": "source/interiors/hana-cottage-interior.png",
+      "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
+      "width": 384,
+      "height": 256,
+      "sha256": "fa67ac07cedb1e461fd9d0d03f738a12b1d690b00242347a69daf03ce9448a21"
+    },
+    {
+      "id": "jun-cottage-interior",
+      "path": "maps/jun-cottage-interior.png",
+      "source": "source/interiors/jun-cottage-interior.png",
+      "source_policy": "OpenAI GPT Image source processed with nearest-neighbor scaling",
+      "width": 384,
+      "height": 256,
+      "sha256": "6a5605e952bfb5bd60a5ebdc286291ceb32486ee5a18da052263eef9377ac45e"
     }
   ]
 }

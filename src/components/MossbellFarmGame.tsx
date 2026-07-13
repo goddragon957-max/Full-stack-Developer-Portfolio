@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { Backpack, BookOpen, CheckCircle2, Clock3, Compass, Hammer, Mail, MapPin, Moon, Mountain, PartyPopper, Pickaxe, RotateCcw, Server, Sprout, Sun, TreePine, Volume2, VolumeX, Waves, type LucideIcon } from 'lucide-react';
-import { experiences, hero, skillGroups } from '../data/portfolio';
+import { Backpack, BookOpen, CheckCircle2, Clock3, Compass, Hammer, Mail, MapPin, Moon, Mountain, PartyPopper, Pickaxe, RotateCcw, Sprout, Sun, TreePine, Volume2, VolumeX, Waves, type LucideIcon } from 'lucide-react';
 import {
   FARM_CROPS,
   FARM_CROP_INFO,
   FARM_LIFE_CROPS,
-  FARM_PORTFOLIO_CROPS,
+  FARM_GARDEN_CROPS,
   FARM_STORAGE_KEY,
   FARM_TOOL_INFO,
   FARM_TOOLS,
@@ -108,6 +107,19 @@ import {
   type RegionId,
 } from '../game/openWorld';
 import {
+  INTERIOR_IDS,
+  INTERIOR_INFO,
+  INTERIOR_STORAGE_KEY,
+  INTERIOR_WORLD_HEIGHT,
+  INTERIOR_WORLD_WIDTH,
+  getInteriorIdForBuilding,
+  isInteriorBlocked,
+  loadInteriorSave,
+  persistInteriorSave,
+  type InteriorId,
+  type InteriorInteractionId,
+} from '../game/interiorWorld';
+import {
   FORAGE_ITEM_IDS,
   FORAGE_ITEM_INFO,
   FORAGE_NODES,
@@ -150,16 +162,14 @@ import {
   type AudioSettings,
 } from '../game/audioSystem';
 
-const CONTACT_EMAIL = 'cvb7412@naver.com';
-// TODO: GitHub 주소 입력 시 RESUME 뷰에 링크가 노출됩니다.
-const GITHUB_URL = '';
-
 type SceneId = 'outside' | 'interior';
 type EntityId =
   | 'farmhouse'
   | 'workshop'
   | 'market'
   | 'barn'
+  | 'hanaCottage'
+  | 'junCottage'
   | 'board'
   | 'mailbox'
   | 'villageKeeper'
@@ -173,17 +183,11 @@ type EntityId =
   | 'mineTravelPost'
   | 'cropPatch'
   | 'emptyLook'
-  | 'exitDoor'
-  | 'skillDesk'
-  | 'projectBoard'
-  | 'serverShelf'
-  | 'bimTable'
-  | 'journalShelf'
-  | 'mailTable';
+  | InteriorInteractionId;
 type Direction = SpriteDirection;
-type MenuTab = 'map' | 'about' | 'settings';
+type MenuTab = 'map' | 'journal' | 'settings';
 type InventoryTab = 'bag' | 'farm' | 'ranch' | 'forage';
-type SeedGroup = 'portfolio' | 'village';
+type SeedGroup = 'garden' | 'field';
 type QuestStage =
   | 'not-started'
   | 'visit-workshop'
@@ -247,9 +251,7 @@ type Entity = {
 const TILE = 32;
 const OUTSIDE_WORLD_W = 32;
 const OUTSIDE_WORLD_H = 22;
-const INTERIOR_WORLD_W = 24;
-const INTERIOR_WORLD_H = 16;
-const INTRO_TITLE = 'EOM SINYONG';
+const INTRO_TITLE = 'MOSSBELL FARM';
 const MOVE_INTERVAL_MS = 92;
 const MOBILE_CAMERA_BREAKPOINT = 620;
 const MOBILE_DIALOGUE_BAR_HEIGHT = 136;
@@ -480,9 +482,9 @@ const farmStageLabels: Record<FarmPlotStage, string> = {
 
 const questLabels: Record<QuestStage, string> = {
   'not-started': '새 의뢰',
-  'visit-workshop': '작업장 조사',
-  'harvest-project-crops': '프로젝트 수확',
-  'inspect-server-barn': '서버 점검',
+  'visit-workshop': '씨앗 가게 방문',
+  'harvest-project-crops': '작물 3개 수확',
+  'inspect-server-barn': '헛간 확인',
   'return-to-board': '완료 보고',
   complete: '의뢰 완료',
 };
@@ -500,7 +502,7 @@ const outsideEntities: Entity[] = [
   {
     id: 'farmhouse',
     scene: 'outside',
-    name: 'Old Farmhouse',
+    name: 'Mossbell Farmhouse',
     kind: 'building',
     x: 3,
     y: 2,
@@ -509,15 +511,15 @@ const outsideEntities: Entity[] = [
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/farmhouse.png',
     label: 'ENTER HOUSE',
-    prompt: '집 안으로 들어가면 포트폴리오 물건들이 놓여 있다.',
-    journalTitle: '농장집 입장',
-    dialogue: ['문을 열었다. 포트폴리오 페이지가 아니라, 포트폴리오가 숨겨진 집 내부로 들어간다.'],
-    tags: ['Enter', 'House interior', 'Portfolio objects'],
+    prompt: '따뜻한 불빛이 새어 나오는 농가다.',
+    journalTitle: '모스벨 농가',
+    dialogue: ['문을 열면 포근한 농가 안으로 들어갈 수 있다.'],
+    tags: ['Home', 'Rest', 'Storage'],
   },
   {
     id: 'workshop',
     scene: 'outside',
-    name: 'Tool Workshop',
+    name: 'Mossbell Seed Shop',
     kind: 'building',
     x: 12,
     y: 2,
@@ -525,16 +527,16 @@ const outsideEntities: Entity[] = [
     h: 4,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/shop.png',
-    label: 'WORKSHOP',
-    prompt: '바깥 작업장이다. 진짜 기술 기록은 집 안 책상에도 있다.',
-    journalTitle: '바깥 작업장',
-    dialogue: ['작업장 문패에는 React, TypeScript, Java, Spring Boot 도구가 걸려 있다.', '집 안 SKILL 책상에서 더 자세한 기록을 확인할 수 있다.'],
-    tags: ['React', 'TypeScript', 'Java', 'Spring Boot'],
+    label: 'SEED SHOP',
+    prompt: '보랏빛 차양 아래 씨앗 주머니가 진열되어 있다.',
+    journalTitle: '모스벨 씨앗 가게',
+    dialogue: ['문을 열면 계절 씨앗과 농사 도구를 살펴볼 수 있다.'],
+    tags: ['Seeds', 'Shop', 'Village'],
   },
   {
     id: 'market',
     scene: 'outside',
-    name: 'Project Market',
+    name: 'Village Market',
     kind: 'building',
     x: 24,
     y: 8,
@@ -542,16 +544,16 @@ const outsideEntities: Entity[] = [
     h: 4,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/market-stall.png',
-    label: 'PROJECTS',
-    prompt: '프로젝트 상자들이 쌓인 시장이다.',
-    journalTitle: '시장 상자: 프로젝트 납품 기록',
-    dialogue: ['상자 라벨: 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰 운영, AWP 업무 시스템.', '실제 업무 흐름 안에서 기능 추가, 버그 수정, 리팩터링, 외부 API 연동을 처리한 기록이다.'],
-    tags: ['AWS', 'Linux', 'React', 'TypeScript', 'PostgreSQL'],
+    label: 'MARKET',
+    prompt: '신선한 채소와 들꽃이 놓인 작은 장터다.',
+    journalTitle: '모스벨 장터',
+    dialogue: ['아침마다 마을 사람들이 수확물을 가져와 진열한다.', '빈 바구니에서는 사과와 햇볕 냄새가 난다.'],
+    tags: ['Produce', 'Flowers', 'Village'],
   },
   {
     id: 'barn',
     scene: 'outside',
-    name: 'Server Barn',
+    name: 'Mossbell Barn',
     kind: 'building',
     x: 4,
     y: 17,
@@ -559,11 +561,45 @@ const outsideEntities: Entity[] = [
     h: 4,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/barn.png',
-    label: 'SERVER BARN',
-    prompt: '서버 헛간이다. 집 안 SERVER 선반에도 운영 기록이 있다.',
-    journalTitle: '서버 헛간: 운영과 인프라',
-    dialogue: ['Linux, AWS EC2/S3/RDS, Apache/Nginx, DB 운영 메모가 적혀 있다.', '서비스 뒤에서 Java/Spring Boot, PostgreSQL, MyBatis가 안정적으로 움직이도록 보는 쪽의 기록이다.'],
-    tags: ['Java', 'Spring Boot', 'AWS', 'Linux', 'PostgreSQL', 'MyBatis'],
+    label: 'ENTER BARN',
+    prompt: '동물들이 밤에 쉬는 붉은 헛간이다.',
+    journalTitle: '모스벨 헛간',
+    dialogue: ['문 너머로 마른 짚과 사료 냄새가 난다.'],
+    tags: ['Ranch', 'Animals', 'Feed'],
+  },
+  {
+    id: 'hanaCottage',
+    scene: 'outside',
+    name: "Hana's Cottage",
+    kind: 'building',
+    x: 20,
+    y: 2,
+    w: 4,
+    h: 4,
+    range: 3,
+    sprite: '/assets/art-remaster-v1/props/buildings/hana-cottage.png',
+    label: "HANA'S HOME",
+    prompt: '초록 지붕과 꽃상자가 예쁜 하나의 집이다.',
+    journalTitle: '하나의 오두막',
+    dialogue: ['창가 화분마다 새싹이 고개를 내밀고 있다.'],
+    tags: ['Hana', 'Flowers', 'Cottage'],
+  },
+  {
+    id: 'junCottage',
+    scene: 'outside',
+    name: "Jun's Cottage",
+    kind: 'building',
+    x: 27,
+    y: 17,
+    w: 4,
+    h: 4,
+    range: 3,
+    sprite: '/assets/art-remaster-v1/props/buildings/jun-cottage.png',
+    label: "JUN'S HOME",
+    prompt: '목장 옆에 자리한 붉은 지붕 오두막이다.',
+    journalTitle: '준의 오두막',
+    dialogue: ['문 옆 우유통이 햇빛을 받아 반짝인다.'],
+    tags: ['Jun', 'Ranch', 'Cottage'],
   },
   {
     id: 'board',
@@ -577,10 +613,10 @@ const outsideEntities: Entity[] = [
     range: 3,
     sprite: '/assets/art-remaster-v1/props/quest-board.png',
     label: 'QUEST BOARD',
-    prompt: '게시판에 BIM/AWP 의뢰서가 붙어 있다.',
-    journalTitle: '의뢰서: AWP/BIM 뷰어 검증',
-    dialogue: ['게시판 의뢰: AWP, BIM, Workpackage 흐름을 화면에서 검증하라.', 'xeokit, XKT, tile/LOD, clipping 같은 3D/BIM 뷰어 키워드가 퀘스트 조건으로 적혀 있다.'],
-    tags: ['AWP', 'BIM', 'xeokit', 'XKT'],
+    prompt: '오늘의 마을 심부름이 붙어 있다.',
+    journalTitle: '마을 게시판',
+    dialogue: ['씨앗 가게에 들르고, 밭에서 작물 세 개를 수확한 뒤 헛간을 확인해 달라는 쪽지다.'],
+    tags: ['Quest', 'Village', 'Daily work'],
   },
   {
     id: 'mailbox',
@@ -594,10 +630,10 @@ const outsideEntities: Entity[] = [
     range: 2,
     sprite: '/assets/art-remaster-v1/props/mailbox.png',
     label: 'MAIL',
-    prompt: '빨간 우편함이 흔들린다. 안에 연락 쪽지가 있다.',
-    journalTitle: '우편함: 연락과 링크',
-    dialogue: ['우편함에 연락 쪽지가 있다: cvb7412@naver.com', '화면 위 RESUME 버튼을 누르면 텍스트 이력서를 바로 볼 수 있다.'],
-    tags: ['Journal', 'Contact', 'Portfolio'],
+    prompt: '빨간 우편함 안에서 편지가 바스락거린다.',
+    journalTitle: '농가 우편함',
+    dialogue: ['편지에는 오늘 날씨와 마을 축제 준비 소식이 적혀 있다.'],
+    tags: ['Mail', 'Village news'],
   },
   {
     id: 'villageKeeper',
@@ -619,7 +655,7 @@ const outsideEntities: Entity[] = [
   {
     id: 'cropPatch',
     scene: 'outside',
-    name: 'Project Crop Patch',
+    name: 'Community Field',
     kind: 'crop',
     x: 15,
     y: 13,
@@ -628,9 +664,9 @@ const outsideEntities: Entity[] = [
     range: 2,
     label: 'FARM',
     prompt: '가까운 밭 칸에서 도구를 선택하고 E를 눌러 농사를 시작하세요.',
-    journalTitle: '수확물: 운영 기능과 리팩터링',
-    dialogue: ['작업 기록 열매를 수확했다: 운영 기능 추가, 관리자 화면, 목록/입력 UI, 외부 API 연동.', '이 게임에서는 포트폴리오가 카드가 아니라 발견물이다.'],
-    tags: ['Project crop', 'REST API', 'Admin UI'],
+    journalTitle: '마을 공동 밭',
+    dialogue: ['씨앗을 심고 물을 주면 날짜가 흐르며 작물이 자란다.'],
+    tags: ['Crops', 'Watering', 'Harvest'],
   },
 ];
 
@@ -653,125 +689,32 @@ const emptyLookEntity: Entity = {
   tags: ['Move closer', 'Press E'],
 };
 
-const interiorEntities: Entity[] = [
-  {
-    id: 'exitDoor',
+function getInteriorEntities(interiorId: InteriorId): Entity[] {
+  const info = INTERIOR_INFO[interiorId];
+  return info.interactions.map((interaction) => ({
+    id: interaction.id,
     scene: 'interior',
-    name: 'Exit Door',
-    kind: 'door',
-    x: 11,
-    y: 14,
-    w: 2,
-    h: 2,
-    range: 2,
-    label: 'EXIT',
-    prompt: '문으로 나가면 농장 마을로 돌아간다.',
-    journalTitle: '집 내부 탐색',
-    dialogue: ['문 앞에 섰다. 다시 바깥 농장으로 나갈 수 있다.'],
-    tags: ['Exit', 'Farm'],
-  },
-  {
-    id: 'skillDesk',
-    scene: 'interior',
-    name: 'SKILL Desk',
-    kind: 'interior',
-    x: 3,
-    y: 3,
-    w: 4,
-    h: 3,
-    range: 3,
-    label: 'SKILL',
-    prompt: '노트북과 키보드가 놓인 SKILL 책상이다.',
-    journalTitle: '집 안 책상: 기술 스택',
-    dialogue: ['노트북 화면에 React/TypeScript UI와 Java/Spring Boot API 작업 기록이 켜져 있다.', '옆 노트에는 PostgreSQL/MyBatis 데이터 처리 메모가 정리되어 있다.'],
-    tags: ['React', 'TypeScript', 'Java', 'Spring Boot', 'PostgreSQL', 'MyBatis'],
-  },
-  {
-    id: 'projectBoard',
-    scene: 'interior',
-    name: 'QUEST Board',
-    kind: 'interior',
-    x: 12,
-    y: 3,
-    w: 4,
-    h: 3,
-    range: 3,
-    label: 'QUEST',
-    prompt: '프로젝트 의뢰가 붙은 QUEST 게시판이다.',
-    journalTitle: '집 안 게시판: 프로젝트 의뢰',
-    dialogue: ['의뢰서에는 문자 발송 서버, 앱 API/관리자 페이지, 쇼핑몰 운영, AWP 업무 시스템이 붙어 있다.', '각 종이는 기능 추가, 버그 수정, 외부 API 연동, 리팩터링 같은 실제 작업 기록이다.'],
-    tags: ['Projects', 'Admin UI', 'REST API', 'Operations'],
-  },
-  {
-    id: 'serverShelf',
-    scene: 'interior',
-    name: 'SERVER Shelf',
-    kind: 'interior',
-    x: 18,
-    y: 3,
-    w: 4,
-    h: 4,
-    range: 3,
-    label: 'SERVER',
-    prompt: '나무 선반처럼 꾸민 SERVER 랙이다.',
-    journalTitle: '집 안 서버 선반: Backend & Infra',
-    dialogue: ['서버 선반에는 AWS, Linux, Apache/Nginx, RDS 운영 노트가 꽂혀 있다.', '서비스 뒤쪽의 안정성, 배포 환경, DB 흐름을 확인하는 기록이다.'],
-    tags: ['AWS', 'Linux', 'Java', 'Spring Boot', 'PostgreSQL'],
-  },
-  {
-    id: 'bimTable',
-    scene: 'interior',
-    name: 'BIM Blueprint Table',
-    kind: 'interior',
-    x: 3,
-    y: 9,
-    w: 5,
-    h: 3,
-    range: 3,
-    label: 'BIM',
-    prompt: '설계 도면과 말린 청사진이 놓인 BIM 테이블이다.',
-    journalTitle: '청사진 테이블: AWP/BIM',
-    dialogue: ['청사진에는 AWP, BIM, Workpackage 흐름과 뷰어 검증 조건이 그려져 있다.', 'xeokit, XKT, tile/LOD, clipping 같은 키워드가 작업 체크리스트로 붙어 있다.'],
-    tags: ['AWP', 'BIM', 'xeokit', 'XKT'],
-  },
-  {
-    id: 'journalShelf',
-    scene: 'interior',
-    name: 'JOURNAL Shelf',
-    kind: 'interior',
-    x: 18,
-    y: 8,
-    w: 4,
-    h: 4,
-    range: 3,
-    label: 'JOURNAL',
-    prompt: '경험 기록이 꽂힌 JOURNAL 책장이다.',
-    journalTitle: '책장: 경험 기록',
-    dialogue: ['책장에는 PHP/CodeIgniter 유지보수에서 앱/웹 운영, 문자 서버, AWP/BIM 업무 시스템으로 확장한 기록이 있다.', '경력은 설명문이 아니라 플레이 중 발견하는 일지로 쌓인다.'],
-    tags: ['Experience', 'PHP', 'CodeIgniter', 'Operations'],
-  },
-  {
-    id: 'mailTable',
-    scene: 'interior',
-    name: 'MAIL Table',
-    kind: 'interior',
-    x: 14,
-    y: 12,
-    w: 3,
-    h: 3,
-    range: 3,
-    label: 'MAIL',
-    prompt: '연락 편지와 링크가 놓인 MAIL 테이블이다.',
-    journalTitle: '편지 테이블: Contact',
-    dialogue: ['편지에 연락처가 적혀 있다: cvb7412@naver.com', '전체 경력은 화면 위 RESUME 버튼에서 텍스트로 확인할 수 있다.'],
-    tags: ['Contact', 'GitHub', 'Resume', 'Portfolio'],
-  },
-];
+    name: interaction.name,
+    kind: interaction.kind === 'exit' ? 'door' : 'interior',
+    x: interaction.x,
+    y: interaction.y,
+    w: interaction.w,
+    h: interaction.h,
+    range: interaction.range,
+    label: interaction.label,
+    prompt: interaction.prompt,
+    journalTitle: `${info.label}: ${interaction.name}`,
+    dialogue: interaction.dialogue,
+    tags: ['Interior', info.shortLabel, interaction.kind],
+  }));
+}
+
+const allInteriorEntities = INTERIOR_IDS.flatMap(getInteriorEntities);
 
 function distanceToEntity(player: Player, entity: Entity) {
-  const cx = entity.x + entity.w / 2;
-  const cy = entity.y + entity.h / 2;
-  return Math.hypot(player.x - cx, player.y - cy);
+  const nearestX = clamp(player.x, entity.x, entity.x + entity.w - 1);
+  const nearestY = clamp(player.y, entity.y, entity.y + entity.h - 1);
+  return Math.hypot(player.x - nearestX, player.y - nearestY);
 }
 
 function getNearestEntity(player: Player, entities: Entity[]) {
@@ -797,11 +740,11 @@ function getInitialViewport(): ViewportSize {
 function getQuestObjective(stage: QuestStage, harvestCount: number) {
   const objectives: Record<QuestStage, string> = {
     'not-started': '옆에 있는 빨간 우편함에서 첫 의뢰를 확인하세요.',
-    'visit-workshop': '북쪽 작업장에서 기술 기록을 조사하세요.',
-    'harvest-project-crops': `중앙 밭에서 프로젝트 작물을 수확하세요. (${harvestCount}/3)`,
-    'inspect-server-barn': '남쪽 서버 헛간의 운영 기록을 점검하세요.',
+    'visit-workshop': '북쪽 씨앗 가게 안으로 들어가세요.',
+    'harvest-project-crops': `중앙 밭에서 작물을 수확하세요. (${harvestCount}/3)`,
+    'inspect-server-barn': '남쪽 헛간 안으로 들어가 우리를 확인하세요.',
     'return-to-board': '남쪽 마을 게시판에 완료 보고를 남기세요.',
-    complete: '첫 의뢰 완료. 농장과 집 안의 기록을 자유롭게 탐색하세요.',
+    complete: '첫 의뢰 완료. 농장과 네 지역을 자유롭게 탐험하세요.',
   };
   return objectives[stage];
 }
@@ -816,18 +759,18 @@ function getDialogueBarHeight(viewport: ViewportSize, dialogueOpen: boolean) {
 }
 
 function getSceneWorldWidth(scene: SceneId) {
-  return scene === 'outside' ? OUTSIDE_WORLD_W : INTERIOR_WORLD_W;
+  return scene === 'outside' ? OUTSIDE_WORLD_W : INTERIOR_WORLD_WIDTH;
 }
 
 function getSceneWorldHeight(scene: SceneId) {
-  return scene === 'outside' ? OUTSIDE_WORLD_H : INTERIOR_WORLD_H;
+  return scene === 'outside' ? OUTSIDE_WORLD_H : INTERIOR_WORLD_HEIGHT;
 }
 
-function isBlockedByEntity(x: number, y: number, scene: SceneId, region: RegionId, dynamicEntities?: Entity[]) {
+function isBlockedByEntity(x: number, y: number, scene: SceneId, region: RegionId, dynamicEntities: Entity[], interiorId: InteriorId | null) {
+  if (scene === 'interior') return interiorId ? isInteriorBlocked(interiorId, x, y) : true;
   if (scene === 'outside' && region === 'farm-village' && (isFishingWaterCell(x, y, region) || isRanchFenceCell(x, y))) return true;
   if (scene === 'outside' && region !== 'farm-village' && (isFishingWaterCell(x, y, region) || isRegionBlocked(region, x, y))) return true;
-  const entities = dynamicEntities ?? (scene === 'outside' ? outsideEntities : interiorEntities);
-  return entities.some((entity) => {
+  return dynamicEntities.some((entity) => {
     if (entity.kind === 'crop' || entity.kind === 'door') return false;
     return x >= entity.x && x < entity.x + entity.w && y >= entity.y && y < entity.y + entity.h;
   });
@@ -896,22 +839,24 @@ function getWorldCameraStyle(player: Player, viewport: ViewportSize, scene: Scen
   return style;
 }
 
-export function PortfolioFarmGame() {
+export function MossbellFarmGame() {
   const [gameStarted, setGameStarted] = useState(false);
   const [typedNameLength, setTypedNameLength] = useState(0);
-  const [scene, setScene] = useState<SceneId>('outside');
+  const [activeInterior, setActiveInterior] = useState<InteriorId | null>(() => loadInteriorSave().currentInterior);
+  const [scene, setScene] = useState<SceneId>(() => activeInterior ? 'interior' : 'outside');
   const [openWorldState, setOpenWorldState] = useState<OpenWorldState>(() => loadOpenWorldState());
-  const [player, setPlayer] = useState<Player>(() => ({ ...openWorldState.positions[openWorldState.currentRegion], walking: false, step: 0 }));
+  const [player, setPlayer] = useState<Player>(() => activeInterior
+    ? { ...INTERIOR_INFO[activeInterior].entry, walking: false, step: 0 }
+    : { ...openWorldState.positions[openWorldState.currentRegion], walking: false, step: 0 });
   const [dialogue, setDialogue] = useState<Entity | null>(null);
   const [journal, setJournal] = useState<string[]>([]);
   const [harvestCount, setHarvestCount] = useState(0);
   const [questStage, setQuestStage] = useState<QuestStage>('not-started');
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeInventoryTab, setActiveInventoryTab] = useState<InventoryTab>('bag');
-  const [seedGroup, setSeedGroup] = useState<SeedGroup>('portfolio');
+  const [seedGroup, setSeedGroup] = useState<SeedGroup>('garden');
   const [selectedInventoryId, setSelectedInventoryId] = useState<InventoryItemId>('field-journal');
   const [acquiredItemId, setAcquiredItemId] = useState<InventoryItemId | null>(null);
-  const [resumeOpen, setResumeOpen] = useState(false);
   const [activeMenuTab, setActiveMenuTab] = useState<MenuTab>('map');
   const [showLabels, setShowLabels] = useState(false);
   const [showHints, setShowHints] = useState(true);
@@ -945,7 +890,6 @@ export function PortfolioFarmGame() {
   const gameStartedRef = useRef(gameStarted);
   const knownInventoryIdsRef = useRef<Set<InventoryItemId>>(new Set(['field-journal', 'farm-catalog', 'ranch-journal', 'forage-journal']));
   const itemPickupTimerRef = useRef<number | null>(null);
-  const resumeOpenRef = useRef(false);
   const movePlayerRef = useRef<(direction: Direction) => void>(() => undefined);
   const interactRef = useRef<() => void>(() => undefined);
   const stopWalkingRef = useRef<() => void>(() => undefined);
@@ -978,6 +922,7 @@ export function PortfolioFarmGame() {
 
   const villageTime = getVillageTime(timeMode, villageElapsedMs);
   const currentRegion = openWorldState.currentRegion;
+  const currentInteriorInfo = activeInterior ? INTERIOR_INFO[activeInterior] : null;
   desiredAudioTrackRef.current = getAudioTrack(currentRegion, villageTime.isNight);
   const lifeNpcEntities = useMemo<Entity[]>(() => LIFE_NPC_IDS.map((id) => {
     const info = LIFE_NPC_INFO[id];
@@ -1043,13 +988,17 @@ export function PortfolioFarmGame() {
       tags: ['Fast travel', currentRegion],
     };
   }, [currentRegion]);
+  const currentInteriorEntities = useMemo(
+    () => activeInterior ? getInteriorEntities(activeInterior) : [],
+    [activeInterior],
+  );
   const currentEntities = useMemo(
     () => {
-      if (scene === 'interior') return interiorEntities;
+      if (scene === 'interior') return currentInteriorEntities;
       if (currentRegion === 'farm-village') return [...outsideEntities, ...lifeNpcEntities, travelPostEntity];
       return [...openWorldNpcEntities, travelPostEntity];
     },
-    [currentRegion, lifeNpcEntities, openWorldNpcEntities, scene, travelPostEntity],
+    [currentInteriorEntities, currentRegion, lifeNpcEntities, openWorldNpcEntities, scene, travelPostEntity],
   );
   const nearby = useMemo(() => getNearestEntity(player, currentEntities), [player, currentEntities]);
   const nearbyFarmPlot = useMemo(
@@ -1074,13 +1023,13 @@ export function PortfolioFarmGame() {
     const position = getOpenWorldNpcPosition(id, villageTime.phase);
     return { id: openWorldNpcEntityIds[id], scene: 'outside', name: `${info.name} · ${info.role}`, kind: 'npc', x: position.x, y: position.y, w: 1, h: 2, range: 1.8, sprite: getNpcSprite(openWorldNpcRemasterIds[id], NPC_PHASE_FACING[villageTime.phase], 0), label: info.name, prompt: '', journalTitle: `${info.role} ${info.name}`, dialogue: [], tags: ['Open World NPC'] };
   }), [villageTime.phase]);
-  const allEntities = useMemo(() => [...outsideEntities, ...lifeNpcEntities, ...allOpenWorldNpcEntities, ...interiorEntities], [allOpenWorldNpcEntities, lifeNpcEntities]);
+  const allEntities = useMemo(() => [...outsideEntities, ...lifeNpcEntities, ...allOpenWorldNpcEntities, ...allInteriorEntities], [allOpenWorldNpcEntities, lifeNpcEntities]);
   const entityJournalEntries = journal
     .map((title) => allEntities.find((entity) => entity.journalTitle === title))
     .filter(Boolean) as Entity[];
   const farmJournalEntries = FARM_CROPS
     .filter((crop) => farmState.inventory[crop] > 0)
-    .map<JournalEntry>((crop) => ({ id: `farm-${crop}`, journalTitle: FARM_CROP_INFO[crop].portfolioTitle }));
+    .map<JournalEntry>((crop) => ({ id: `farm-${crop}`, journalTitle: FARM_CROP_INFO[crop].journalTitle }));
   const fishJournalEntries = fishingState.discovered
     .map<JournalEntry>((fish) => ({ id: `fish-${fish}`, journalTitle: `${FISH_INFO[fish].habitat.toUpperCase()} 도감: ${FISH_INFO[fish].label}` }));
   const ranchJournalEntries = [
@@ -1104,7 +1053,7 @@ export function PortfolioFarmGame() {
   const dialogueBarHeight = getDialogueBarHeight(viewport, dialogueOpen);
   const questObjective = getQuestObjective(questStage, harvestCount);
   const mapEntities = currentEntities;
-  const menuTabs: MenuTab[] = ['map', 'about', 'settings'];
+  const menuTabs: MenuTab[] = ['map', 'journal', 'settings'];
   const questStageIndex = questStageOrder.indexOf(questStage);
   const fishBasketDescription = fishingState.discovered.length > 0
     ? fishingState.discovered.map((fish) => `${FISH_INFO[fish].label} ${fishingState.inventory[fish]}`).join(' · ')
@@ -1115,7 +1064,7 @@ export function PortfolioFarmGame() {
         id: 'field-journal',
         name: '농장 수첩',
         category: 'RECORD',
-        description: `조사한 포트폴리오 기록 ${totalJournalCount}개가 정리되어 있다.`,
+        description: `모스벨에서 발견한 장소와 생물 ${totalJournalCount}개가 정리되어 있다.`,
         tone: 'journal',
         tab: 'bag',
         icon: BookOpen,
@@ -1125,7 +1074,7 @@ export function PortfolioFarmGame() {
         id: 'quest-note',
         name: '의뢰 쪽지',
         category: 'QUEST',
-        description: '우편함에서 받은 첫 의뢰. 농장의 개발 기록을 확인하고 완료 보고를 남겨야 한다.',
+        description: '우편함에서 받은 첫 마을 의뢰. 가게와 밭, 헛간의 하루 일을 돕는다.',
         tone: 'quest',
         tab: 'bag',
         icon: Mail,
@@ -1133,9 +1082,9 @@ export function PortfolioFarmGame() {
       },
       {
         id: 'tool-kit',
-        name: '개발 도구 기록',
-        category: 'SKILL',
-        description: '작업장에서 확인한 React, TypeScript, Java, Spring Boot 도구 기록.',
+        name: '씨앗 꾸러미',
+        category: 'FARM',
+        description: '씨앗 가게에서 받은 여섯 종류의 씨앗 꾸러미.',
         tone: 'tools',
         tab: 'bag',
         icon: Hammer,
@@ -1143,9 +1092,9 @@ export function PortfolioFarmGame() {
       },
       {
         id: 'project-crops',
-        name: '프로젝트 작물',
-        category: 'PROJECT',
-        description: `중앙 밭에서 수확한 프로젝트 기록. 현재 ${harvestCount}/3개를 모았다.`,
+        name: '오늘의 수확물',
+        category: 'QUEST',
+        description: `마을 의뢰를 위해 수확한 작물. 현재 ${harvestCount}/3개를 모았다.`,
         tone: 'harvest',
         tab: 'bag',
         icon: Sprout,
@@ -1154,19 +1103,19 @@ export function PortfolioFarmGame() {
       },
       {
         id: 'server-log',
-        name: '서버 운영 로그',
-        category: 'BACKEND',
-        description: '서버 헛간에서 점검한 AWS, Linux, Spring Boot, PostgreSQL/MyBatis 운영 기록.',
+        name: '헛간 점검표',
+        category: 'RANCH',
+        description: '우리, 사료통, 생산품 선반을 확인한 목장 점검표.',
         tone: 'server',
         tab: 'bag',
-        icon: Server,
+        icon: Hammer,
         unlocked: questStageIndex >= 4,
       },
       {
         id: 'completion-badge',
         name: '첫 의뢰 완료 배지',
         category: 'MILESTONE',
-        description: '기술, 프로젝트, 운영 기록을 하나의 작업 흐름으로 연결한 증표.',
+        description: '첫 마을 심부름을 끝낸 농부에게 주는 작은 나무 배지.',
         tone: 'complete',
         tab: 'bag',
         icon: CheckCircle2,
@@ -1176,7 +1125,7 @@ export function PortfolioFarmGame() {
         id: 'farm-catalog',
         name: '씨앗 도감',
         category: 'FARM',
-        description: '프로젝트 작물 3종과 마을 작물 토마토·옥수수·호박의 수확 기록.',
+        description: '감자·딸기·당근·토마토·옥수수·호박의 수확 기록.',
         tone: 'harvest',
         tab: 'farm',
         icon: Sprout,
@@ -1186,7 +1135,7 @@ export function PortfolioFarmGame() {
         id: farmInventoryItemIds[crop],
         name: FARM_CROP_INFO[crop].label,
         category: 'HARVEST',
-        description: `${FARM_CROP_INFO[crop].portfolioDescription} · NORMAL ${farmState.qualityInventory[crop].normal} / SILVER ${farmState.qualityInventory[crop].silver} / GOLD ${farmState.qualityInventory[crop].gold}`,
+        description: `${FARM_CROP_INFO[crop].description} · NORMAL ${farmState.qualityInventory[crop].normal} / SILVER ${farmState.qualityInventory[crop].silver} / GOLD ${farmState.qualityInventory[crop].gold}`,
         tone: FARM_CROP_INFO[crop].tone as InventoryTone,
         tab: 'farm',
         asset: CROP_ITEM_SPRITES[crop],
@@ -1601,7 +1550,7 @@ export function PortfolioFarmGame() {
       }[direction];
       const nextX = Math.max(0, Math.min(worldWidth - 1, current.x + delta[0]));
       const nextY = Math.max(0, Math.min(worldHeight - 1, current.y + delta[1]));
-      if (isBlockedByEntity(nextX, nextY, scene, currentRegion, currentEntities)) {
+      if (isBlockedByEntity(nextX, nextY, scene, currentRegion, currentEntities, activeInterior)) {
         return { ...current, facing: direction, walking: false };
       }
       return {
@@ -1612,28 +1561,63 @@ export function PortfolioFarmGame() {
         step: current.step + 1,
       };
     });
-  }, [cancelPlayerAction, currentEntities, currentRegion, player, regionTransition, scene, transitionThroughExit]);
+  }, [activeInterior, cancelPlayerAction, currentEntities, currentRegion, player, regionTransition, scene, transitionThroughExit]);
 
   const unlock = useCallback((target: Entity, dialogueLines: string[] = target.dialogue) => {
     setDialogue(dialogueLines === target.dialogue ? target : { ...target, dialogue: dialogueLines });
     setJournal((current) => addUnique(current, target.journalTitle));
   }, []);
 
-  const enterHouse = useCallback(() => {
+  const enterBuilding = useCallback((interiorId: InteriorId) => {
     cancelFishingRef.current('scene');
+    cancelPlayerAction();
     pressedDirectionsRef.current = [];
+    const info = INTERIOR_INFO[interiorId];
+    const roomEntry = getInteriorEntities(interiorId)[0];
+    setActiveInterior(interiorId);
     setScene('interior');
-    setPlayer((current) => ({ ...current, x: 11, y: 13, facing: 'up', walking: false, step: current.step + 1 }));
-    unlock(interiorEntities[0]);
-  }, [unlock]);
+    setPlayer((current) => ({ ...current, ...info.entry, walking: false, step: current.step + 1 }));
+    if (interiorId === 'shop' && questStage === 'visit-workshop') {
+      setQuestStage('harvest-project-crops');
+      unlock(roomEntry, ['씨앗 가게에 도착했다.', '다음 단계: 밭에서 잘 익은 작물 3개를 수확하자.']);
+      return;
+    }
+    if (interiorId === 'barn' && questStage === 'inspect-server-barn') {
+      setQuestStage('return-to-board');
+      unlock(roomEntry, ['헛간의 우리와 사료통을 확인했다.', '마지막 단계: 마을 게시판에 완료 보고를 남기자.']);
+      return;
+    }
+    unlock(roomEntry, [`${info.label} 안으로 들어왔다.`, ...roomEntry.dialogue]);
+  }, [cancelPlayerAction, questStage, unlock]);
 
-  const leaveHouse = useCallback(() => {
+  const leaveBuilding = useCallback(() => {
+    if (!activeInterior) return;
     cancelFishingRef.current('scene');
+    cancelPlayerAction();
     pressedDirectionsRef.current = [];
+    const info = INTERIOR_INFO[activeInterior];
+    const outsideReturn = info.outsideReturn;
+    const current = openWorldStateRef.current;
+    const nextWorldState: OpenWorldState = {
+      ...current,
+      currentRegion: 'farm-village',
+      positions: {
+        ...current.positions,
+        'farm-village': outsideReturn,
+      },
+    };
+    openWorldStateRef.current = nextWorldState;
+    setOpenWorldState(nextWorldState);
+    setActiveInterior(null);
     setScene('outside');
-    setPlayer((current) => ({ ...current, x: 6, y: 6, facing: 'down', walking: false, step: current.step + 1 }));
-    unlock(outsideEntities[0]);
-  }, [unlock]);
+    setPlayer((playerState) => ({ ...playerState, ...outsideReturn, walking: false, step: playerState.step + 1 }));
+    setDialogue({
+      ...outsideEntities[0],
+      name: info.label,
+      prompt: `${info.label}에서 마을로 나왔다.`,
+      dialogue: ['다시 농장 마을의 바람과 새소리가 들린다.'],
+    });
+  }, [activeInterior, cancelPlayerAction]);
 
   const interactWithNearbyAnimal = useCallback(() => {
     if (!nearbyAnimal) return false;
@@ -1717,10 +1701,10 @@ export function PortfolioFarmGame() {
       showHarvestFeedback(result.harvestedCrop, quality, nearbyFarmPlot.x, nearbyFarmPlot.y);
       if (!hadFirstHarvest) triggerCelebration('first-harvest');
       dialogueName = cropInfo.label;
-      dialogueLines.push(cropInfo.portfolioDescription);
+      dialogueLines.push(cropInfo.description);
       dialogueLines.push(`수확 품질: ${quality.toUpperCase()}`);
       if (result.firstOfType) {
-        dialogueLines.push(`${FARM_LIFE_CROPS.includes(result.harvestedCrop) ? '농장 도감' : '포트폴리오 기록'} 해금: ${cropInfo.portfolioTitle}`);
+        dialogueLines.push(`농장 도감 해금: ${cropInfo.journalTitle}`);
       }
 
       if (FARM_LIFE_CROPS.includes(result.harvestedCrop)) {
@@ -1729,12 +1713,12 @@ export function PortfolioFarmGame() {
         setVillageLifeState(nextLifeState);
       }
 
-      if (questStage === 'harvest-project-crops' && FARM_PORTFOLIO_CROPS.includes(result.harvestedCrop)) {
+      if (questStage === 'harvest-project-crops' && FARM_GARDEN_CROPS.includes(result.harvestedCrop)) {
         const nextHarvestCount = Math.min(harvestCount + 1, 3);
         setHarvestCount(nextHarvestCount);
         if (nextHarvestCount === 3) {
           setQuestStage('inspect-server-barn');
-          dialogueLines.push('프로젝트 작물 3개를 모두 수확했습니다. 다음은 남쪽 서버 헛간입니다.');
+          dialogueLines.push('작물 3개를 모두 수확했습니다. 다음은 남쪽 헛간입니다.');
         } else {
           dialogueLines.push(`퀘스트 수확 진행: ${nextHarvestCount}/3`);
         }
@@ -1767,12 +1751,17 @@ export function PortfolioFarmGame() {
       return;
     }
 
-    if (target.id === 'farmhouse' && scene === 'outside') {
-      enterHouse();
+    const interiorId = scene === 'outside' ? getInteriorIdForBuilding(target.id) : null;
+    if (interiorId) {
+      enterBuilding(interiorId);
       return;
     }
     if (target.id === 'exitDoor' && scene === 'interior') {
-      leaveHouse();
+      leaveBuilding();
+      return;
+    }
+    if (target.id === 'farmhouseBed' && scene === 'interior') {
+      advanceLifeToNextDay();
       return;
     }
 
@@ -1816,8 +1805,8 @@ export function PortfolioFarmGame() {
       setHarvestCount(0);
       setQuestStage('visit-workshop');
       unlock(target, [
-        '새 의뢰를 받았다: 농장 곳곳의 개발 기록을 확인하고 게시판에 완료 보고를 남겨라.',
-        '첫 목적지는 북쪽 작업장이다. 연락 쪽지에는 cvb7412@naver.com도 적혀 있다.',
+        '새 의뢰를 받았다: 씨앗 가게에 들르고 작물 세 개를 수확한 뒤 헛간을 확인하자.',
+        '첫 목적지는 북쪽의 보랏빛 지붕 씨앗 가게다.',
       ]);
       return;
     }
@@ -1827,30 +1816,12 @@ export function PortfolioFarmGame() {
       return;
     }
 
-    if (target.id === 'workshop' && questStage === 'visit-workshop') {
-      setQuestStage('harvest-project-crops');
-      unlock(target, [
-        '작업장의 React, TypeScript, Java, Spring Boot 도구를 확인했다.',
-        '다음 단계: 중앙 밭에서 프로젝트 작물 3개를 수확하자.',
-      ]);
-      return;
-    }
-
-    if (target.id === 'barn' && questStage === 'inspect-server-barn') {
-      setQuestStage('return-to-board');
-      unlock(target, [
-        'AWS, Linux, Java/Spring Boot, PostgreSQL/MyBatis 운영 기록을 점검했다.',
-        '마지막 단계: 남쪽 마을 게시판에 완료 보고를 남기자.',
-      ]);
-      return;
-    }
-
     if (target.id === 'board' && questStage === 'return-to-board') {
       setQuestStage('complete');
       triggerCelebration('quest-complete');
       unlock(target, [
-        '첫 의뢰 완료. 기술, 프로젝트, 운영, AWP/BIM 기록이 하나의 작업 흐름으로 연결됐다.',
-        '이제 농장과 집 안의 포트폴리오 기록을 자유롭게 탐색할 수 있다.',
+        '첫 마을 의뢰 완료. 씨앗 가게와 밭, 헛간의 하루 일이 모두 끝났다.',
+        '이제 다른 지역을 탐험하거나 농장 생활을 자유롭게 이어갈 수 있다.',
       ]);
       return;
     }
@@ -1861,7 +1832,7 @@ export function PortfolioFarmGame() {
     }
 
     unlock(target);
-  }, [currentEntities, currentRegion, enterHouse, interactWithFishing, interactWithNearbyAnimal, interactWithNearbyFarmPlot, interactWithNearbyForage, leaveHouse, nearby, questObjective, questStage, scene, triggerCelebration, unlock, villageLifeState, villageTime.phase]);
+  }, [advanceLifeToNextDay, currentEntities, currentRegion, enterBuilding, interactWithFishing, interactWithNearbyAnimal, interactWithNearbyFarmPlot, interactWithNearbyForage, leaveBuilding, nearby, questObjective, questStage, scene, triggerCelebration, unlock, villageLifeState, villageTime.phase]);
 
   useEffect(() => {
     if (typedNameLength >= INTRO_TITLE.length) return undefined;
@@ -1893,6 +1864,10 @@ export function PortfolioFarmGame() {
     openWorldStateRef.current = openWorldState;
     persistOpenWorldState(openWorldState);
   }, [openWorldState]);
+
+  useEffect(() => {
+    persistInteriorSave(activeInterior);
+  }, [activeInterior]);
 
   useEffect(() => {
     foragingStateRef.current = foragingState;
@@ -2042,10 +2017,6 @@ export function PortfolioFarmGame() {
   }, [clearFishingTimers]);
 
   useEffect(() => {
-    resumeOpenRef.current = resumeOpen;
-  }, [resumeOpen]);
-
-  useEffect(() => {
     const updateViewport = () => {
       setViewport({ width: window.innerWidth, height: window.innerHeight });
     };
@@ -2123,14 +2094,6 @@ export function PortfolioFarmGame() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (resumeOpenRef.current) {
-        if (event.code === 'Escape') {
-          event.preventDefault();
-          setResumeOpen(false);
-        }
-        return;
-      }
-
       if (!gameStartedRef.current) {
         if (event.code === 'Enter' || event.code === 'Space' || event.code === 'KeyE') {
           event.preventDefault();
@@ -2216,7 +2179,7 @@ export function PortfolioFarmGame() {
   const foragePrompt = nearbyForageNode
     ? `${FORAGE_ITEM_INFO[nearbyForageNode.item].label} · ${nearbyForageNode.tool === 'pickaxe' ? '곡괭이 [5]' : 'E로 채집'}`
     : null;
-  const prompt = fishingPrompt ?? animalPrompt ?? farmPrompt ?? foragePrompt ?? nearby?.prompt ?? (scene === 'outside' ? `${REGION_INFO[currentRegion].label} · 길 끝을 따라 다음 지역을 탐험하세요.` : '집 안 물건 옆에서 E를 눌러 포트폴리오 기록을 조사하세요.');
+  const prompt = fishingPrompt ?? animalPrompt ?? farmPrompt ?? foragePrompt ?? nearby?.prompt ?? (scene === 'outside' ? `${REGION_INFO[currentRegion].label} · 길 끝을 따라 다음 지역을 탐험하세요.` : '가구나 문 가까이에서 E를 눌러 살펴보세요.');
 
   return (
     <section
@@ -2225,7 +2188,7 @@ export function PortfolioFarmGame() {
         '--dialogue-bar-height': `${dialogueBarHeight}px`,
         '--inventory-rail-width': `${inventoryRailWidth}px`,
       } as CSSProperties}
-      data-ui-pass="portfolio-inside-farming-rpg"
+      data-ui-pass="mossbell-farm-game"
       data-game-world="playable-cozy-farm-rpg"
       data-screen-mode="fullscreen-game-shell"
       data-layout-mode="full-screen-map-with-right-inventory-bar"
@@ -2244,6 +2207,9 @@ export function PortfolioFarmGame() {
       data-intro-title={INTRO_TITLE}
       data-typed-title={typedTitle}
       data-current-scene={scene}
+      data-current-interior={activeInterior ?? 'outside'}
+      data-interior-count={INTERIOR_IDS.length}
+      data-interior-storage-key={INTERIOR_STORAGE_KEY}
       data-player-x={player.x}
       data-player-y={player.y}
       data-player-facing={player.facing}
@@ -2302,7 +2268,7 @@ export function PortfolioFarmGame() {
       data-village-life="v2"
       data-village-day={villageLifeState.day}
       data-village-life-storage="localStorage"
-      data-village-life-storage-key="portfolio-village-life-v2"
+      data-village-life-storage-key={VILLAGE_LIFE_STORAGE_KEY}
       data-life-npc-count="2"
       data-life-npc-schedule={villageTime.phase}
       data-ranch-animal-count="5"
@@ -2341,7 +2307,6 @@ export function PortfolioFarmGame() {
       data-quest-objective={questObjective}
       data-journal-count={totalJournalCount}
       data-harvest-count={harvestCount}
-      data-resume-open={resumeOpen ? 'true' : 'false'}
       data-generated-assets="gpt-image-remaster-packs"
       data-font="Pretendard"
     >
@@ -2457,7 +2422,7 @@ export function PortfolioFarmGame() {
                   {showHints && nearbyForageNode?.id === node.id && <kbd>E</kbd>}
                 </div>
               ))}
-              <img className={`player-sprite facing-${player.facing} ${playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE, zIndex: getPlayerDepth(player) }} alt="움직일 수 있는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-player-action={playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
+              <img className={`player-sprite facing-${player.facing} ${playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE, zIndex: getPlayerDepth(player) }} alt="움직일 수 있는 픽셀 농부" data-player-sprite={playerSprite} data-player-action={playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
               {forageFeedback && (
                 <div className="forage-feedback" style={{ left: forageFeedback.x * TILE, top: forageFeedback.y * TILE - 52, zIndex: 916 }} role="status" data-forage-feedback={forageFeedback.item}>
                   <img src={FORAGE_ITEM_INFO[forageFeedback.item].asset} alt="" aria-hidden="true" />
@@ -2508,13 +2473,13 @@ export function PortfolioFarmGame() {
             </div>
           ) : (
             <div className="tile-world interior-world" style={worldCameraStyle}>
-              <img className="interior-room-bg" src="/assets/art-remaster-v1/maps/farmhouse-interior.png" alt="Generated cozy developer farmhouse interior room" />
-              {interiorEntities.map((entity) => (
+              {currentInteriorInfo && <img className="interior-room-bg" src={currentInteriorInfo.mapAsset} alt={`${currentInteriorInfo.label} pixel interior`} />}
+              {currentInteriorEntities.map((entity) => (
                 <div key={entity.id} className={`game-entity interior-hotspot entity-${entity.id} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE }} data-entity-id={entity.id}>
                   <b>{entity.label}</b>
                 </div>
               ))}
-              <img className={`player-sprite facing-${player.facing} ${playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="집 내부를 걷는 생성형 도트 개발자 농부 캐릭터" data-player-sprite={playerSprite} data-player-action={playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
+              <img className={`player-sprite facing-${player.facing} ${playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE }} alt="실내를 걷는 픽셀 농부" data-player-sprite={playerSprite} data-player-action={playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
             </div>
           )}
         </main>
@@ -2578,9 +2543,9 @@ export function PortfolioFarmGame() {
               </nav>
 
               {activeMenuTab === 'map' && (
-                <div className="map-panel" data-map-panel="portfolio-world-map">
+                <div className="map-panel" data-map-panel="mossbell-world-map">
                   <div className="map-title-row">
-                    <span>{scene === 'outside' ? REGION_INFO[currentRegion].label : 'Farmhouse Interior Map'}</span>
+                    <span>{scene === 'outside' ? REGION_INFO[currentRegion].label : currentInteriorInfo?.label ?? 'Interior'}</span>
                     <b>{player.x}, {player.y}</b>
                   </div>
                   {scene === 'outside' && (
@@ -2619,11 +2584,11 @@ export function PortfolioFarmGame() {
                 </div>
               )}
 
-              {activeMenuTab === 'about' && (
-                <div className="about-panel" data-about-panel="portfolio-about">
-                  <p>엄신용 포트폴리오는 웹 섹션이 아니라 농장 RPG 안의 발견물로 배치되어 있습니다.</p>
+              {activeMenuTab === 'journal' && (
+                <div className="about-panel" data-journal-panel="mossbell-journal">
+                  <p>모스벨에서 발견한 장소와 생물, 수확 기록입니다.</p>
                   <dl>
-                    <div><dt>Scene</dt><dd>{scene === 'outside' ? REGION_INFO[currentRegion].label : 'Farmhouse Interior'}</dd></div>
+                    <div><dt>Scene</dt><dd>{scene === 'outside' ? REGION_INFO[currentRegion].label : currentInteriorInfo?.label ?? 'Interior'}</dd></div>
                     <div><dt>World</dt><dd>{openWorldState.discovered.length}/{REGION_IDS.length} regions</dd></div>
                     <div><dt>Journal</dt><dd>{totalJournalCount}/{totalJournalEntries}</dd></div>
                     <div><dt>Quest harvest</dt><dd>{harvestCount}/3</dd></div>
@@ -2637,9 +2602,6 @@ export function PortfolioFarmGame() {
                       <li key={`menu-${entry.id}`}>{entry.journalTitle}</li>
                     ))}
                   </ul>
-                  <button type="button" className="about-resume-button" onClick={() => setResumeOpen(true)}>
-                    TEXT RESUME
-                  </button>
                 </div>
               )}
 
@@ -2759,7 +2721,7 @@ export function PortfolioFarmGame() {
                       fishingStateRef.current = resetState;
                       setFishingState(resetState);
                       if (selectedInventoryId === 'fish-basket') setSelectedInventoryId('field-journal');
-                      showFishingDialogue('Fishing Reset', ['낚시 도감과 어획 수량만 초기화했습니다.', '농장, 퀘스트, 마을 조명과 포트폴리오 탐색 기록은 유지됩니다.'], ['Fishing', 'Reset']);
+                      showFishingDialogue('Fishing Reset', ['낚시 도감과 어획 수량만 초기화했습니다.', '농장, 퀘스트, 마을 조명과 탐험 기록은 유지됩니다.'], ['Fishing', 'Reset']);
                     }}
                   >
                     <RotateCcw aria-hidden="true" />
@@ -2870,14 +2832,14 @@ export function PortfolioFarmGame() {
                   </button>
                 </div>
                 <div className="seed-group-tabs" role="tablist" aria-label="Seed group">
-                  {(['portfolio', 'village'] as SeedGroup[]).map((group) => (
+                  {(['garden', 'field'] as SeedGroup[]).map((group) => (
                     <button key={group} type="button" role="tab" className={seedGroup === group ? 'is-active' : ''} aria-selected={seedGroup === group} onClick={() => setSeedGroup(group)}>
                       {group.toUpperCase()}
                     </button>
                   ))}
                 </div>
                 <div className="farm-seed-selector" aria-label="Seed type" data-selected-seed={farmState.selectedSeed} data-seed-group={seedGroup}>
-                  {(seedGroup === 'portfolio' ? FARM_PORTFOLIO_CROPS : FARM_LIFE_CROPS).map((crop) => (
+                  {(seedGroup === 'garden' ? FARM_GARDEN_CROPS : FARM_LIFE_CROPS).map((crop) => (
                     <button
                       key={crop}
                       type="button"
@@ -2998,7 +2960,7 @@ export function PortfolioFarmGame() {
                 </section>
               )}
 
-              {activeInventoryTab === 'bag' && <section className="inventory-rail-journal" aria-label="Discovered portfolio records" data-inventory-journal={journalEntries.length}>
+              {activeInventoryTab === 'bag' && <section className="inventory-rail-journal" aria-label="Discovered world records" data-inventory-journal={journalEntries.length}>
                 <header>
                   <span>DISCOVERED RECORDS</span>
                   <b>{journalEntries.length}</b>
@@ -3010,7 +2972,7 @@ export function PortfolioFarmGame() {
                     ))}
                   </ul>
                 ) : (
-                  <p>농장 오브젝트를 조사하면 발견한 포트폴리오 기록이 여기에 쌓입니다.</p>
+                  <p>장소와 가구, 생물을 조사하면 발견 기록이 여기에 쌓입니다.</p>
                 )}
               </section>}
 
@@ -3052,77 +3014,17 @@ export function PortfolioFarmGame() {
         </div>
       </div>
 
-      {resumeOpen && (
-        <section className="resume-overlay" role="dialog" aria-modal="true" aria-label="Text resume view" data-resume-overlay="recruiter-view">
-          <div className="resume-window">
-            <header className="resume-header">
-              <div>
-                <span>TEXT RESUME</span>
-                <strong>엄신용 · Full-stack Web Developer</strong>
-              </div>
-              <button type="button" className="resume-close" aria-label="Close resume view" onClick={() => setResumeOpen(false)}>×</button>
-            </header>
-
-            <div className="resume-body">
-              <p className="resume-lead">{hero.headline}</p>
-              <p className="resume-sub">{hero.subcopy} {hero.note}</p>
-
-              <h3>경력</h3>
-              <ul className="resume-experiences">
-                {experiences.map((experience) => (
-                  <li key={experience.id}>
-                    <div className="resume-exp-head">
-                      <strong>{experience.company}</strong>
-                      <span>{experience.period}</span>
-                    </div>
-                    <em>{experience.title} · {experience.role}</em>
-                    <p>{experience.summary}</p>
-                    <ul>
-                      {experience.highlights.map((highlight) => (
-                        <li key={highlight}>{highlight}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-
-              <h3>기술 스택</h3>
-              <ul className="resume-skills">
-                {skillGroups.map((group) => (
-                  <li key={group.title}>
-                    <strong>{group.title}</strong>
-                    <span>{group.items.join(' · ')}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <h3>연락처</h3>
-              <p className="resume-contact">
-                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-                {GITHUB_URL && (
-                  <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a>
-                )}
-              </p>
-              <p className="resume-footnote">게임으로 보시려면 이 창을 닫고 농장을 돌아다니며 E 키로 오브젝트를 조사하세요. (Esc로 닫기)</p>
-            </div>
-          </div>
-        </section>
-      )}
-
       {!gameStarted && (
         <div className="intro-screen" data-intro-screen="pixel-title">
           <div className="intro-card">
-            <span className="intro-kicker">PIXEL PORTFOLIO RPG</span>
+            <span className="intro-kicker">COZY PIXEL FARM RPG</span>
             <h1 className="pixel-title" aria-label={INTRO_TITLE}>
               <span>{typedTitle}</span>
               <i aria-hidden="true">▌</i>
             </h1>
-            <p>Walk the farm. Enter the house. Read the portfolio by touching objects.</p>
+            <p>Grow crops, care for animals, fish, forage, and explore four connected regions.</p>
             <button type="button" className="intro-start" onClick={startGame}>
               START GAME
-            </button>
-            <button type="button" className="intro-resume-link" data-intro-resume-link="recruiter-shortcut" onClick={() => setResumeOpen(true)}>
-              게임 없이 텍스트 이력서 보기 →
             </button>
             <small>Press Enter / Space / E · Hold arrows or WASD after start</small>
           </div>

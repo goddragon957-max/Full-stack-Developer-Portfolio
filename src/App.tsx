@@ -1,9 +1,9 @@
-import { PortfolioFarmGame } from './components/PortfolioFarmGame';
+import { MossbellFarmGame } from './components/MossbellFarmGame';
 
 export function App() {
   return (
-    <main data-app="loop-dog-lab">
-      <PortfolioFarmGame />
+    <main data-app="mossbell-farm">
+      <MossbellFarmGame />
     </main>
   );
 }

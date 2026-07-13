@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "visual_source": "gpt-image",
+  "cottages": [
+    {
+      "id": "hana-cottage",
+      "source": "hana-cottage-chroma.png",
+      "alpha_source": "hana-cottage-alpha.png",
+      "runtime": "hana-cottage.png",
+      "prompt_summary": "Green-roof farmer cottage with planters, garden tools, and a centered door.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "chroma_key": "#ff00ff",
+      "canvas": {
+        "width": 128,
+        "height": 128
+      },
+      "alpha": true,
+      "binary_alpha": true,
+      "source_sha256": "adf54718f03f4966c6141440ef02a932687babf409da514d2e3b40c6fe150e32",
+      "runtime_sha256": "559bf2be835fbc8d59d803f1785628e91c1f8f901dbabfee2f62aae11b8f1766"
+    },
+    {
+      "id": "jun-cottage",
+      "source": "jun-cottage-chroma.png",
+      "alpha_source": "jun-cottage-alpha.png",
+      "runtime": "jun-cottage.png",
+      "prompt_summary": "Red-roof rancher cottage with horseshoe, milk can, and a centered door.",
+      "generator": "OpenAI GPT Image built-in tool",
+      "chroma_key": "#ff00ff",
+      "canvas": {
+        "width": 128,
+        "height": 128
+      },
+      "alpha": true,
+      "binary_alpha": true,
+      "source_sha256": "f184c16d20b80bde5a922cbe7e0acc63a5185218502baa9b94b5924c92c76b76",
+      "runtime_sha256": "ebd478e26d95560973aa385b89da1069636454fde6153cdec858fd663e00f0a7"
+    }
+  ]
+}

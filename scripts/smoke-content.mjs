@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
 const app = readFileSync('src/App.tsx', 'utf8');
-const game = readFileSync('src/components/PortfolioFarmGame.tsx', 'utf8');
+const game = readFileSync('src/components/MossbellFarmGame.tsx', 'utf8');
 const farmLoop = readFileSync('src/game/farmLoop.ts', 'utf8');
 const villagePulse = readFileSync('src/game/villagePulse.ts', 'utf8');
 const villageLife = existsSync('src/game/villageLife.ts') ? readFileSync('src/game/villageLife.ts', 'utf8') : '';
@@ -20,7 +20,7 @@ const joined = `${app}\n${game}\n${farmLoop}\n${villagePulse}\n${villageLife}\n$
 const publicJoined = `${app}\n${game}\n${css}`;
 
 const required = [
-  'data-ui-pass="portfolio-inside-farming-rpg"',
+  'data-ui-pass="mossbell-farm-game"',
   'data-game-world="playable-cozy-farm-rpg"',
   'data-screen-mode="fullscreen-game-shell"',
   'data-game-phase',
@@ -30,7 +30,7 @@ const required = [
   'data-player-walking',
   'data-player-frame',
   'data-movement-mode="pressed-key-raf-loop"',
-  'EOM SINYONG',
+  'MOSSBELL FARM',
   'intro-screen',
   'pixel-title',
   'START GAME',
@@ -48,7 +48,6 @@ const required = [
   'data-right-inventory-bar="persistent"',
   '--inventory-rail-width',
   'data-map-renderer="single-generated-map-image"',
-  'data-world-map-image="developer-farm-map"',
   'world-map-image',
   '--camera-left',
   '--camera-top',
@@ -128,7 +127,7 @@ const required = [
   'data-village-life="v2"',
   'data-village-day',
   'data-village-life-storage="localStorage"',
-  'data-village-life-storage-key="portfolio-village-life-v2"',
+  'data-village-life-storage-key',
   'data-life-npc-count="2"',
   'data-life-npc-id',
   'data-life-npc-schedule',
@@ -221,8 +220,8 @@ const required = [
   'data-layer="game-overlay-ui"',
   'data-settings-toggle="gear"',
   'data-settings-window="game-menu"',
-  'data-map-panel="portfolio-world-map"',
-  'data-about-panel="portfolio-about"',
+  'data-map-panel="mossbell-world-map"',
+  'data-journal-panel="mossbell-journal"',
   'data-settings-panel="game-options"',
   'data-settings-map="below-options"',
   'Settings map',
@@ -249,10 +248,9 @@ const required = [
   'data-journal-count',
   'data-harvest-count',
   'data-generated-assets="gpt-image-remaster-packs"',
-  'PortfolioFarmGame',
+  'MossbellFarmGame',
   'game-sprites',
   'generated-sheets/farmhouse-interior-room.png',
-  'generated-sheets/developer-farm-map.png',
   'generated-sprites/character',
   'generated-sprites/character-walk',
   'developer-farmer-character-sheet.png',
@@ -261,18 +259,11 @@ const required = [
   'interior-world',
   'dialogue-box',
   'is-collapsed',
-  'Java',
-  'Spring Boot',
-  'React',
-  'TypeScript',
-  'PostgreSQL',
-  'MyBatis',
-  'AWS',
-  'Linux',
-  'AWP',
-  'BIM',
-  'xeokit',
-  'XKT',
+  'data-current-interior',
+  'data-interior-count',
+  'data-interior-storage-key',
+  'hanaCottage',
+  'junCottage',
   'word-break: keep-all',
 ];
 
@@ -302,6 +293,12 @@ const forbiddenPublic = [
   'className="quest-journal"',
   'hud-controls',
   'speech-bubble-layer',
+  'PIXEL PORTFOLIO RPG',
+  'TEXT RESUME',
+  'data-resume-overlay=',
+  'data-about-panel="portfolio-about"',
+  'cvb7412@naver.com',
+  '엄신용',
 ];
 
 const missing = required.filter((item) => !joined.includes(item));
@@ -317,7 +314,7 @@ if (forbidden.length) {
 }
 
 const requiredFiles = [
-  'src/components/PortfolioFarmGame.tsx',
+  'src/components/MossbellFarmGame.tsx',
   'src/game/farmLoop.ts',
   'src/game/villagePulse.ts',
   'src/game/fishingLoop.ts',
@@ -326,6 +323,11 @@ const requiredFiles = [
   'src/game/foragingLoop.ts',
   'src/game/animationCatalog.ts',
   'src/game/audioSystem.ts',
+  'src/game/interiorWorld.ts',
+  'scripts/process-gpt-interiors.py',
+  'scripts/process-gpt-cottages.py',
+  'scripts/test-open-world.mjs',
+  'scripts/test-interior-world.mjs',
   'scripts/process-gpt-remaster-assets.py',
   'scripts/assemble-gpt-remaster-maps.py',
   'scripts/generate-farm-loop-assets.py',
@@ -507,6 +509,14 @@ const requiredFiles = [
   'public/assets/art-remaster-v1/maps/river-coast.png',
   'public/assets/art-remaster-v1/maps/mine-foothill.png',
   'public/assets/art-remaster-v1/maps/farmhouse-interior.png',
+  'public/assets/art-remaster-v1/maps/shop-interior.png',
+  'public/assets/art-remaster-v1/maps/barn-interior.png',
+  'public/assets/art-remaster-v1/maps/hana-cottage-interior.png',
+  'public/assets/art-remaster-v1/maps/jun-cottage-interior.png',
+  'public/assets/art-remaster-v1/interiors/manifest.json',
+  'public/assets/art-remaster-v1/buildings/cottages-manifest.json',
+  'public/assets/art-remaster-v1/props/buildings/hana-cottage.png',
+  'public/assets/art-remaster-v1/props/buildings/jun-cottage.png',
   'public/assets/audio/manifest.json',
 ];
 
@@ -521,6 +531,7 @@ if (missingFiles.length) {
 }
 
 const rejectedFiles = [
+  'src/components/PortfolioFarmGame.tsx',
   'src/components/PortfolioGame3D.tsx',
   'src/components/PixelPortfolioVillage.tsx',
   'public/assets/portfolio-hero-gpt.webp',
@@ -681,7 +692,7 @@ if (
   || remasterManifest.sources?.length !== 19
   || remasterManifest.assets?.length !== 278
   || remasterManifest.maps?.length !== 4
-  || remasterManifest.interiors?.length !== 1
+  || remasterManifest.interiors?.length !== 5
   || remasterManifest.audio?.length !== 5
   || remasterManifest.audio.some((track) => !track.present || !track.sha256)
   || remasterActionAssets.length !== 15
@@ -703,6 +714,40 @@ const wrongRemasterMaps = remasterManifest.maps
   .filter(({ actual }) => actual.width !== 512 || actual.height !== 352);
 if (wrongRemasterMaps.length) {
   console.error(`Remaster region maps must stay 512x352: ${wrongRemasterMaps.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const interiorManifest = JSON.parse(readFileSync('public/assets/art-remaster-v1/interiors/manifest.json', 'utf8'));
+const invalidInteriors = interiorManifest.interiors?.filter((interior) => {
+  const runtimePath = `public/assets/art-remaster-v1/${interior.runtime}`;
+  const sourcePath = `public/assets/art-remaster-v1/${interior.source}`;
+  if (!existsSync(runtimePath) || !existsSync(sourcePath)) return true;
+  const size = readPngSize(runtimePath);
+  const digest = createHash('sha256').update(readFileSync(runtimePath)).digest('hex');
+  return interior.generator !== 'OpenAI GPT Image built-in tool'
+    || size.width !== 384
+    || size.height !== 256
+    || digest !== interior.runtime_sha256;
+}) ?? [];
+if (interiorManifest.visual_source !== 'gpt-image' || interiorManifest.interiors?.length !== 5 || invalidInteriors.length) {
+  console.error('Five GPT Image building interiors must exist at 384x256 with current hashes');
+  process.exit(1);
+}
+
+const cottageManifest = JSON.parse(readFileSync('public/assets/art-remaster-v1/buildings/cottages-manifest.json', 'utf8'));
+const invalidCottages = cottageManifest.cottages?.filter((cottage) => {
+  const runtimePath = `public/assets/art-remaster-v1/props/buildings/${cottage.runtime}`;
+  const size = existsSync(runtimePath) ? readPngSize(runtimePath) : { width: 0, height: 0 };
+  const digest = existsSync(runtimePath) ? createHash('sha256').update(readFileSync(runtimePath)).digest('hex') : '';
+  return cottage.generator !== 'OpenAI GPT Image built-in tool'
+    || !cottage.alpha
+    || !cottage.binary_alpha
+    || size.width !== 128
+    || size.height !== 128
+    || digest !== cottage.runtime_sha256;
+}) ?? [];
+if (cottageManifest.visual_source !== 'gpt-image' || cottageManifest.cottages?.length !== 2 || invalidCottages.length) {
+  console.error('Hana and Jun cottages must be current 128x128 transparent GPT Image sprites');
   process.exit(1);
 }
 

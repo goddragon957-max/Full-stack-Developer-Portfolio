@@ -91,14 +91,14 @@ const cells = (axis: 'x' | 'y', fixed: number, from: number, to: number) => (
 );
 
 export const REGION_EXITS: RegionExit[] = [
-  { id: 'village-east', from: 'farm-village', to: 'whisper-forest', edge: 'right', cells: cells('x', 31, 9, 12), arrival: { x: 1, y: 11, facing: 'right' } },
-  { id: 'forest-west', from: 'whisper-forest', to: 'farm-village', edge: 'left', cells: cells('x', 0, 9, 12), arrival: { x: 30, y: 11, facing: 'left' } },
-  { id: 'forest-north', from: 'whisper-forest', to: 'river-coast', edge: 'up', cells: cells('y', 0, 14, 17), arrival: { x: 16, y: 20, facing: 'up' } },
-  { id: 'coast-south', from: 'river-coast', to: 'whisper-forest', edge: 'down', cells: cells('y', 21, 14, 17), arrival: { x: 16, y: 1, facing: 'down' } },
+  { id: 'village-east', from: 'farm-village', to: 'whisper-forest', edge: 'right', cells: cells('x', 31, 7, 9), arrival: { x: 1, y: 11, facing: 'right' } },
+  { id: 'forest-west', from: 'whisper-forest', to: 'farm-village', edge: 'left', cells: cells('x', 0, 9, 12), arrival: { x: 30, y: 8, facing: 'left' } },
+  { id: 'forest-north', from: 'whisper-forest', to: 'river-coast', edge: 'up', cells: cells('y', 0, 16, 18), arrival: { x: 18, y: 20, facing: 'up' } },
+  { id: 'coast-south', from: 'river-coast', to: 'whisper-forest', edge: 'down', cells: cells('y', 21, 17, 19), arrival: { x: 17, y: 1, facing: 'down' } },
   { id: 'coast-east', from: 'river-coast', to: 'mine-foothill', edge: 'right', cells: cells('x', 31, 3, 6), arrival: { x: 1, y: 5, facing: 'right' } },
-  { id: 'mine-west', from: 'mine-foothill', to: 'river-coast', edge: 'left', cells: cells('x', 0, 3, 6), arrival: { x: 30, y: 5, facing: 'left' } },
-  { id: 'mine-south', from: 'mine-foothill', to: 'farm-village', edge: 'down', cells: cells('y', 21, 14, 17), arrival: { x: 19, y: 1, facing: 'down' } },
-  { id: 'village-north', from: 'farm-village', to: 'mine-foothill', edge: 'up', cells: cells('y', 0, 18, 20), arrival: { x: 16, y: 20, facing: 'up' } },
+  { id: 'mine-west', from: 'mine-foothill', to: 'river-coast', edge: 'left', cells: cells('x', 0, 4, 7), arrival: { x: 30, y: 5, facing: 'left' } },
+  { id: 'mine-south', from: 'mine-foothill', to: 'farm-village', edge: 'down', cells: cells('y', 21, 15, 17), arrival: { x: 8, y: 1, facing: 'down' } },
+  { id: 'village-north', from: 'farm-village', to: 'mine-foothill', edge: 'up', cells: cells('y', 0, 7, 9), arrival: { x: 16, y: 20, facing: 'up' } },
 ];
 
 export const FAST_TRAVEL_POSTS: Record<RegionId, { x: number; y: number }> = {
@@ -113,14 +113,14 @@ export const FAST_TRAVEL_ARRIVALS: Record<RegionId, WorldPosition> = Object.from
 ) as Record<RegionId, WorldPosition>;
 
 const FOREST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 14, h: 1 }, { x: 18, y: 0, w: 14, h: 1 },
+  { x: 0, y: 0, w: 16, h: 1 }, { x: 19, y: 0, w: 13, h: 1 },
   { x: 0, y: 21, w: 32, h: 1 }, { x: 0, y: 1, w: 1, h: 8 }, { x: 0, y: 13, w: 1, h: 8 },
   { x: 31, y: 1, w: 1, h: 20 }, { x: 20, y: 1, w: 3, h: 8 }, { x: 20, y: 13, w: 3, h: 8 },
   { x: 4, y: 3, w: 4, h: 3 }, { x: 25, y: 4, w: 4, h: 4 }, { x: 4, y: 15, w: 5, h: 4 },
 ];
 
 const COAST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 32, h: 1 }, { x: 0, y: 21, w: 14, h: 1 }, { x: 18, y: 21, w: 14, h: 1 },
+  { x: 0, y: 0, w: 32, h: 1 }, { x: 0, y: 21, w: 17, h: 1 }, { x: 20, y: 21, w: 12, h: 1 },
   { x: 0, y: 1, w: 1, h: 20 }, { x: 31, y: 1, w: 1, h: 2 }, { x: 31, y: 7, w: 1, h: 14 },
   { x: 19, y: 1, w: 4, h: 3 }, { x: 19, y: 7, w: 4, h: 3 }, { x: 19, y: 13, w: 4, h: 8 },
   { x: 23, y: 8, w: 9, h: 13 }, { x: 5, y: 4, w: 4, h: 3 },
@@ -128,7 +128,7 @@ const COAST_BLOCKED_RECTS = [
 
 const MINE_BLOCKED_RECTS = [
   { x: 0, y: 0, w: 32, h: 2 }, { x: 0, y: 21, w: 14, h: 1 }, { x: 18, y: 21, w: 14, h: 1 },
-  { x: 0, y: 2, w: 1, h: 1 }, { x: 0, y: 7, w: 1, h: 14 }, { x: 31, y: 2, w: 1, h: 19 },
+  { x: 0, y: 2, w: 1, h: 2 }, { x: 0, y: 8, w: 1, h: 13 }, { x: 31, y: 2, w: 1, h: 19 },
   { x: 11, y: 2, w: 10, h: 5 }, { x: 4, y: 10, w: 5, h: 4 }, { x: 24, y: 10, w: 5, h: 5 },
   { x: 10, y: 17, w: 4, h: 3 }, { x: 20, y: 17, w: 4, h: 3 },
 ];
@@ -220,9 +220,19 @@ export function persistOpenWorldState(state: OpenWorldState) {
 }
 
 export function getRegionExit(region: RegionId, position: { x: number; y: number }, direction: WorldDirection) {
+  const nearEdge = direction === 'left'
+    ? position.x <= 1
+    : direction === 'right'
+      ? position.x >= WORLD_WIDTH - 2
+      : direction === 'up'
+        ? position.y <= 1
+        : position.y >= WORLD_HEIGHT - 2;
+  if (!nearEdge) return null;
   return REGION_EXITS.find((exit) => exit.from === region
     && exit.edge === direction
-    && exit.cells.some((cell) => cell.x === position.x && cell.y === position.y)) ?? null;
+    && exit.cells.some((cell) => direction === 'left' || direction === 'right'
+      ? cell.y === position.y
+      : cell.x === position.x)) ?? null;
 }
 
 export function enterRegion(state: OpenWorldState, exit: RegionExit): RegionEntryResult {

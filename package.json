@@ -1,5 +1,5 @@
 {
-  "name": "loop-dog-lab",
+  "name": "mossbell-farm",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "lint": "tsc --noEmit",
-    "test": "node scripts/smoke-content.mjs && node scripts/test-audio-system.mjs",
+    "test": "node scripts/smoke-content.mjs && node scripts/test-audio-system.mjs && node scripts/test-open-world.mjs && node scripts/test-interior-world.mjs",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
