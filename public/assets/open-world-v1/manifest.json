@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "generator": "scripts/generate-open-world-assets.py",
+  "map_size": {
+    "width": 512,
+    "height": 352
+  },
+  "logical_tile_size": 16,
+  "regions": [
+    "whisper-forest",
+    "river-coast",
+    "mine-foothill"
+  ],
+  "npcs": [
+    "forest-guide",
+    "mine-keeper"
+  ],
+  "forage_items": [
+    "mushroom",
+    "herb",
+    "wild-berry",
+    "fern",
+    "moon-bloom"
+  ],
+  "mine_items": [
+    "stone",
+    "copper-ore",
+    "iron-ore",
+    "star-crystal"
+  ],
+  "fish": [
+    "river-trout",
+    "silver-dace",
+    "night-eel",
+    "shore-sardine",
+    "coral-bream",
+    "tide-ray"
+  ],
+  "transparent_sprites": true
+}

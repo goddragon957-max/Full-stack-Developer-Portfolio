@@ -1,5 +1,6 @@
 export type FarmTool = 'hoe' | 'seeds' | 'watering-can';
-export type CropType = 'frontend' | 'backend' | 'bim';
+export type CropType = 'frontend' | 'backend' | 'bim' | 'tomato' | 'corn' | 'pumpkin';
+export type CropQuality = 'normal' | 'silver' | 'gold';
 export type FarmPlotStage = 'untilled' | 'tilled' | 'planted' | 'watered' | 'growing-1' | 'growing-2' | 'ready';
 
 export type FarmPlot = {
@@ -12,13 +13,16 @@ export type FarmPlot = {
 };
 
 export type FarmInventory = Record<CropType, number>;
+export type FarmQualityInventory = Record<CropType, Record<CropQuality, number>>;
 
 export type FarmState = {
-  version: 1;
+  version: 2;
   plots: FarmPlot[];
   selectedTool: FarmTool;
   selectedSeed: CropType;
   inventory: FarmInventory;
+  qualityInventory: FarmQualityInventory;
+  wateringStreak: number;
   firstHarvested: boolean;
 };
 
@@ -27,15 +31,19 @@ export type FarmInteractionResult = {
   message: string;
   changed: boolean;
   harvestedCrop: CropType | null;
+  harvestedQuality: CropQuality | null;
   firstOfType: boolean;
 };
 
 export const FARM_STORAGE_KEY = 'portfolio-farm-loop-v1';
-export const FARM_SAVE_VERSION = 1;
+export const FARM_SAVE_VERSION = 2;
 export const FARM_GROWTH_STEP_MS = 1000;
 
 export const FARM_TOOLS: FarmTool[] = ['hoe', 'seeds', 'watering-can'];
-export const FARM_CROPS: CropType[] = ['frontend', 'backend', 'bim'];
+export const FARM_CROPS: CropType[] = ['frontend', 'backend', 'bim', 'tomato', 'corn', 'pumpkin'];
+export const FARM_PORTFOLIO_CROPS: CropType[] = ['frontend', 'backend', 'bim'];
+export const FARM_LIFE_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
+export const CROP_QUALITIES: CropQuality[] = ['normal', 'silver', 'gold'];
 export const FARM_PLOT_STAGES: FarmPlotStage[] = [
   'untilled',
   'tilled',
@@ -47,9 +55,9 @@ export const FARM_PLOT_STAGES: FarmPlotStage[] = [
 ];
 
 export const FARM_TOOL_INFO: Record<FarmTool, { label: string; shortcut: string; asset: string }> = {
-  hoe: { label: '괭이', shortcut: '1', asset: '/assets/farm-loop/tools/hoe.png' },
-  seeds: { label: '씨앗', shortcut: '2', asset: '/assets/farm-loop/tools/seeds.png' },
-  'watering-can': { label: '물뿌리개', shortcut: '3', asset: '/assets/farm-loop/tools/watering-can.png' },
+  hoe: { label: '괭이', shortcut: '1', asset: TOOL_SPRITES.hoe },
+  seeds: { label: '씨앗', shortcut: '2', asset: TOOL_SPRITES.seeds },
+  'watering-can': { label: '물뿌리개', shortcut: '3', asset: TOOL_SPRITES['watering-can'] },
 };
 
 export const FARM_CROP_INFO: Record<CropType, {
@@ -80,6 +88,27 @@ export const FARM_CROP_INFO: Record<CropType, {
     portfolioDescription: 'AWP와 BIM 업무 흐름, xeokit·XKT·tile/LOD·clipping 검증 기록.',
     tone: 'bim',
   },
+  tomato: {
+    label: '토마토',
+    shortLabel: '토마토',
+    portfolioTitle: '농장 도감: 토마토',
+    portfolioDescription: '햇빛을 받아 붉게 익은 마을 밭의 토마토.',
+    tone: 'tomato',
+  },
+  corn: {
+    label: '옥수수',
+    shortLabel: '옥수수',
+    portfolioTitle: '농장 도감: 옥수수',
+    portfolioDescription: '키가 곧게 자라 황금빛 알을 맺은 옥수수.',
+    tone: 'corn',
+  },
+  pumpkin: {
+    label: '호박',
+    shortLabel: '호박',
+    portfolioTitle: '농장 도감: 호박',
+    portfolioDescription: '넓은 잎 아래 묵직하게 여문 주황빛 호박.',
+    tone: 'pumpkin',
+  },
 };
 
 const FARM_PLOT_LAYOUT = [
@@ -96,6 +125,11 @@ const toolSet = new Set<string>(FARM_TOOLS);
 const cropSet = new Set<string>(FARM_CROPS);
 
 export function createInitialFarmState(): FarmState {
+  const inventory = Object.fromEntries(FARM_CROPS.map((crop) => [crop, 0])) as FarmInventory;
+  const qualityInventory = Object.fromEntries(FARM_CROPS.map((crop) => [
+    crop,
+    { normal: 0, silver: 0, gold: 0 },
+  ])) as FarmQualityInventory;
   return {
     version: FARM_SAVE_VERSION,
     plots: FARM_PLOT_LAYOUT.map(({ id, x, y }) => ({
@@ -108,7 +142,9 @@ export function createInitialFarmState(): FarmState {
     })),
     selectedTool: 'hoe',
     selectedSeed: 'frontend',
-    inventory: { frontend: 0, backend: 0, bim: 0 },
+    inventory,
+    qualityInventory,
+    wateringStreak: 0,
     firstHarvested: false,
   };
 }
@@ -134,18 +170,32 @@ function normalizePlot(value: unknown, fallback: FarmPlot): FarmPlot {
 
 function normalizeInventory(value: unknown): FarmInventory {
   const candidate = value && typeof value === 'object' ? value as Partial<FarmInventory> : {};
-  return {
-    frontend: Math.max(0, Math.floor(Number(candidate.frontend) || 0)),
-    backend: Math.max(0, Math.floor(Number(candidate.backend) || 0)),
-    bim: Math.max(0, Math.floor(Number(candidate.bim) || 0)),
-  };
+  return Object.fromEntries(FARM_CROPS.map((crop) => [
+    crop,
+    Math.max(0, Math.floor(Number(candidate[crop]) || 0)),
+  ])) as FarmInventory;
+}
+
+function normalizeQualityInventory(value: unknown, inventory: FarmInventory): FarmQualityInventory {
+  const candidate = value && typeof value === 'object' ? value as Partial<FarmQualityInventory> : {};
+  return Object.fromEntries(FARM_CROPS.map((crop) => {
+    const saved = candidate[crop] ?? {} as Record<CropQuality, number>;
+    const quality = Object.fromEntries(CROP_QUALITIES.map((item) => [
+      item,
+      Math.max(0, Math.floor(Number(saved[item]) || 0)),
+    ])) as Record<CropQuality, number>;
+    const qualityTotal = CROP_QUALITIES.reduce((total, item) => total + quality[item], 0);
+    if (qualityTotal < inventory[crop]) quality.normal += inventory[crop] - qualityTotal;
+    return [crop, quality];
+  })) as FarmQualityInventory;
 }
 
 function normalizeFarmState(value: unknown): FarmState {
   const initial = createInitialFarmState();
   if (!value || typeof value !== 'object') return initial;
   const candidate = value as Partial<FarmState>;
-  if (candidate.version !== FARM_SAVE_VERSION) return initial;
+  const version = Number((value as { version?: unknown }).version);
+  if (version !== 1 && version !== FARM_SAVE_VERSION) return initial;
 
   const savedPlots = Array.isArray(candidate.plots) ? candidate.plots : [];
   const plots = initial.plots.map((fallback) => {
@@ -153,6 +203,7 @@ function normalizeFarmState(value: unknown): FarmState {
     return normalizePlot(saved, fallback);
   });
 
+  const inventory = normalizeInventory(candidate.inventory);
   return {
     version: FARM_SAVE_VERSION,
     plots,
@@ -162,7 +213,9 @@ function normalizeFarmState(value: unknown): FarmState {
     selectedSeed: typeof candidate.selectedSeed === 'string' && cropSet.has(candidate.selectedSeed)
       ? candidate.selectedSeed as CropType
       : initial.selectedSeed,
-    inventory: normalizeInventory(candidate.inventory),
+    inventory,
+    qualityInventory: normalizeQualityInventory(candidate.qualityInventory, inventory),
+    wateringStreak: Math.max(0, Math.min(99, Math.floor(Number(candidate.wateringStreak) || 0))),
     firstHarvested: Boolean(candidate.firstHarvested),
   };
 }
@@ -227,14 +280,14 @@ export function getNearestFarmPlot(
 }
 
 export function getFarmGroundAsset(stage: FarmPlotStage): string {
-  if (stage === 'untilled') return '/assets/farm-loop/ground/untilled.png';
-  if (stage === 'watered') return '/assets/farm-loop/ground/watered.png';
-  return '/assets/farm-loop/ground/tilled.png';
+  if (stage === 'untilled') return SOIL_SPRITES.untilled;
+  if (stage === 'watered') return SOIL_SPRITES.watered;
+  return SOIL_SPRITES.tilled;
 }
 
 export function getFarmCropAsset(plot: FarmPlot): string | null {
   if (!plot.crop || ['untilled', 'tilled'].includes(plot.stage)) return null;
-  return `/assets/farm-loop/crops/${plot.crop}/${plot.stage}.png`;
+  return CROP_SPRITES[plot.crop][plot.stage] ?? null;
 }
 
 function replacePlot(state: FarmState, nextPlot: FarmPlot): FarmState {
@@ -242,10 +295,25 @@ function replacePlot(state: FarmState, nextPlot: FarmPlot): FarmState {
 }
 
 function unchanged(state: FarmState, message: string): FarmInteractionResult {
-  return { state, message, changed: false, harvestedCrop: null, firstOfType: false };
+  return { state, message, changed: false, harvestedCrop: null, harvestedQuality: null, firstOfType: false };
 }
 
-export function interactWithFarmPlot(state: FarmState, plotId: string, now = Date.now()): FarmInteractionResult {
+export function chooseCropQuality(roll: number, wateringStreak: number, careBonus = 0): CropQuality {
+  const normalized = Math.max(0, Math.min(0.999_999, roll));
+  const goldChance = Math.min(0.3, 0.07 + Math.min(wateringStreak, 9) * 0.012 + Math.min(careBonus, 5) * 0.018);
+  const silverChance = Math.min(0.55, 0.25 + Math.min(wateringStreak, 9) * 0.018 + Math.min(careBonus, 5) * 0.02);
+  if (normalized < goldChance) return 'gold';
+  if (normalized < goldChance + silverChance) return 'silver';
+  return 'normal';
+}
+
+export function interactWithFarmPlot(
+  state: FarmState,
+  plotId: string,
+  now = Date.now(),
+  qualityRoll = 0.5,
+  careBonus = 0,
+): FarmInteractionResult {
   const advancedState = advanceFarmState(state, now);
   const plot = advancedState.plots.find((candidate) => candidate.id === plotId);
   if (!plot) return unchanged(advancedState, '선택한 밭을 찾을 수 없습니다.');
@@ -253,17 +321,26 @@ export function interactWithFarmPlot(state: FarmState, plotId: string, now = Dat
   if (plot.stage === 'ready' && plot.crop) {
     const crop = plot.crop;
     const firstOfType = advancedState.inventory[crop] === 0;
+    const harvestedQuality = chooseCropQuality(qualityRoll, advancedState.wateringStreak, careBonus);
     const nextPlot: FarmPlot = { ...plot, stage: 'tilled', crop: null, wateredAt: null };
     const nextState = replacePlot({
       ...advancedState,
       inventory: { ...advancedState.inventory, [crop]: advancedState.inventory[crop] + 1 },
+      qualityInventory: {
+        ...advancedState.qualityInventory,
+        [crop]: {
+          ...advancedState.qualityInventory[crop],
+          [harvestedQuality]: advancedState.qualityInventory[crop][harvestedQuality] + 1,
+        },
+      },
       firstHarvested: true,
     }, nextPlot);
     return {
       state: nextState,
-      message: `${FARM_CROP_INFO[crop].label}을 수확했습니다.`,
+      message: `${FARM_CROP_INFO[crop].label}을 수확했습니다. (${harvestedQuality.toUpperCase()})`,
       changed: true,
       harvestedCrop: crop,
+      harvestedQuality,
       firstOfType,
     };
   }
@@ -275,6 +352,7 @@ export function interactWithFarmPlot(state: FarmState, plotId: string, now = Dat
       message: '괭이로 밭을 갈았습니다.',
       changed: true,
       harvestedCrop: null,
+      harvestedQuality: null,
       firstOfType: false,
     };
   }
@@ -287,6 +365,7 @@ export function interactWithFarmPlot(state: FarmState, plotId: string, now = Dat
       message: `${FARM_CROP_INFO[crop].label} 씨앗을 심었습니다.`,
       changed: true,
       harvestedCrop: null,
+      harvestedQuality: null,
       firstOfType: false,
     };
   }
@@ -294,10 +373,11 @@ export function interactWithFarmPlot(state: FarmState, plotId: string, now = Dat
   if (plot.stage === 'planted') {
     if (advancedState.selectedTool !== 'watering-can') return unchanged(advancedState, '물뿌리개를 선택해 작물에 물을 주세요.');
     return {
-      state: replacePlot(advancedState, { ...plot, stage: 'watered', wateredAt: now }),
+      state: replacePlot({ ...advancedState, wateringStreak: Math.min(99, advancedState.wateringStreak + 1) }, { ...plot, stage: 'watered', wateredAt: now }),
       message: '작물에 물을 주었습니다. 곧 자라기 시작합니다.',
       changed: true,
       harvestedCrop: null,
+      harvestedQuality: null,
       firstOfType: false,
     };
   }
@@ -308,3 +388,4 @@ export function interactWithFarmPlot(state: FarmState, plotId: string, now = Dat
 
   return unchanged(advancedState, '이 밭에서는 지금 사용할 수 없는 도구입니다.');
 }
+import { CROP_SPRITES, SOIL_SPRITES, TOOL_SPRITES } from './animationCatalog';

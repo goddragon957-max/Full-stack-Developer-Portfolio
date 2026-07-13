@@ -11,6 +11,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'public' / 'assets'
 MANIFEST = ASSETS / 'sprite-matte-cleanup.json'
+REMASTER_MANIFEST = ASSETS / 'art-remaster-v1' / 'manifest.json'
 
 STATIC_TARGETS = [
     ASSETS / 'game-sprites' / f'sprite-{number}.png'
@@ -131,7 +132,38 @@ def check_targets() -> None:
 
     if errors:
         raise SystemExit('\n'.join(errors))
-    print(f'sprite matte check passed: {len(TARGETS)} runtime sprites')
+
+    remaster_errors: list[str] = []
+    remaster_assets: list[dict] = []
+    if not REMASTER_MANIFEST.exists():
+        remaster_errors.append('art-remaster-v1/manifest.json: missing file')
+    else:
+        remaster_assets = json.loads(REMASTER_MANIFEST.read_text(encoding='utf-8')).get('assets', [])
+        for entry in remaster_assets:
+            relative_path = entry.get('path', '')
+            if relative_path.startswith('tiles/terrain/'):
+                continue
+            path = ASSETS / 'art-remaster-v1' / relative_path
+            if not path.exists():
+                remaster_errors.append(f'art-remaster-v1/{relative_path}: missing file')
+                continue
+            with Image.open(path) as source:
+                rgba = source.convert('RGBA')
+                pixels = list(rgba.get_flattened_data())
+                alpha_values = {pixel[3] for pixel in pixels}
+                if 0 not in alpha_values or 255 not in alpha_values:
+                    remaster_errors.append(f'art-remaster-v1/{relative_path}: missing binary transparency')
+                if any(alpha not in (0, 255) for alpha in alpha_values):
+                    remaster_errors.append(f'art-remaster-v1/{relative_path}: semi-transparent matte pixels found')
+                if any(alpha == 0 and (red or green or blue) for red, green, blue, alpha in pixels):
+                    remaster_errors.append(f'art-remaster-v1/{relative_path}: color data remains under transparent pixels')
+                corners = ((0, 0), (rgba.width - 1, 0), (0, rgba.height - 1), (rgba.width - 1, rgba.height - 1))
+                if any(rgba.getpixel(point)[3] != 0 for point in corners):
+                    remaster_errors.append(f'art-remaster-v1/{relative_path}: opaque sprite corner found')
+
+    if remaster_errors:
+        raise SystemExit('\n'.join(remaster_errors))
+    print(f'sprite matte check passed: {len(TARGETS)} legacy sprites and {len(remaster_assets)} GPT remaster assets')
 
 
 def main() -> None:

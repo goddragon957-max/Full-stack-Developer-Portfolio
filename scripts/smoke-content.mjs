@@ -4,13 +4,19 @@ import { createHash } from 'node:crypto';
 const app = readFileSync('src/App.tsx', 'utf8');
 const game = readFileSync('src/components/PortfolioFarmGame.tsx', 'utf8');
 const farmLoop = readFileSync('src/game/farmLoop.ts', 'utf8');
+const villagePulse = readFileSync('src/game/villagePulse.ts', 'utf8');
+const villageLife = existsSync('src/game/villageLife.ts') ? readFileSync('src/game/villageLife.ts', 'utf8') : '';
+const openWorld = existsSync('src/game/openWorld.ts') ? readFileSync('src/game/openWorld.ts', 'utf8') : '';
+const foragingLoop = existsSync('src/game/foragingLoop.ts') ? readFileSync('src/game/foragingLoop.ts', 'utf8') : '';
+const animationCatalog = existsSync('src/game/animationCatalog.ts') ? readFileSync('src/game/animationCatalog.ts', 'utf8') : '';
+const audioSystem = existsSync('src/game/audioSystem.ts') ? readFileSync('src/game/audioSystem.ts', 'utf8') : '';
 const css = readFileSync('src/styles.css', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const readme = readFileSync('README.md', 'utf8');
 const verify = readFileSync('VERIFY.md', 'utf8');
 const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${game}\n${farmLoop}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
+const joined = `${app}\n${game}\n${farmLoop}\n${villagePulse}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}\n${audioSystem}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
 const publicJoined = `${app}\n${game}\n${css}`;
 
 const required = [
@@ -30,14 +36,14 @@ const required = [
   'START GAME',
   'requestAnimationFrame',
   'pressedDirectionsRef',
-  'normalizedCharacterWalkSprites',
+  'PLAYER_WALK_SPRITES',
   'data-sprite-normalization="bottom-centered-transparent-canvas"',
   'data-walk-cycle="coherent-generated-frames"',
   'data-world-scale-mode="pixel-locked-fit"',
   'data-mobile-fit-mode="camera-fullscreen-safe-area"',
   'data-camera-mode="player-centered-fullscreen"',
   'data-map-grid="32x22"',
-  'data-collision-mode="entity-bounds"',
+  'data-collision-mode="entity-and-water-bounds"',
   'data-depth-sorting="y-axis-feet"',
   'data-right-inventory-bar="persistent"',
   '--inventory-rail-width',
@@ -82,6 +88,113 @@ const required = [
   'farm-toolbelt',
   'farm-plot',
   'RESET FARM',
+  'data-village-pulse="v1"',
+  'data-time-mode',
+  'data-day-phase',
+  'data-village-clock',
+  'data-time-mode-control="auto-day-night"',
+  'data-celebration',
+  'data-fireworks-layer="milestone-celebration"',
+  'data-harvest-combo',
+  'data-harvest-feedback="combo-pop"',
+  'data-npc-count="5"',
+  'villageKeeper',
+  'FIRST HARVEST',
+  'QUEST COMPLETE',
+  'data-fishing-loop="v1"',
+  'data-fishing-state',
+  'data-fishing-spot-count',
+  'data-fishing-water="pond"',
+  'data-selected-game-tool',
+  'data-fishing-catch-total',
+  'data-fishing-discovered',
+  'data-fishing-pool',
+  'data-fishing-spot-id',
+  'data-fishing-feedback',
+  'data-reset-fishing="fishing-state-only"',
+  'fishing-rod',
+  'Digit4',
+  'Digit5',
+  'casting',
+  'waiting',
+  'bite',
+  'success',
+  'escaped',
+  'bluegill',
+  'carp',
+  'perch',
+  'koi',
+  'moonfin',
+  'data-village-life="v2"',
+  'data-village-day',
+  'data-village-life-storage="localStorage"',
+  'data-village-life-storage-key="portfolio-village-life-v2"',
+  'data-life-npc-count="2"',
+  'data-life-npc-id',
+  'data-life-npc-schedule',
+  'data-ranch-animal-count="5"',
+  'data-animal-id',
+  'data-animal-species',
+  'data-animal-status',
+  'data-ranch-product-total',
+  'data-perfect-care-streak',
+  'data-reset-ranch="ranch-state-only"',
+  'data-farm-growth="v2"',
+  'data-farm-crop-count="6"',
+  'data-crop-quality',
+  'data-inventory-tab',
+  'data-open-world="v1"',
+  'data-current-region',
+  'data-world-region-count="4"',
+  'data-world-graph="explicit"',
+  'data-region-transition',
+  'data-region-discovered',
+  'data-fast-travel',
+  'data-foraging-loop="v1"',
+  'data-foraging-storage="localStorage"',
+  'data-foraging-storage-key',
+  'data-forage-node-count="10"',
+  'data-forage-inventory-total',
+  'data-forage-quest',
+  'data-mine-quest',
+  'data-inventory-tab-control="bag-farm-ranch-forage"',
+  'data-open-world-storage-key',
+  'data-fishing-spot-total="6"',
+  'data-open-world-npc-count="2"',
+  'data-art-remaster="v1"',
+  'data-visual-source="gpt-image"',
+  'data-animation-catalog="directional-gpt-sprites"',
+  'PLAYER_ACTION_SPRITES',
+  'NPC_PORTRAITS',
+  'data-player-action',
+  'data-dialogue-portrait',
+  'emptyLookEntity',
+  'data-ambient-layer="gpt-pixel-effects"',
+  'data-audio-system="region-crossfade"',
+  'data-music-muted',
+  'data-music-volume',
+  'data-audio-track',
+  'AREA DISCOVERED',
+  'WORLD EXPLORER',
+  'whisper-forest',
+  'river-coast',
+  'mine-foothill',
+  'portfolio-village-life-v2',
+  'tomato',
+  'corn',
+  'pumpkin',
+  'normal',
+  'silver',
+  'gold',
+  'chicken-1',
+  'chicken-2',
+  'chicken-3',
+  'cow-1',
+  'cow-2',
+  'egg',
+  'milk',
+  'golden-egg',
+  'PERFECT CARE',
   'Digit1',
   'Digit2',
   'Digit3',
@@ -135,7 +248,7 @@ const required = [
   'complete',
   'data-journal-count',
   'data-harvest-count',
-  'data-generated-assets="codex-image-sheets-and-game-sprites"',
+  'data-generated-assets="gpt-image-remaster-packs"',
   'PortfolioFarmGame',
   'game-sprites',
   'generated-sheets/farmhouse-interior-room.png',
@@ -206,7 +319,20 @@ if (forbidden.length) {
 const requiredFiles = [
   'src/components/PortfolioFarmGame.tsx',
   'src/game/farmLoop.ts',
+  'src/game/villagePulse.ts',
+  'src/game/fishingLoop.ts',
+  'src/game/villageLife.ts',
+  'src/game/openWorld.ts',
+  'src/game/foragingLoop.ts',
+  'src/game/animationCatalog.ts',
+  'src/game/audioSystem.ts',
+  'scripts/process-gpt-remaster-assets.py',
+  'scripts/assemble-gpt-remaster-maps.py',
   'scripts/generate-farm-loop-assets.py',
+  'scripts/generate-village-pulse-assets.py',
+  'scripts/generate-fishing-assets.py',
+  'scripts/generate-village-life-assets.py',
+  'scripts/generate-open-world-assets.py',
   'public/assets/cozy-farming-village-tileset-4x3.png',
   'public/assets/generated-sheets/farmhouse-interior-room.png',
   'public/assets/generated-sheets/developer-farm-map.png',
@@ -279,7 +405,115 @@ const requiredFiles = [
   'public/assets/farm-loop/crops/bim/growing-1.png',
   'public/assets/farm-loop/crops/bim/growing-2.png',
   'public/assets/farm-loop/crops/bim/ready.png',
+  'public/assets/village-pulse/manifest.json',
+  'public/assets/village-pulse/npc/village-keeper/down-0.png',
+  'public/assets/village-pulse/npc/village-keeper/down-1.png',
+  'public/assets/village-pulse/npc/village-keeper/down-2.png',
+  'public/assets/village-pulse/npc/village-keeper/down-3.png',
+  'public/assets/village-pulse/npc/village-keeper/left-0.png',
+  'public/assets/village-pulse/npc/village-keeper/left-1.png',
+  'public/assets/village-pulse/npc/village-keeper/left-2.png',
+  'public/assets/village-pulse/npc/village-keeper/left-3.png',
+  'public/assets/village-pulse/npc/village-keeper/right-0.png',
+  'public/assets/village-pulse/npc/village-keeper/right-1.png',
+  'public/assets/village-pulse/npc/village-keeper/right-2.png',
+  'public/assets/village-pulse/npc/village-keeper/right-3.png',
+  'public/assets/village-pulse/npc/village-keeper/up-0.png',
+  'public/assets/village-pulse/npc/village-keeper/up-1.png',
+  'public/assets/village-pulse/npc/village-keeper/up-2.png',
+  'public/assets/village-pulse/npc/village-keeper/up-3.png',
+  'public/assets/fishing/manifest.json',
+  'public/assets/fishing/tools/fishing-rod.png',
+  'public/assets/fishing/water/ripple-0.png',
+  'public/assets/fishing/water/ripple-1.png',
+  'public/assets/fishing/water/bobber.png',
+  'public/assets/fishing/fish/bluegill.png',
+  'public/assets/fishing/fish/carp.png',
+  'public/assets/fishing/fish/perch.png',
+  'public/assets/fishing/fish/koi.png',
+  'public/assets/fishing/fish/moonfin.png',
+  'public/assets/village-life-v2/manifest.json',
+  'public/assets/village-life-v2/npcs/farmer-0.png',
+  'public/assets/village-life-v2/npcs/farmer-1.png',
+  'public/assets/village-life-v2/npcs/rancher-0.png',
+  'public/assets/village-life-v2/npcs/rancher-1.png',
+  'public/assets/village-life-v2/animals/chicken-0.png',
+  'public/assets/village-life-v2/animals/chicken-1.png',
+  'public/assets/village-life-v2/animals/chicken-sleeping.png',
+  'public/assets/village-life-v2/animals/cow-0.png',
+  'public/assets/village-life-v2/animals/cow-1.png',
+  'public/assets/village-life-v2/animals/cow-sleeping.png',
+  'public/assets/village-life-v2/products/egg.png',
+  'public/assets/village-life-v2/products/milk.png',
+  'public/assets/village-life-v2/products/golden-egg.png',
+  'public/assets/village-life-v2/crops/tomato/planted.png',
+  'public/assets/village-life-v2/crops/tomato/watered.png',
+  'public/assets/village-life-v2/crops/tomato/growing-1.png',
+  'public/assets/village-life-v2/crops/tomato/growing-2.png',
+  'public/assets/village-life-v2/crops/tomato/ready.png',
+  'public/assets/village-life-v2/crops/corn/planted.png',
+  'public/assets/village-life-v2/crops/corn/watered.png',
+  'public/assets/village-life-v2/crops/corn/growing-1.png',
+  'public/assets/village-life-v2/crops/corn/growing-2.png',
+  'public/assets/village-life-v2/crops/corn/ready.png',
+  'public/assets/village-life-v2/crops/pumpkin/planted.png',
+  'public/assets/village-life-v2/crops/pumpkin/watered.png',
+  'public/assets/village-life-v2/crops/pumpkin/growing-1.png',
+  'public/assets/village-life-v2/crops/pumpkin/growing-2.png',
+  'public/assets/village-life-v2/crops/pumpkin/ready.png',
+  'public/assets/open-world-v1/manifest.json',
+  'public/assets/open-world-v1/maps/whisper-forest.png',
+  'public/assets/open-world-v1/maps/river-coast.png',
+  'public/assets/open-world-v1/maps/mine-foothill.png',
+  'public/assets/open-world-v1/npcs/forest-guide-0.png',
+  'public/assets/open-world-v1/npcs/forest-guide-1.png',
+  'public/assets/open-world-v1/npcs/mine-keeper-0.png',
+  'public/assets/open-world-v1/npcs/mine-keeper-1.png',
+  'public/assets/open-world-v1/items/mushroom.png',
+  'public/assets/open-world-v1/items/herb.png',
+  'public/assets/open-world-v1/items/wild-berry.png',
+  'public/assets/open-world-v1/items/fern.png',
+  'public/assets/open-world-v1/items/moon-bloom.png',
+  'public/assets/open-world-v1/items/stone.png',
+  'public/assets/open-world-v1/items/copper-ore.png',
+  'public/assets/open-world-v1/items/iron-ore.png',
+  'public/assets/open-world-v1/items/star-crystal.png',
+  'public/assets/open-world-v1/fish/river-trout.png',
+  'public/assets/open-world-v1/fish/silver-dace.png',
+  'public/assets/open-world-v1/fish/night-eel.png',
+  'public/assets/open-world-v1/fish/shore-sardine.png',
+  'public/assets/open-world-v1/fish/coral-bream.png',
+  'public/assets/open-world-v1/fish/tide-ray.png',
+  'public/assets/open-world-v1/props/travel-post.png',
+  'public/assets/open-world-v1/tools/pickaxe.png',
+  'public/assets/art-remaster-v1/manifest.json',
+  'public/assets/art-remaster-v1/style/style-anchor.png',
+  'public/assets/art-remaster-v1/characters/player/down-0.png',
+  'public/assets/art-remaster-v1/characters/player/left-0.png',
+  'public/assets/art-remaster-v1/characters/player/right-0.png',
+  'public/assets/art-remaster-v1/characters/player/up-0.png',
+  'public/assets/art-remaster-v1/characters/player/actions/hoe-0.png',
+  'public/assets/art-remaster-v1/characters/player/actions/water-1.png',
+  'public/assets/art-remaster-v1/characters/player/actions/pickaxe-2.png',
+  'public/assets/art-remaster-v1/characters/player/actions/fish-cast-1.png',
+  'public/assets/art-remaster-v1/characters/player/actions/fish-reel-1.png',
+  'public/assets/art-remaster-v1/npcs/lumi/portrait-neutral.png',
+  'public/assets/art-remaster-v1/npcs/hana/portrait-happy.png',
+  'public/assets/art-remaster-v1/npcs/jun/portrait-concerned.png',
+  'public/assets/art-remaster-v1/npcs/sera/portrait-neutral.png',
+  'public/assets/art-remaster-v1/npcs/doyun/portrait-happy.png',
+  'public/assets/art-remaster-v1/maps/farm-village.png',
+  'public/assets/art-remaster-v1/maps/whisper-forest.png',
+  'public/assets/art-remaster-v1/maps/river-coast.png',
+  'public/assets/art-remaster-v1/maps/mine-foothill.png',
+  'public/assets/art-remaster-v1/maps/farmhouse-interior.png',
+  'public/assets/audio/manifest.json',
 ];
+
+if (game.includes('...currentEntities[0]')) {
+  console.error('Empty-space dialogue must not reuse the first regional entity ID');
+  process.exit(1);
+}
 const missingFiles = requiredFiles.filter((path) => !existsSync(path));
 if (missingFiles.length) {
   console.error(`Missing required generated game sprite files: ${missingFiles.join(', ')}`);
@@ -383,6 +617,194 @@ if (
   || farmLoopManifest.tools?.length !== 3
 ) {
   console.error('Farm Loop asset manifest is incomplete or incompatible');
+  process.exit(1);
+}
+
+const villageLifeManifestPath = 'public/assets/village-life-v2/manifest.json';
+if (existsSync(villageLifeManifestPath)) {
+  const villageLifeManifest = JSON.parse(readFileSync(villageLifeManifestPath, 'utf8'));
+  const lifePngPaths = requiredFiles.filter((path) => path.startsWith('public/assets/village-life-v2/') && path.endsWith('.png'));
+  const wrongLifeAssetSizes = lifePngPaths
+    .map((path) => ({ path, actual: readPngSize(path) }))
+    .filter(({ path, actual }) => path.includes('/npcs/')
+      ? actual.width !== 48 || actual.height !== 64
+      : actual.width !== 32 || actual.height !== 32);
+
+  if (wrongLifeAssetSizes.length) {
+    console.error(`Village Life assets use incompatible canvases: ${wrongLifeAssetSizes.map(({ path }) => path).join(', ')}`);
+    process.exit(1);
+  }
+
+  const instances = villageLifeManifest.animal_instances ?? [];
+  const chickenCount = instances.filter((animal) => animal.species === 'chicken').length;
+  const cowCount = instances.filter((animal) => animal.species === 'cow').length;
+  if (
+    villageLifeManifest.version !== 1
+    || villageLifeManifest.npcs?.length !== 2
+    || instances.length !== 5
+    || chickenCount !== 3
+    || cowCount !== 2
+    || villageLifeManifest.crops?.length !== 3
+    || villageLifeManifest.crop_stages?.length !== 5
+    || villageLifeManifest.products?.length !== 3
+  ) {
+    console.error('Village & Farm Life v2 asset manifest is incomplete or incompatible');
+    process.exit(1);
+  }
+}
+
+const openWorldManifest = JSON.parse(readFileSync('public/assets/open-world-v1/manifest.json', 'utf8'));
+if (
+  openWorldManifest.version !== 1
+  || openWorldManifest.map_size?.width !== 512
+  || openWorldManifest.map_size?.height !== 352
+  || openWorldManifest.logical_tile_size !== 16
+  || openWorldManifest.regions?.length !== 3
+  || openWorldManifest.npcs?.length !== 2
+  || openWorldManifest.forage_items?.length !== 5
+  || openWorldManifest.mine_items?.length !== 4
+  || openWorldManifest.fish?.length !== 6
+) {
+  console.error('Pixel Farm Mini Open World v1 asset manifest is incomplete or incompatible');
+  process.exit(1);
+}
+
+const remasterManifest = JSON.parse(readFileSync('public/assets/art-remaster-v1/manifest.json', 'utf8'));
+const remasterActionAssets = remasterManifest.assets?.filter((asset) => asset.path.startsWith('characters/player/actions/')) ?? [];
+const remasterPortraitAssets = remasterManifest.assets?.filter((asset) => /npcs\/(lumi|hana|jun|sera|doyun)\/portrait-/.test(asset.path)) ?? [];
+if (
+  remasterManifest.version !== 1
+  || remasterManifest.visual_source !== 'gpt-image'
+  || remasterManifest.logical_tile_size !== 16
+  || remasterManifest.runtime_map_size?.width !== 512
+  || remasterManifest.runtime_map_size?.height !== 352
+  || remasterManifest.sources?.length !== 19
+  || remasterManifest.assets?.length !== 278
+  || remasterManifest.maps?.length !== 4
+  || remasterManifest.interiors?.length !== 1
+  || remasterManifest.audio?.length !== 5
+  || remasterManifest.audio.some((track) => !track.present || !track.sha256)
+  || remasterActionAssets.length !== 15
+  || remasterPortraitAssets.length !== 15
+  || !remasterManifest.validation?.all_sprite_alpha
+  || !remasterManifest.validation?.all_sprite_transparent_corners
+) {
+  console.error('GPT Image art remaster manifest is incomplete or incompatible');
+  process.exit(1);
+}
+
+if (remasterManifest.sources.some((source) => source.generator !== 'OpenAI GPT Image built-in tool')) {
+  console.error('Every remaster source pack must record OpenAI GPT Image provenance');
+  process.exit(1);
+}
+
+const wrongRemasterMaps = remasterManifest.maps
+  .map((map) => ({ path: `public/assets/art-remaster-v1/${map.path}`, actual: readPngSize(`public/assets/art-remaster-v1/${map.path}`) }))
+  .filter(({ actual }) => actual.width !== 512 || actual.height !== 352);
+if (wrongRemasterMaps.length) {
+  console.error(`Remaster region maps must stay 512x352: ${wrongRemasterMaps.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const audioManifest = JSON.parse(readFileSync('public/assets/audio/manifest.json', 'utf8'));
+const expectedAudioTrackIds = ['village-day', 'forest-day', 'coast-day', 'mine-day', 'night'];
+const invalidAudioTracks = audioManifest.tracks?.filter((track) => {
+  const path = `public/assets/audio/${track.file}`;
+  const sourcePath = `${audioManifest.source_directory}/${track.source}`;
+  if (!track.present || !existsSync(path) || !existsSync(sourcePath)) return true;
+  const bytes = readFileSync(path);
+  const hasMp3Header = bytes.subarray(0, 3).toString('ascii') === 'ID3'
+    || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0);
+  const sha256 = createHash('sha256').update(bytes).digest('hex');
+  return !hasMp3Header || bytes.length < 100_000 || sha256 !== track.sha256;
+}) ?? [];
+if (
+  audioManifest.version !== 1
+  || audioManifest.crossfade_ms < 800
+  || audioManifest.crossfade_ms > 1200
+  || audioManifest.tracks?.length !== 5
+  || expectedAudioTrackIds.some((id) => !audioManifest.tracks.some((track) => track.id === id))
+  || invalidAudioTracks.length > 0
+  || (audioSystem.match(/available: true/g) ?? []).length !== 5
+) {
+  console.error('Audio manifest, source files, MP3 outputs, hashes, and runtime availability must agree for all five tracks');
+  process.exit(1);
+}
+
+const runtimeVisualCode = `${game}\n${farmLoop}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}`;
+const legacyRuntimeVisualRoots = [
+  '/assets/farm-loop/',
+  '/assets/village-life-v2/',
+  '/assets/open-world-v1/',
+  '/assets/fishing/',
+  '/assets/village-pulse/',
+  '/assets/generated-sprites/',
+  '/assets/generated-sheets/',
+  '/assets/game-sprites/',
+  '/assets/pixellab/',
+];
+const legacyRuntimeVisuals = legacyRuntimeVisualRoots.filter((root) => runtimeVisualCode.includes(root));
+if (legacyRuntimeVisuals.length) {
+  console.error(`Legacy or code-generated runtime art references remain: ${legacyRuntimeVisuals.join(', ')}`);
+  process.exit(1);
+}
+
+const openWorldPngPaths = requiredFiles.filter((path) => path.startsWith('public/assets/open-world-v1/') && path.endsWith('.png'));
+const wrongOpenWorldAssetSizes = openWorldPngPaths
+  .map((path) => ({ path, actual: readPngSize(path) }))
+  .filter(({ path, actual }) => {
+    if (path.includes('/maps/')) return actual.width !== 512 || actual.height !== 352;
+    if (path.includes('/npcs/')) return actual.width !== 48 || actual.height !== 64;
+    return actual.width !== 32 || actual.height !== 32;
+  });
+
+if (wrongOpenWorldAssetSizes.length) {
+  console.error(`Open World assets use incompatible canvases: ${wrongOpenWorldAssetSizes.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const villagePulseAssetPaths = requiredFiles.filter((path) => path.startsWith('public/assets/village-pulse/npc/') && path.endsWith('.png'));
+const wrongVillagePulseAssetSizes = villagePulseAssetPaths
+  .map((path) => ({ path, actual: readPngSize(path) }))
+  .filter(({ actual }) => actual.width !== 118 || actual.height !== 181);
+
+if (wrongVillagePulseAssetSizes.length) {
+  console.error(`Village NPC frames must stay on the normalized 118x181 canvas: ${wrongVillagePulseAssetSizes.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const villagePulseManifest = JSON.parse(readFileSync('public/assets/village-pulse/manifest.json', 'utf8'));
+if (
+  villagePulseManifest.version !== 1
+  || villagePulseManifest.npc?.id !== 'village-keeper'
+  || villagePulseManifest.npc?.frames?.length !== 16
+  || villagePulseManifest.npc?.canvas?.width !== 118
+  || villagePulseManifest.npc?.canvas?.height !== 181
+) {
+  console.error('Village Pulse asset manifest is incomplete or incompatible');
+  process.exit(1);
+}
+
+const fishingAssetPaths = requiredFiles.filter((path) => path.startsWith('public/assets/fishing/') && path.endsWith('.png'));
+const wrongFishingAssetSizes = fishingAssetPaths
+  .map((path) => ({ path, actual: readPngSize(path) }))
+  .filter(({ actual }) => actual.width !== 32 || actual.height !== 32);
+
+if (wrongFishingAssetSizes.length) {
+  console.error(`Fishing assets must stay on a 32x32 logical canvas: ${wrongFishingAssetSizes.map(({ path }) => path).join(', ')}`);
+  process.exit(1);
+}
+
+const fishingManifest = JSON.parse(readFileSync('public/assets/fishing/manifest.json', 'utf8'));
+if (
+  fishingManifest.version !== 1
+  || fishingManifest.logical_size !== 32
+  || fishingManifest.fish?.length !== 5
+  || fishingManifest.water_frames?.length !== 2
+  || fishingManifest.fishing_spots?.length !== 2
+  || fishingManifest.pond_cells?.length < 12
+) {
+  console.error('Fishing Pond asset manifest is incomplete or incompatible');
   process.exit(1);
 }
 

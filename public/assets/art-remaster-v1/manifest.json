@@ -1,0 +1,4550 @@
+{
+  "version": 1,
+  "visual_source": "gpt-image",
+  "artwork_policy": "GPT Image originals; code is limited to chroma cleanup, cropping, nearest-neighbor normalization, palette reduction and manifest creation.",
+  "logical_tile_size": 16,
+  "runtime_map_size": {
+    "width": 512,
+    "height": 352
+  },
+  "sources": [
+    {
+      "id": "style-anchor",
+      "path": "source/style-anchor-chroma.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Common visual identity board for characters, livestock, buildings, props and items",
+      "grid": null,
+      "sha256": "605088c37164c547368b4ad024ae1fa505bbc42e6ab8d088755596aad9021df5"
+    },
+    {
+      "id": "player",
+      "path": "source/player-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Straw-hat farmer four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "7c960dc442223de4398ce35fe527c9ba78af731cac7b5d25e35220b1ec6afed3"
+    },
+    {
+      "id": "lumi",
+      "path": "source/lumi-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Lumi four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "5e5d301b32b532e3e0a7f7fd7c049ec572c38ac8df24e5840308bd102d6f02fe"
+    },
+    {
+      "id": "hana",
+      "path": "source/hana-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Hana four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "99499211dd76f401b703ba2026c74a504bdae7cb25682967bc6e432439956f8e"
+    },
+    {
+      "id": "jun",
+      "path": "source/jun-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Jun four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "13c64ce082ffb4298925e62ba77459062e4f483ce7039df318a98aa5f5031fb1"
+    },
+    {
+      "id": "sera",
+      "path": "source/sera-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Sera four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "bac5aeb08d5143472585f1d0d8b82dd9f81be1d6cb17f12c54c9ff8bb267773d"
+    },
+    {
+      "id": "doyun",
+      "path": "source/doyun-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Doyun four-direction three-frame walk cycle",
+      "grid": {
+        "rows": 4,
+        "columns": 3
+      },
+      "sha256": "704d97a851d5cd2c2b8b91a1e722e22dcf4e279a2dd644911549f5a424e27832"
+    },
+    {
+      "id": "player-actions",
+      "path": "source/player-actions-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Player hoe, watering, mining, fishing cast and fishing reel actions",
+      "grid": {
+        "rows": 5,
+        "columns": 3
+      },
+      "sha256": "8ec75f54ea864461aff88c7db0bcb73976e92605aa1012304c6e6808dab9aea7"
+    },
+    {
+      "id": "npc-portraits",
+      "path": "source/npc-portraits-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Five NPC dialogue portraits with neutral, happy and concerned expressions",
+      "grid": {
+        "rows": 3,
+        "columns": 5
+      },
+      "sha256": "b647eac24298622467364eb569609a542678467c56dc4ee617b6ceb50bed2d8d"
+    },
+    {
+      "id": "livestock",
+      "path": "source/livestock-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Chicken and cow state animation pack",
+      "grid": {
+        "rows": 2,
+        "columns": 6
+      },
+      "sha256": "c6e2d494d9702e4c104a8cc1e8ac17a5d406d634bd45994de6015311c278a707"
+    },
+    {
+      "id": "crops",
+      "path": "source/crops-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Six crops across five growth stages",
+      "grid": {
+        "rows": 5,
+        "columns": 6
+      },
+      "sha256": "23a7704996500c69746f65d1dab0a0ede7848430d41d04b3cf63508745c2ea15"
+    },
+    {
+      "id": "items",
+      "path": "source/items-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Harvest, ranch, forage, ore and fish icon pack",
+      "grid": {
+        "rows": 5,
+        "columns": 6
+      },
+      "sha256": "0d214e142e9e4e99e7c5edcf23fd10d57dd2f0fee1e1d6fd48bc80adc71e28ab"
+    },
+    {
+      "id": "gameplay",
+      "path": "source/gameplay-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Tools, soil states and ambient effect pack",
+      "grid": {
+        "rows": 3,
+        "columns": 6
+      },
+      "sha256": "bd407a5e54f4f6d275badad3975af407cbb05025e9abe8a6cbb2a98f2bb4f77d"
+    },
+    {
+      "id": "world-props",
+      "path": "source/world-props-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Market, village, ranch, coast, mine and landmark prop pack",
+      "grid": {
+        "rows": 3,
+        "columns": 5
+      },
+      "sha256": "4dd628a3fd04d95b98230ae82f906883e77c9a0b2690e8897b0a6d6196f205b1"
+    },
+    {
+      "id": "terrain-grass-path",
+      "path": "source/terrain-grass-path.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Sixteen-mask grass-path Wang terrain family",
+      "grid": {
+        "rows": 4,
+        "columns": 4
+      },
+      "sha256": "f734c4f42f0b17796c356c193fc297b2c7e39ea6fc02039beadfa5abab8b1555"
+    },
+    {
+      "id": "terrain-stream",
+      "path": "source/terrain-stream.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Sixteen-mask stream Wang terrain family",
+      "grid": {
+        "rows": 4,
+        "columns": 4
+      },
+      "sha256": "2ea7b61535fadf4cf0fa2a530cff4a38baba56106f95fa29ff62adcb0f9c14a8"
+    },
+    {
+      "id": "terrain-coast",
+      "path": "source/terrain-coast.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Sixteen-mask coast Wang terrain family",
+      "grid": {
+        "rows": 4,
+        "columns": 4
+      },
+      "sha256": "eb6bebb5ce05437ccd5bf2d6658bd02d22009643f132db8cdc1981df17d79451"
+    },
+    {
+      "id": "terrain-cliff",
+      "path": "source/terrain-cliff.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Sixteen-mask cliff Wang terrain family",
+      "grid": {
+        "rows": 4,
+        "columns": 4
+      },
+      "sha256": "9797f9e33a315aabb755d9e5ac0760b1cd85433b4c0e6731f997132e81048553"
+    },
+    {
+      "id": "hoe-icon",
+      "path": "source/hoe-icon.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Chunky right-angle farming hoe for 32px toolbelt readability",
+      "grid": null,
+      "sha256": "862fb168b510377dc4f99a149e7273b3272ac10999fdb363f7c8fb9bd2bbd834"
+    }
+  ],
+  "assets": [
+    {
+      "path": "props/buildings/farmhouse.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 128,
+        "height": 128
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ed3d5269e1894e9c97af1fdb27425910447d7203d838457d816b176953ee78a2"
+    },
+    {
+      "path": "props/buildings/shop.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 160,
+        "height": 128
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "441bffff580ef8e14be70f52ee0f1ab91fa4508676809ea2ac14ebd99091544b"
+    },
+    {
+      "path": "props/buildings/barn.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 128,
+        "height": 128
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "950ebe8f136e9177780bbd38fb30d734b0673168cb803ebb00fa7ea9c46c6bca"
+    },
+    {
+      "path": "props/nature/tree.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c828383fb014e0a58be7c896eed732c3b8b481aa95340679b054d9480d6bec26"
+    },
+    {
+      "path": "props/nature/apple-tree.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "985d289414816dc4d107ede868d2e83fb6a97f77eef891f0d548fe6342f53cbe"
+    },
+    {
+      "path": "props/travel-sign.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 5
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e1b999bdb93d9ce42fdbf2451440ac76c68ce933c05daa21a7171786383cacd0"
+    },
+    {
+      "path": "props/bridge.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 6
+      },
+      "canvas": {
+        "width": 128,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a5859a4e2fc44e6e056c8ce24aeba874b9f6b650fb76da1e82581f991ad708f9"
+    },
+    {
+      "path": "props/crystal-cluster.png",
+      "source": "source/style-anchor-chroma.png",
+      "cell": {
+        "row": 0,
+        "column": 7
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4ea55e7937985f6452fcc2134f81e214707246c15a3c461c6f182b2f1113f3c4"
+    },
+    {
+      "path": "tiles/terrain/grass-path/00.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 0,
+        "column": 0,
+        "connectivity_mask": 0
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "1390903982ef9c2ef98ff6ecfb075a6007ce1cce09708008dffa977da19ec5cd"
+    },
+    {
+      "path": "tiles/terrain/grass-path/01.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 0,
+        "column": 1,
+        "connectivity_mask": 1
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "677848fb8dd079784f9ea9d9091ca791e399cd62658f53e4f6029274cefec7f7"
+    },
+    {
+      "path": "tiles/terrain/grass-path/02.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 0,
+        "column": 2,
+        "connectivity_mask": 2
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "3298151543ab1b3b095d54005a6ef84c2ec8749c5502b11f12d71268962d9e52"
+    },
+    {
+      "path": "tiles/terrain/grass-path/03.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 0,
+        "column": 3,
+        "connectivity_mask": 3
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "fdad2a479e4fe48bdd7b221c89700bc2aa1c79e6f0fc3e13cad9444584a441bf"
+    },
+    {
+      "path": "tiles/terrain/grass-path/04.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 1,
+        "column": 0,
+        "connectivity_mask": 4
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c274d7911c8504b227e2e97225d3c50d5171cc522b463aeac59934bfe05c0fb7"
+    },
+    {
+      "path": "tiles/terrain/grass-path/05.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 1,
+        "column": 1,
+        "connectivity_mask": 5
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c0ba071403be4ad1288f07afa6ed7d8f35bf5d6d83f17e7662e0d4e63509a4cc"
+    },
+    {
+      "path": "tiles/terrain/grass-path/06.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 1,
+        "column": 2,
+        "connectivity_mask": 6
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "b010ab51a3eb4f5e1a7bc4e76ced9f88ff2479b61536e207309dc18376b155c6"
+    },
+    {
+      "path": "tiles/terrain/grass-path/07.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 1,
+        "column": 3,
+        "connectivity_mask": 7
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "140728dea053fb4b13674a406080cf28ffd131b62ee21ee84d09ce3cd816b678"
+    },
+    {
+      "path": "tiles/terrain/grass-path/08.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 2,
+        "column": 0,
+        "connectivity_mask": 8
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "bd94ef37e9020c13aea926898f8a1b0daf8a6330bdf84a91f2e6982004369e0d"
+    },
+    {
+      "path": "tiles/terrain/grass-path/09.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 2,
+        "column": 1,
+        "connectivity_mask": 9
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "4f9a4b59e6ca2a4230d830ed051669f324f8bdab526603d1d0603fde01350d87"
+    },
+    {
+      "path": "tiles/terrain/grass-path/10.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 2,
+        "column": 2,
+        "connectivity_mask": 10
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "5d3b5c2f5df132278b8ef1becd93c976789d4f33a066a11801f6cd12b5f22c92"
+    },
+    {
+      "path": "tiles/terrain/grass-path/11.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 2,
+        "column": 3,
+        "connectivity_mask": 11
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "05d96e6da8957f3a361eca417185351b790654fa3e3d26a6dd37ef30a7ed9db5"
+    },
+    {
+      "path": "tiles/terrain/grass-path/12.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 3,
+        "column": 0,
+        "connectivity_mask": 12
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "f36bf39d37fd1a67df816430170bc6ae7a5ee377f576f19364d6f2aa1acf4453"
+    },
+    {
+      "path": "tiles/terrain/grass-path/13.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 3,
+        "column": 1,
+        "connectivity_mask": 13
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "171f5072390aba7b8b9aaeedad98f377881ab3e5bd448e0147c805ace83640dd"
+    },
+    {
+      "path": "tiles/terrain/grass-path/14.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 3,
+        "column": 2,
+        "connectivity_mask": 14
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "f9a19837fef8e270b35d5e6635ba7e80df3adf190c57192f3968f97b47078ac8"
+    },
+    {
+      "path": "tiles/terrain/grass-path/15.png",
+      "source": "source/terrain-grass-path.png",
+      "cell": {
+        "row": 3,
+        "column": 3,
+        "connectivity_mask": 15
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "676998984fb0862e7a800722d162984cf579af0bf65c9c13adc96eb0c0ff63c1"
+    },
+    {
+      "path": "tiles/terrain/stream/00.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 0,
+        "column": 0,
+        "connectivity_mask": 0
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "3220b0121ab11b5383500f6370fa6881c896eadf7c2beeee9ce076c4355cd5ad"
+    },
+    {
+      "path": "tiles/terrain/stream/01.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 0,
+        "column": 1,
+        "connectivity_mask": 1
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "9e7ac76aec81dc8c061e77fe1aaa7745b3ec846f92b56638acae5d48a6c605ba"
+    },
+    {
+      "path": "tiles/terrain/stream/02.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 0,
+        "column": 2,
+        "connectivity_mask": 2
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "7a37017cc2befc1488fcfa3c64007b060013e36f0229fdec71b292cde649cc24"
+    },
+    {
+      "path": "tiles/terrain/stream/03.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 0,
+        "column": 3,
+        "connectivity_mask": 3
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "fc3d1c8ee7758152b982989f5ed2ca430893ffbb247304af4b17fe250adbce7d"
+    },
+    {
+      "path": "tiles/terrain/stream/04.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 1,
+        "column": 0,
+        "connectivity_mask": 4
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "924b14aaf2527f5320ac792e74c9301eebb1fb9882ea034c1703d3235c3a0da8"
+    },
+    {
+      "path": "tiles/terrain/stream/05.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 1,
+        "column": 1,
+        "connectivity_mask": 5
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "1a611ffb63e976f1fab1e1c69618102213b41041bd7ce687509bb45ce2a62b29"
+    },
+    {
+      "path": "tiles/terrain/stream/06.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 1,
+        "column": 2,
+        "connectivity_mask": 6
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "71ec90008471c58f789e9c8143c57c83a2730247a8aebe8e47656eb78b76a0a3"
+    },
+    {
+      "path": "tiles/terrain/stream/07.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 1,
+        "column": 3,
+        "connectivity_mask": 7
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "0ca2074d4d5554dd22dc4bbbb0519b15033407bb621e88280e24aae0c93327d8"
+    },
+    {
+      "path": "tiles/terrain/stream/08.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 2,
+        "column": 0,
+        "connectivity_mask": 8
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "2c805d9303b1b7b215f056b42de575d5727bec013b75634ff8cfd908ee71daf0"
+    },
+    {
+      "path": "tiles/terrain/stream/09.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 2,
+        "column": 1,
+        "connectivity_mask": 9
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "ff2c98d3dd9b977f3e3bd417fe7de23adaf11cf4c6bd6096a4fd1954229eb43e"
+    },
+    {
+      "path": "tiles/terrain/stream/10.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 2,
+        "column": 2,
+        "connectivity_mask": 10
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "155695b756514bf050034082ae37b1747377f4562551bbc015b2651b80701c0d"
+    },
+    {
+      "path": "tiles/terrain/stream/11.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 2,
+        "column": 3,
+        "connectivity_mask": 11
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "da8a1eca21aa77c1b0954a0b5f54692e94d6abd0b3afb86ddf0d613bdb57be3f"
+    },
+    {
+      "path": "tiles/terrain/stream/12.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 3,
+        "column": 0,
+        "connectivity_mask": 12
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "0dd98808a99f047fe5074642d06a8390dcf59ce7e13af9abf266c6a7870f7fbd"
+    },
+    {
+      "path": "tiles/terrain/stream/13.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 3,
+        "column": 1,
+        "connectivity_mask": 13
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "ae5b6d15117f4b8039c9b0a3adbc7b5153953977adb9c6b64b04d915e94a7a20"
+    },
+    {
+      "path": "tiles/terrain/stream/14.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 3,
+        "column": 2,
+        "connectivity_mask": 14
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "f915b4c3ab2d0d31bee4459537d8b6b9ad340444c3afc0eda2bf0d276464132b"
+    },
+    {
+      "path": "tiles/terrain/stream/15.png",
+      "source": "source/terrain-stream.png",
+      "cell": {
+        "row": 3,
+        "column": 3,
+        "connectivity_mask": 15
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c2da48b9f31f2a2a015e95a76ab97d11b311ab48275a5256d7fd637b155a2787"
+    },
+    {
+      "path": "tiles/terrain/coast/00.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 0,
+        "column": 0,
+        "connectivity_mask": 0
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "ce3247a507495c12ab617c94e3ce980d69fdb7779711b449997b8c0c2f1a0c94"
+    },
+    {
+      "path": "tiles/terrain/coast/01.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 0,
+        "column": 1,
+        "connectivity_mask": 1
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "3ebf34dad4255efe6c55d8a1373aacf6f583a47fcf03b1bb61a521a0c41e30bc"
+    },
+    {
+      "path": "tiles/terrain/coast/02.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 0,
+        "column": 2,
+        "connectivity_mask": 2
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c67d7491d4135934e00a838200c5ccd8325ad43ee9494d1ea21b00b6b315ad7e"
+    },
+    {
+      "path": "tiles/terrain/coast/03.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 0,
+        "column": 3,
+        "connectivity_mask": 3
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "f7756a3266bf265e33ac0e6d59b1add52898862063bb69d6641af2b7554005b7"
+    },
+    {
+      "path": "tiles/terrain/coast/04.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 1,
+        "column": 0,
+        "connectivity_mask": 4
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "89549e04d504a4bbee5ac26198fbb7b60eeed80acde665ee628644e9f4eec352"
+    },
+    {
+      "path": "tiles/terrain/coast/05.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 1,
+        "column": 1,
+        "connectivity_mask": 5
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "33e1d2a0a4eb47b56fd3116b96ced9e46b02f449476b67421925fc8ad68018b4"
+    },
+    {
+      "path": "tiles/terrain/coast/06.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 1,
+        "column": 2,
+        "connectivity_mask": 6
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "d6e312d3c9bf21354f897759bc77164789307cf9171b63b271d6be6ddb97d4ef"
+    },
+    {
+      "path": "tiles/terrain/coast/07.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 1,
+        "column": 3,
+        "connectivity_mask": 7
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "20dab985c98994efda0c0cfcd1c872695958a8fd426549e6ca976c09575946aa"
+    },
+    {
+      "path": "tiles/terrain/coast/08.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 2,
+        "column": 0,
+        "connectivity_mask": 8
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "68aae4050126ab7db9cfa9c46084bf09273232bc0c49b36f4d8ae32314b2f7e1"
+    },
+    {
+      "path": "tiles/terrain/coast/09.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 2,
+        "column": 1,
+        "connectivity_mask": 9
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "bc4341fd1338abc13ca91dea4550e2d1d0947d516e06d51a4dd41b78b1fab15c"
+    },
+    {
+      "path": "tiles/terrain/coast/10.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 2,
+        "column": 2,
+        "connectivity_mask": 10
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c093786339103d2beec41949c592541470ffe498ee173f107b2c479bf75c638a"
+    },
+    {
+      "path": "tiles/terrain/coast/11.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 2,
+        "column": 3,
+        "connectivity_mask": 11
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "16ce5e2ad08db8134db36b29e391d78929efae8d49db45d618747fe60f8f6b56"
+    },
+    {
+      "path": "tiles/terrain/coast/12.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 3,
+        "column": 0,
+        "connectivity_mask": 12
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "1268f60f21bb6ffb8cf94aa56a282f5bd7e951b3ad3da6b8203c7936bb2fbffb"
+    },
+    {
+      "path": "tiles/terrain/coast/13.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 3,
+        "column": 1,
+        "connectivity_mask": 13
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "f4206b6305ba94b0f07f5c02be960704b60fc778ca5eef323eb6eeddeb7a0538"
+    },
+    {
+      "path": "tiles/terrain/coast/14.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 3,
+        "column": 2,
+        "connectivity_mask": 14
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "d70bf5c47789f64850e1ce9d7928260fad89dd2eb431009d4c0551018383df7a"
+    },
+    {
+      "path": "tiles/terrain/coast/15.png",
+      "source": "source/terrain-coast.png",
+      "cell": {
+        "row": 3,
+        "column": 3,
+        "connectivity_mask": 15
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "523343457a7f14707f747e2e730e31c68617a4728a1348b796d1fdf1d1953463"
+    },
+    {
+      "path": "tiles/terrain/cliff/00.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 0,
+        "column": 0,
+        "connectivity_mask": 0
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "ebbe02b6ccd106db596392136621c2c6fef7b7549025503ce5e93da8e0f4422d"
+    },
+    {
+      "path": "tiles/terrain/cliff/01.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 0,
+        "column": 1,
+        "connectivity_mask": 1
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "b4c5f4be1a3cf6070512dbc9ff18be9987c6e3e2453ea3c913c1a95a53dfc4c5"
+    },
+    {
+      "path": "tiles/terrain/cliff/02.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 0,
+        "column": 2,
+        "connectivity_mask": 2
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "80e0b82267fb9d4f9f241a3070ec49ce9e484d3e985c10efd86db322bd657af7"
+    },
+    {
+      "path": "tiles/terrain/cliff/03.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 0,
+        "column": 3,
+        "connectivity_mask": 3
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "254a1f31f331671573a1d12d31826047988c704b42eacbeba20a4e1ad4639bc7"
+    },
+    {
+      "path": "tiles/terrain/cliff/04.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 1,
+        "column": 0,
+        "connectivity_mask": 4
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "61fb07a0e2f2264b6c667710cfe05a5ef9faa36a9baa37a1ad30bb46e6b313b3"
+    },
+    {
+      "path": "tiles/terrain/cliff/05.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 1,
+        "column": 1,
+        "connectivity_mask": 5
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "44d5eaa9b8ea21b32576362a038b45183c494bad84c8fd95d507190ebe7ee88b"
+    },
+    {
+      "path": "tiles/terrain/cliff/06.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 1,
+        "column": 2,
+        "connectivity_mask": 6
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "e0395b2e174de02c112ee4e52d6e3de31eaad2962cb9b4974c4080a798fa3bbd"
+    },
+    {
+      "path": "tiles/terrain/cliff/07.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 1,
+        "column": 3,
+        "connectivity_mask": 7
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "d2593f44f508be15977170f532834f663ac305871687e3acc3568022a3b58d7f"
+    },
+    {
+      "path": "tiles/terrain/cliff/08.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 2,
+        "column": 0,
+        "connectivity_mask": 8
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "9da1c640c1bc9a6527010189b5d6168a8bee65c384910d75dfa0eea61fc27d3e"
+    },
+    {
+      "path": "tiles/terrain/cliff/09.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 2,
+        "column": 1,
+        "connectivity_mask": 9
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "6a9891f6d0143a031df7b9b5cce2b665bf25ed6e77d567e7035afa67f4114679"
+    },
+    {
+      "path": "tiles/terrain/cliff/10.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 2,
+        "column": 2,
+        "connectivity_mask": 10
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "b673fdf6424ee223d2f47c21accf584c302a953d9fc7b31b10a163c5efee127a"
+    },
+    {
+      "path": "tiles/terrain/cliff/11.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 2,
+        "column": 3,
+        "connectivity_mask": 11
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "ada994ba7df951951f04cb350110b7e1fe6b1b8ac631f013b801d23980bb2362"
+    },
+    {
+      "path": "tiles/terrain/cliff/12.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 3,
+        "column": 0,
+        "connectivity_mask": 12
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "25d1b4f03a4cca73f8033d3e6cd25bc1f8b43d623d98c62f15685c18fa480583"
+    },
+    {
+      "path": "tiles/terrain/cliff/13.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 3,
+        "column": 1,
+        "connectivity_mask": 13
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "a2559e7cab1551a3e2b3d07546b3a7592ea7691e862df80d5bfb4c15c674098c"
+    },
+    {
+      "path": "tiles/terrain/cliff/14.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 3,
+        "column": 2,
+        "connectivity_mask": 14
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "c55029dfc72fbafe95f3ad3163159efc988848fb72dc171496ca865e54da4164"
+    },
+    {
+      "path": "tiles/terrain/cliff/15.png",
+      "source": "source/terrain-cliff.png",
+      "cell": {
+        "row": 3,
+        "column": 3,
+        "connectivity_mask": 15
+      },
+      "canvas": {
+        "width": 16,
+        "height": 16
+      },
+      "alpha": false,
+      "transparent_corners": false,
+      "sha256": "73f009a8ddb3c3621fa66414dd69dab0fb6b7fc91a4d6a833c724e6ca13a523e"
+    },
+    {
+      "path": "characters/player/down-0.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "24761426bd483a93044510e458bb2d0b931a0410bc329f4a7a718aaf953fb5b7"
+    },
+    {
+      "path": "characters/player/down-1.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e965bea00104f253fb6dbaf0f7b8bb4385401e37bd50d9477b93597ae714817b"
+    },
+    {
+      "path": "characters/player/down-2.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f01350326ff531e743c867d942cd69261bdec7adfbf663e97dd6c10aa2d3d99c"
+    },
+    {
+      "path": "characters/player/left-0.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8be68fbc7bb7ce17b3aaea8fb888042afcb4c00c59c0a58fed770b02338d0995"
+    },
+    {
+      "path": "characters/player/left-1.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3dfac59ce4896b3f002895e2e4a5e7329add9b446e16c9c7ce9a8e499ecc5192"
+    },
+    {
+      "path": "characters/player/left-2.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4e5fdb327127b9460c55b7b814256218f172279c73162c511038f937ba1a09df"
+    },
+    {
+      "path": "characters/player/right-0.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f563165be74adfea8a63875b814d92a4b6c6e21f0cedb3f5a49c805606d63fbc"
+    },
+    {
+      "path": "characters/player/right-1.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "cd2ccb176ef4878e3c58d2f0c3c84dfc78b85ced84971611293bf8a325e523c6"
+    },
+    {
+      "path": "characters/player/right-2.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f5c01599ee7abf9970b065b0544d2ed472fcea1753b2d376d843b2a60e835144"
+    },
+    {
+      "path": "characters/player/up-0.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9e8dee3af665c1d3058f85e24665cb709c713e6321559421b7fb4517e23075de"
+    },
+    {
+      "path": "characters/player/up-1.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b6ecd27803e0b0fe9c5877b40906bdf39861e277b3d48cff90bf75442edbe4b8"
+    },
+    {
+      "path": "characters/player/up-2.png",
+      "source": "source/player-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e35e32e16bd57a0a785874caf7bd4b95ddd3e9ae37ef50788f01b70878d21a94"
+    },
+    {
+      "path": "npcs/lumi/down-0.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "54e9a015d0cbbd397f23b4131841a90635a84d88de4911cc66c529b4c98c1080"
+    },
+    {
+      "path": "npcs/lumi/down-1.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7343e09f140e46700eb150c8aa00f3feab3db2edebcb3e1d00a07c8463bedaad"
+    },
+    {
+      "path": "npcs/lumi/down-2.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c095c3ef4415509c847d58ec32fb7b065c1ddde5891795c4285ddb3cf54cddab"
+    },
+    {
+      "path": "npcs/lumi/left-0.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9db29cef25f8e6bcd04bfbad475046eb4cd6c9b36a8040b645ceb819f14e76ab"
+    },
+    {
+      "path": "npcs/lumi/left-1.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a2d65e1abf7a665b9b089685143498901f121164955bf998937227880994ada6"
+    },
+    {
+      "path": "npcs/lumi/left-2.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a225410614daf7e4e47c97d927308ab9e30608a2491e979bc2c1ff1f2c2adcb5"
+    },
+    {
+      "path": "npcs/lumi/right-0.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9bf67ca4e21d666e150954c86f45a872776e98e979a4677b9ff650cd43c5e947"
+    },
+    {
+      "path": "npcs/lumi/right-1.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c28115ca7d5673456e583800753e70e9c4ab3a2a6210bcc9217fe49d77c6a72e"
+    },
+    {
+      "path": "npcs/lumi/right-2.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c95230ecc98b9904bd35faf2525a010cbf6b53fe248aa63c0550df067958106b"
+    },
+    {
+      "path": "npcs/lumi/up-0.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "74be1b1236a0d79e30ea68bd98561a63111816abc5faed6d55fc82be1c887fc3"
+    },
+    {
+      "path": "npcs/lumi/up-1.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "92201242c72e9bac4675729fae584a7875b2aec24baa49f253da8bf3c9b1540b"
+    },
+    {
+      "path": "npcs/lumi/up-2.png",
+      "source": "source/lumi-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5a5f56d93ec787c34d4397fc5d77877cd8323f51db692e70d1fd044d79046aed"
+    },
+    {
+      "path": "npcs/hana/down-0.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0a66d5f196c62ff5a01f3b5c1b88537b788e39facdaa011efc9805f4036d2d95"
+    },
+    {
+      "path": "npcs/hana/down-1.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "2ceded964d3a584158cfb5f5d7f842b8db567a76a89117d052cde0d97b3d629b"
+    },
+    {
+      "path": "npcs/hana/down-2.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "2e867cd54790196e3889be343f4e2b151c35ff0ae8dc04b83d8ad226d6311fa5"
+    },
+    {
+      "path": "npcs/hana/left-0.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d8298c15a518a60c2d536b20b8105ee3f8b243b15d30c8698b6d746251d1fbee"
+    },
+    {
+      "path": "npcs/hana/left-1.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a566b1e5aff03dd48daaa420d8cd3773e8486ea3f81f10f016c2d5231859f0b0"
+    },
+    {
+      "path": "npcs/hana/left-2.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "319df76e86a4965442664a27e3be5f568bf56b2843df01b3b8a3e8936dea9b88"
+    },
+    {
+      "path": "npcs/hana/right-0.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f3156c2c0d26c8e80d844ebe0f233dec7927750068303cc2660cc65c274bc55c"
+    },
+    {
+      "path": "npcs/hana/right-1.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b75dd53ca4045a0afcf5df69d4c427065c5f0c88386602e1c18972ccec2021ee"
+    },
+    {
+      "path": "npcs/hana/right-2.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b6b14a70351b1f05059483b44f6d0dabc3c66f7a209374f47f7b158b887e3caf"
+    },
+    {
+      "path": "npcs/hana/up-0.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "322a0a20ef74f44aa8dbe5490f928451533bae52870c79c47308e194b47568f3"
+    },
+    {
+      "path": "npcs/hana/up-1.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3d50c9a1ba3dc23b1f04f76765fed07380be9095baee2617dc9a91080fc2a291"
+    },
+    {
+      "path": "npcs/hana/up-2.png",
+      "source": "source/hana-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8e1eb8e9933ef1b4b60f6f534a2460c468b58c02744af0290f54043aca846945"
+    },
+    {
+      "path": "npcs/jun/down-0.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c5d541d2d7a20ed8d9d747bb6d412310365e1390270803080952086f24a314b2"
+    },
+    {
+      "path": "npcs/jun/down-1.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4abca1e798b4fed20de7bd4a6a83bd824dca514c080da8c4d77fd591f7b573e4"
+    },
+    {
+      "path": "npcs/jun/down-2.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6f3d912858f34468a1fe6d457adae05a7cf9a62d45c7a0ef2fab94fede027c16"
+    },
+    {
+      "path": "npcs/jun/left-0.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9e71d78e4b7e7986556d34064b4332a87868cfa59c5ec55f20b5c918224db111"
+    },
+    {
+      "path": "npcs/jun/left-1.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0c2d1aa00fd00929a967ff4b5e75d24e004926dd76a18793e08e125423452ade"
+    },
+    {
+      "path": "npcs/jun/left-2.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3b855535f6e51164621dd8641dbaa2da6a1ddf9750ac61efd0615b69e5ad8841"
+    },
+    {
+      "path": "npcs/jun/right-0.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8f3971c6f833fe8cf107a4233bd30f0d9d5e786e82d9e4a7985417f36a34ec73"
+    },
+    {
+      "path": "npcs/jun/right-1.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "20ed0b1654f5ff73ec07ccbbfec7e1112005259779d9cac89385e567b2ed75aa"
+    },
+    {
+      "path": "npcs/jun/right-2.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8eb5983cc103bc64e9b12286ee5a9f2b78b018b2846d2117341d11e08d944c5f"
+    },
+    {
+      "path": "npcs/jun/up-0.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d98b52e3454d415ae3eb7d24b11b45f12b63c6233a62c6ff719c7b581c3fd8d3"
+    },
+    {
+      "path": "npcs/jun/up-1.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8b99f82c16fa1b312d5abf49824ab12f02d472063cda5b7cd1e62dcc764261dd"
+    },
+    {
+      "path": "npcs/jun/up-2.png",
+      "source": "source/jun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "2a88b851e6a7056e5d2333f29df8f0413ba5eb5f93913230b52c7f1077b6cd21"
+    },
+    {
+      "path": "npcs/sera/down-0.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c7a7aa61b0655a9b37a87ff28224dfa629cfe3552bef7eb66140697905d124d1"
+    },
+    {
+      "path": "npcs/sera/down-1.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b05deaae810117fc80425b29edad1bb2b8d23739273caa9e88e9bb87f05064c3"
+    },
+    {
+      "path": "npcs/sera/down-2.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "96b96207e2e79cdcb4f090766ac07f546533b298f4de3f1cd45b1cbd5f2f5ce3"
+    },
+    {
+      "path": "npcs/sera/left-0.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e71911320b6a153232557fe20746db5023e74d3954aca2722d3493df28c719f3"
+    },
+    {
+      "path": "npcs/sera/left-1.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ca37061f621aaa91255bf9d4e3f1e01da8c698e32a19f62e525b43a35cc21240"
+    },
+    {
+      "path": "npcs/sera/left-2.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "85d2bdccc4f60d39ca95d238e948606b78b3786faa0cf37069ed08f68796d053"
+    },
+    {
+      "path": "npcs/sera/right-0.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "83a11f8fe6eed4abadf69a5428c47eccc0f3c614417fc8228eb292d74924190d"
+    },
+    {
+      "path": "npcs/sera/right-1.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7cd14d30b3e21d5fc510d389cc7502d85948259d4228801261926f2b4a8ed881"
+    },
+    {
+      "path": "npcs/sera/right-2.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "946ce2462aed349e2c0cb8c14307f53d7cb21b33b8e5facb311a5a0463fd4a0b"
+    },
+    {
+      "path": "npcs/sera/up-0.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "79efd219f0425902e9ec5010c212b53742412184a209b71df7764d25ec05c75f"
+    },
+    {
+      "path": "npcs/sera/up-1.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e6d7bf96267d876ab83d0e391315afec467df9aa7dbd9d27e04ad432a009ae90"
+    },
+    {
+      "path": "npcs/sera/up-2.png",
+      "source": "source/sera-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a43319d91e2494e5ffce348c544f090c93c0c35962930d30ba03e6d79d598e51"
+    },
+    {
+      "path": "npcs/doyun/down-0.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "daa0f183f762cad094097831c80927aa6991a7c3ffe3208beab9f4a4440ce42e"
+    },
+    {
+      "path": "npcs/doyun/down-1.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b15ce46cf7d7b29de2e841b97a0aab965ff18c81a70f7677287aef613ee0577e"
+    },
+    {
+      "path": "npcs/doyun/down-2.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "af7e81db6d37b78cbdd0ecc3b6d15d9c6fa63bdbdc24df02edacf1118c74add9"
+    },
+    {
+      "path": "npcs/doyun/left-0.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5fc16aa136984f2f4ff890515fc095573c3428140c1a2c7f9a27a1007e99f083"
+    },
+    {
+      "path": "npcs/doyun/left-1.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ccefd8db21987217bac93922a88c10172cd4eff3c92acd6bc820908dc0a1fb01"
+    },
+    {
+      "path": "npcs/doyun/left-2.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ffe28aa804750d4e636ac9eb7026082ad9e6836cd12a4780e40ac27d3b8309ac"
+    },
+    {
+      "path": "npcs/doyun/right-0.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7ca6ba073aa17d4a10c38232ff4074182ec99f134ad3d8a70a43ed3a43175d8b"
+    },
+    {
+      "path": "npcs/doyun/right-1.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "869dd1be61dd8275d1267c929eca6e9b05448ad9b454a21bfae3c50594943789"
+    },
+    {
+      "path": "npcs/doyun/right-2.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9fecf66b26f7bee92c53d417738b2e039bfb0a5d3557c4af2a8da535e59ea6d9"
+    },
+    {
+      "path": "npcs/doyun/up-0.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7bf27f4ed660575adec2fb61f7f473ec3241747ce72c473f94cb4854eac25061"
+    },
+    {
+      "path": "npcs/doyun/up-1.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6a05699b7d61b645a4ae00326c4f63720026cfab1a9b398e04b5c0ab25bdd9af"
+    },
+    {
+      "path": "npcs/doyun/up-2.png",
+      "source": "source/doyun-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "af1332734a1fa9c98dd10e9e537990896c4ee0283b8c1eafe133093eae66f619"
+    },
+    {
+      "path": "characters/player/actions/hoe-0.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e3e8f21a8247133b17879e3a1822fcf087c55869b6532393ac8bcab9082013dc"
+    },
+    {
+      "path": "characters/player/actions/hoe-1.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "946907d64e296dd69271c5cc21c36220e11bdf04bdf9ebcca4b105a7a0c95a68"
+    },
+    {
+      "path": "characters/player/actions/hoe-2.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9c49a6fc273ce5a7641435f703a7575dc7eabd2c3263f3fd430d75c020e445a0"
+    },
+    {
+      "path": "characters/player/actions/water-0.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "1d8d53f37ca96b2e5b564c9947bd8b069e237e1a520013e4421bdd6ba1172d15"
+    },
+    {
+      "path": "characters/player/actions/water-1.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e4df53734c3f2b778ce42ecc42d2f0b2cdd975b1d37c523f7bc28008ca6c694e"
+    },
+    {
+      "path": "characters/player/actions/water-2.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "dbe2673dd279aa46b3d692c157ecf80c2b307400bc3252357506305f0fc50f12"
+    },
+    {
+      "path": "characters/player/actions/pickaxe-0.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "46196d5b0774562b2067344d49aef1e6fda7686398af43ef0c264a3b933e5913"
+    },
+    {
+      "path": "characters/player/actions/pickaxe-1.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "dc32d595dd071fd44799843ef6052ae8407e1ff7afb104fdc376cd609e7e659f"
+    },
+    {
+      "path": "characters/player/actions/pickaxe-2.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "692a21baa0ea4a83c425cbcd886616bf6777e00db77f022ed864e2eee7064ccd"
+    },
+    {
+      "path": "characters/player/actions/fish-cast-0.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "eb2b68551576bb756c1dc2f16d3a99dfbe18fbde7fa10bdc3987a25326e44148"
+    },
+    {
+      "path": "characters/player/actions/fish-cast-1.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "05b3e76d052560d3b3af6eac5d597a132a7c14711d9279e80b8fe4a445c4917f"
+    },
+    {
+      "path": "characters/player/actions/fish-cast-2.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "fb355b523d4bb7eddb4fed20197cce4f5b4f98cec51dca4f7c3551d36ef792ae"
+    },
+    {
+      "path": "characters/player/actions/fish-reel-0.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f4c70b2fb6d0e8d9c8d89607e8c2e5cbf6e3b79675fd36cf28baae17ac415915"
+    },
+    {
+      "path": "characters/player/actions/fish-reel-1.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "461978b8994b950d52d7ce19138e04a559b8f77e950e1dd86e11523621397abb"
+    },
+    {
+      "path": "characters/player/actions/fish-reel-2.png",
+      "source": "source/player-actions-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e7abdba6a8272b7cceee7abacb919eea0e0c0ba791a5a162534b303d3c481ede"
+    },
+    {
+      "path": "npcs/lumi/portrait-neutral.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6b4e0fbe56b7f88ac877ad34972ea33c65cddcc8819c4b92df4da2f642ddd157"
+    },
+    {
+      "path": "npcs/hana/portrait-neutral.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8b43fee2ed42e05de011fae2291406cd433e5f9e4bcf4009ba30cbf1ef923071"
+    },
+    {
+      "path": "npcs/jun/portrait-neutral.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d25c64bdf46fdfb97df4c287d5549e2f0eda37a0deb7a6bad78ba6a30a9d8366"
+    },
+    {
+      "path": "npcs/sera/portrait-neutral.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0be416bc9bb41318cff9d855c7089295367666d835f1af8f4092dccd5e0cd7af"
+    },
+    {
+      "path": "npcs/doyun/portrait-neutral.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "904b418cabc5694b64f1fc13a987750828ebbddc27c8044cc953307f70fcac7d"
+    },
+    {
+      "path": "npcs/lumi/portrait-happy.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "1264f118fefdbe7963e4aced80bb006ab4a638ee7923e722e70cb94ba7defeab"
+    },
+    {
+      "path": "npcs/hana/portrait-happy.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f3e34a7bf670fd04601a184146e22d3e14b5ef7cef7a34e2aaa1e4c304150cbb"
+    },
+    {
+      "path": "npcs/jun/portrait-happy.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5398cc115a20a863dc3989979bfaba3544495c59a72261b028417a933e33d362"
+    },
+    {
+      "path": "npcs/sera/portrait-happy.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b5c051907608d089e24202162460ac302b28b51acc3544da5fd395233d8c822c"
+    },
+    {
+      "path": "npcs/doyun/portrait-happy.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "2f12ebb0c4ae48788b62ad6de2f2203a7ff8f9c67a4a4a766491d2530cbcff2e"
+    },
+    {
+      "path": "npcs/lumi/portrait-concerned.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f80a15b4857b16fba798b78b47a2605ba27e5c05a68e5be95e42070072fdaaec"
+    },
+    {
+      "path": "npcs/hana/portrait-concerned.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c660a4d7388dafaf5b0d360090e8cfb9125a9a8d72d09f6a48cc4bf698df12bf"
+    },
+    {
+      "path": "npcs/jun/portrait-concerned.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "626e096a3eba23e487069825a8b4992ff8c01a849f6906a9e9dc42423764c80b"
+    },
+    {
+      "path": "npcs/sera/portrait-concerned.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "fd4e07926324941fe214846b643b21af55e1865fd89bc7fec7f5fdf5d9e1224d"
+    },
+    {
+      "path": "npcs/doyun/portrait-concerned.png",
+      "source": "source/npc-portraits-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ff74b4a308d962d43a11b4ef2cbde8d496dd8cbe022c3250a3aa11cf15460378"
+    },
+    {
+      "path": "animals/chicken/idle.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b1b796a4d2ec59f312ca8b11378b0e5c6113adfa41648a94d3c0e22187e43bde"
+    },
+    {
+      "path": "animals/chicken/walk-0.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c2c7f392056b5f731d4711be407b7fae36f9fb349964dec54a0cd7d6b1a8dc30"
+    },
+    {
+      "path": "animals/chicken/walk-1.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "59f91703473edb274fb61e37ebcf46ad27f063f817cd7febc7a79bd14cd3f6f1"
+    },
+    {
+      "path": "animals/chicken/happy.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ed8697d8456d0104bbec7957dabf755e6ac56e30c3db2fbb21c70455d3cb3ace"
+    },
+    {
+      "path": "animals/chicken/sleeping.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "15b53659173e8e773bfbafc7a503f2307fc5f680bbb305213be5a0b9e47c4813"
+    },
+    {
+      "path": "animals/chicken/product-ready.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 5
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "bc82c3cfb21b95f04e13a4070eabeddd1c03bbf82e4b257b932fea5d1f3e6459"
+    },
+    {
+      "path": "animals/cow/idle.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "2fe0dca8f16dd70a99a98dc6efe8ccac7d674999a5c7965686bbdec9c71b34a8"
+    },
+    {
+      "path": "animals/cow/walk-0.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4e382e291290319db92c3e7dd47a499597aed639c451f29fd6c66b94db600b65"
+    },
+    {
+      "path": "animals/cow/walk-1.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ecbcacfdaef2ad379095f674d3a5f89365c510b970632e77b5c925beac27c5a1"
+    },
+    {
+      "path": "animals/cow/happy.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f7fc643ac733ac05430c37ef088e3e87b6fb8ffc5a303a0ef723399f603895ac"
+    },
+    {
+      "path": "animals/cow/sleeping.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0352d6295c0b0e36104d6ea0f83fe705dac857b940fc20f1fece0d9934c860ed"
+    },
+    {
+      "path": "animals/cow/product-ready.png",
+      "source": "source/livestock-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 5
+      },
+      "canvas": {
+        "width": 48,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "bc87ac3f85bed2d941d801560f558b4ac204c3b5fd94dea09a0c8c05d3eea97c"
+    },
+    {
+      "path": "crops/frontend/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d56391a917235069544442dcf1e9caf1886d5c24fc97aab006a20602a5d615bb"
+    },
+    {
+      "path": "crops/backend/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "820d846169a0573bd318e4f6f06ad5091135f38d01b2e565b18aa4ff4646cf60"
+    },
+    {
+      "path": "crops/bim/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ba3d2f6f00d44b01f3989bcb5fc9a3e9ebd3ff3d854ffeb78d933ad9296cfe66"
+    },
+    {
+      "path": "crops/tomato/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4c1a0545a2cfea0a7b41d3c13cc78d17abe9710c0f7e65eb94ad2bd7e8b7890d"
+    },
+    {
+      "path": "crops/corn/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "829ccde06937301ca0df43b0b41ca9d1a7c2cd68c054cdfd565ceb3a2c21ffd8"
+    },
+    {
+      "path": "crops/pumpkin/planted.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a40bda3a49aafa34c6f636a46c327bd724b3bddd9cee809c118233d06110c40f"
+    },
+    {
+      "path": "crops/frontend/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "00b2b0ec266552d4c65128b161eed2d3a4c1a36e2bd0134955de9bb4c4ffc5fe"
+    },
+    {
+      "path": "crops/backend/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "187d7540035f5e2675b781f772246fc8883f818e520907757d3f865fb4d24be0"
+    },
+    {
+      "path": "crops/bim/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "454ef7ac44fbacf5a748c4d70d44eb214f1bb6f446d3b93d17e0874e8076c0aa"
+    },
+    {
+      "path": "crops/tomato/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "46ad8f0c16dc1e1e295a6823a2fb9c08834438a27b76e7a763ca2971ec8e721a"
+    },
+    {
+      "path": "crops/corn/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6999ea686bb7a2c90267480c0d51c7098e72787f7295866ce01f4a89508c0f6f"
+    },
+    {
+      "path": "crops/pumpkin/watered.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "172add24bc6a9820d4af5c4595737d35d8d72401c52f869387945bfcfe902747"
+    },
+    {
+      "path": "crops/frontend/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "522fac33f32291920d9037a2c3bffc7c39a70e56ee76914ec052a1cd2ceec65a"
+    },
+    {
+      "path": "crops/backend/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0a203feaba9cc9874b2ddc11e869e614a06967a7019f8b6096fbc6f8702192b8"
+    },
+    {
+      "path": "crops/bim/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "19219052345c66effe50b21bc8918e4e4b2046286ddc5d01aecf0dbdd4d382fb"
+    },
+    {
+      "path": "crops/tomato/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c5477695c2664f2f165f060df90da13e180de2717411443a9f6a97a56b88d565"
+    },
+    {
+      "path": "crops/corn/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "19d3f14bcc38ff3a74c2ca8537ca512db43e29bdbe023a297bfbcaf06ee26991"
+    },
+    {
+      "path": "crops/pumpkin/growing-1.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "98b05be8c2d8d05f475af1d8a3d8e3eba220a556a7eb72f9451ec22bf3c52238"
+    },
+    {
+      "path": "crops/frontend/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c9ed8b34d8698eaf64c6fb388b564e0c5925d7bbb0401a08395c45393ffdba02"
+    },
+    {
+      "path": "crops/backend/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f0a5457a06b19faba3cfee946893a12136bf7a1a1be590187b4d694fa84ec86e"
+    },
+    {
+      "path": "crops/bim/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "62f6a00b8f8346124ae8abe63e7709c15f0049fb684cd078b5ffdd57d6c989df"
+    },
+    {
+      "path": "crops/tomato/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "863890ff6e31b394768e7388686959e5a6f6e054a86b7f457c22cb1a9d2ae08f"
+    },
+    {
+      "path": "crops/corn/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7e5eb34b6609c760bd68a9062af3e9adf36253e0a877b8217dff88b01b207f9a"
+    },
+    {
+      "path": "crops/pumpkin/growing-2.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f3a1e6b887fac7f861780eaae544b22934a3951a1613fb53d882b9e804c48003"
+    },
+    {
+      "path": "crops/frontend/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ffde820ea3084cb91878b2af17526edbb742ee1652f28cd059c0b3779ad583fe"
+    },
+    {
+      "path": "crops/backend/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e9998b07e9c5afb28bdfb4157a29f61915c5d3be5cef944a742462e775de256d"
+    },
+    {
+      "path": "crops/bim/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9b9dfa5a1c36b79a69d8b00f415d6861a668e7541e90a50309058f187fb4e7b6"
+    },
+    {
+      "path": "crops/tomato/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "030d47c14936ecb978787231a90b3357bbf95d4b699685b82f48f16742a80216"
+    },
+    {
+      "path": "crops/corn/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "249c3123425b140ef8c27d8ad6b4a2b3383fb7a902e06dd55a48005934814769"
+    },
+    {
+      "path": "crops/pumpkin/ready.png",
+      "source": "source/crops-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6cf30c122b4f7a5395946c16b67d9f1b83c3a5020236e499ce72fd2a55902979"
+    },
+    {
+      "path": "items/crops/frontend.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "710b12f3ddd3882353d56b4d9237588485d1bf989b79bc09d7060d0426295709"
+    },
+    {
+      "path": "items/crops/backend.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ed4c936e7d271409437aea7dfb7cb4da9d85305da1acf4746831bb03419b75f8"
+    },
+    {
+      "path": "items/crops/bim.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "e42d55d42c971b592d5d4abe71e6010e8b62c9de351908dcd970e9630b47255a"
+    },
+    {
+      "path": "items/crops/tomato.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "46b3620b387f3f685b65bd28fc467c094c59faa03115242fbf36c313c132539a"
+    },
+    {
+      "path": "items/crops/corn.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5b2d4401e1b90646aedab5c1bab5e50ad90df66d1686901fe081415c6b76f3ee"
+    },
+    {
+      "path": "items/crops/pumpkin.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b4bd21e1ae5eda15b0f0e111de31d31b8b0b9b4111ce714fd04204faa12756da"
+    },
+    {
+      "path": "items/products/egg.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ff196e5bf85ccff1563e35983d945a3d96fa78a86e7036726b4c89b7a9e7627e"
+    },
+    {
+      "path": "items/products/milk.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c408d33ca88820d0223bcffc01fed73a04f5039eb9f2d463f0908f3bb1a28dd6"
+    },
+    {
+      "path": "items/products/golden-egg.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "602006d7a1df8798dd9e79b4492cc566980e8fbbe3281681b2d5603705f61427"
+    },
+    {
+      "path": "items/forage/mushroom.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7509feec8be74d2676738b3d0359c6ff870cb2baf9cf50464b2409a0859a84c1"
+    },
+    {
+      "path": "items/forage/herb.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8d9d2982dc5bcd911d5f892b4313da2a057ae86282d57e8f37d634b985caab27"
+    },
+    {
+      "path": "items/forage/wild-berry.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "6305f8429afabe74470f0c801d84d74d36ea9fd606643748e044b7230518dd8f"
+    },
+    {
+      "path": "items/forage/fern.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d34945e34498ea3bd92caa7c1a4eac1536b1b6565e075bacfdd8bdc8edb4e8e8"
+    },
+    {
+      "path": "items/forage/moon-bloom.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9952d19063c76157e3b16131e6b51d232643d8df7edbfac0075ad68ea2ae55f8"
+    },
+    {
+      "path": "items/ore/stone.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f9d9291beec1b73e7533140502407d9c559733d266684dc0ce4b8e9f8e7fc558"
+    },
+    {
+      "path": "items/ore/copper-ore.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b0c0b1c34d17f588a0adc43395e44851250c304b187a5dd720f77e08fcd00df5"
+    },
+    {
+      "path": "items/ore/iron-ore.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "dabc0bc79429660e34e48b7b8510e1fad497737fe1fdfe5361d746a8ec6eb70b"
+    },
+    {
+      "path": "items/ore/star-crystal.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7663843b983486e374014fe33ef29dfea8a831ba0c9133f8985d24f73c47239f"
+    },
+    {
+      "path": "items/fish/bluegill.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "1231ebc59af5125866cc0b79a6757fe3d19d36e7d0f14f5a81b24389daf8836a"
+    },
+    {
+      "path": "items/fish/carp.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f367e23a48a98e9ca378c4093e3e2a1f613208c41f933e7157b798a5ab262573"
+    },
+    {
+      "path": "items/fish/perch.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9a0e0ca46e2eb9d7930d597303a46d802b558a5ea56d887c88abe0aa1e0d1063"
+    },
+    {
+      "path": "items/fish/koi.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "28f12970d53cf24400996b0f44e314b06178fa549d1ee67140691a9e462e6578"
+    },
+    {
+      "path": "items/fish/moonfin.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "64d34e695521d146a9af167d5a1c04aee9276145500bbd5883aa481c5b0326e1"
+    },
+    {
+      "path": "items/fish/river-trout.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a3b9b9a4051b042de7f00ed1ec4d4bb99f17c3830d4db7beb0f4ac772db8c2a5"
+    },
+    {
+      "path": "items/fish/silver-dace.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "040d243beca654ad821d31d2d51cd8c0070f1405ba358e41719710eaa7fc9d9b"
+    },
+    {
+      "path": "items/fish/night-eel.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d40193293b10371a7e08e38d200749ff59f6b29d3093546f6a2eecf9f30cf523"
+    },
+    {
+      "path": "items/fish/shore-sardine.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "ce598b43f90af9767a48cd01f5380b6e014a016fd346d5e1a8c98584ff6e0df0"
+    },
+    {
+      "path": "items/fish/coral-bream.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "a3ec114cd50906860cd591cd5b394a809260b8f36d4528e00726e499c3ee1c60"
+    },
+    {
+      "path": "items/fish/tide-ray.png",
+      "source": "source/items-sheet.png",
+      "cell": {
+        "row": 4,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0ef3feaa5240d044ab03040bf78f91a6330a1faa9b31d9d13ea63651c2c1732c"
+    },
+    {
+      "path": "items/tools/seeds.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5e60be33f3e4571edd500fbaa8e06986e9b2ce0e777fb501839fe014f2c2cbd9"
+    },
+    {
+      "path": "items/tools/watering-can.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3d68b93d741c5f7a28f233296ffa046355107cddaea1631e13ccaca51ae8bd7c"
+    },
+    {
+      "path": "items/tools/fishing-rod.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0787b604563102d640beaf5f8bea120eef73d89eb2da87fba6ee8cbdf7ef1968"
+    },
+    {
+      "path": "items/tools/pickaxe.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "93b883e4351b70e3a43e8a5e2c420305024fdbcf9457bb95e87299053fc2b101"
+    },
+    {
+      "path": "items/tools/bucket.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5f3ddf938b38af404335cbe15cf88fa474e8385e7cd8e75266dc436a83124181"
+    },
+    {
+      "path": "tiles/soil/untilled.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f3671f7b08ebf57cd72288d1a08c4329460cd0619dc18cf5a34a44a9173817af"
+    },
+    {
+      "path": "tiles/soil/tilled.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3d011fb83afa511f55e8f0118bee517f0900b54a55e227e4b7bff55f414d2961"
+    },
+    {
+      "path": "tiles/soil/watered.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "832690b14e5ac63b107fce05a1c5d794044fed9069959ff9effdbe97a625a008"
+    },
+    {
+      "path": "effects/bobber.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3fdf6534c40a6f14c9903ac366b4a63c2c01c51cb681acaa7b98e139dfc73e2e"
+    },
+    {
+      "path": "effects/ripple-0.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "93782677e3132947b8c237cbf9f2ae53aaf6988a3038bc0c1c311dbdcbf25e1b"
+    },
+    {
+      "path": "effects/ripple-1.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "01c5a64bec9438d6c2332941d9d96572d70667dad589ecef9cba50197966475b"
+    },
+    {
+      "path": "effects/heart.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b5c1424042b1e855ae2b30606f9008cf8a931b990405624979c921523df198c8"
+    },
+    {
+      "path": "effects/note.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d387f1d6e3d7cb61bd02d98368c8e991829abbb8a621c8d43b35f0230fc60302"
+    },
+    {
+      "path": "effects/harvest-sparkle.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3861e7c4e23c9fccc6aca1856de0e9d57f2fefa9ab47c3aa018cd2caec200355"
+    },
+    {
+      "path": "effects/crystal-sparkle.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d76830594fec83b79e4c89d7548e16e71868e32620f46d24151c69297e172696"
+    },
+    {
+      "path": "effects/smoke.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3e8b4e83e37efe50e4ea53def5f7c8fc641e294bda41a277c5f8025178fd8358"
+    },
+    {
+      "path": "effects/window-light.png",
+      "source": "source/gameplay-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 5
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "19344792cfd96913dcbec83584ba99705568eddc8bf1fd5b1e9d07304d765685"
+    },
+    {
+      "path": "props/market-stall.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 128,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "3da576e5be3db6a348110dea8a57370384a34a4a2ee5b87b6367f39296cb5767"
+    },
+    {
+      "path": "props/quest-board.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "dd6a14cb769169a89167682f420d4e8b40086c7d7a6de7123d2aa46a8302c832"
+    },
+    {
+      "path": "props/mailbox.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "9bef350f38960cfee7a8808b74853eed68bd20ad0e5b1d483298f7860bf48996"
+    },
+    {
+      "path": "props/well.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c1f16e510e67ae32a3845c16269b95882275f18c5ae7f8e689808f62477d96ea"
+    },
+    {
+      "path": "props/ranch-gate.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "b407067a123b597c391144709ba8e970077a60632e8a861627c56f7b61111595"
+    },
+    {
+      "path": "props/fence-horizontal.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 96,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "d3909a7b8b41a4a00820f4170b3e16ce0746a15ae497b6303879a87fc4471946"
+    },
+    {
+      "path": "props/fence-vertical.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "fd7fabd469e2e0db86351b2321d7b5cc1df263d942c2288558826c1b9256a9c1"
+    },
+    {
+      "path": "props/dock.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c122c71338c34342938b5208d04063c7e694ea34704527dcfa887e4a6ee066d2"
+    },
+    {
+      "path": "props/mine-entrance.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "canvas": {
+        "width": 128,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "86756f6272148576e8b2622c2f2198c81ed1eeb3a06bc1614602b8bd12194f3c"
+    },
+    {
+      "path": "props/mushroom-ring.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 4
+      },
+      "canvas": {
+        "width": 96,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "06cc0c5bcb56cfbfac04d1587b6c307f60fa5bb5c314726a81fa4db966f75518"
+    },
+    {
+      "path": "props/crystal-altar.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 96,
+        "height": 96
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5c7857a1da2b00b733b5b4f91a2ec4e55e605bebd1d356384439acf67ae96635"
+    },
+    {
+      "path": "props/lantern-post.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 48,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "1ee6f6acd39a7902c73af5dbb8cb32e5d9043f6bb84f68102d822b3fde9179ea"
+    },
+    {
+      "path": "props/wildflowers.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 64,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0dffbc505f3ef607679b2660284feccc56f41a0d0786b73ebed0fcf6bcaba816"
+    },
+    {
+      "path": "props/rock-cluster.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "canvas": {
+        "width": 64,
+        "height": 48
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "c57c532b17723c2735fd2d0ac953acef44eb26881d77b98e5efdbd70c25c35a8"
+    },
+    {
+      "path": "items/tools/hoe.png",
+      "source": "source/world-props-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 4
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "43ac0dbb45702fc34bd6f0687587cfd83e48e590688e40729f02a19ac0fbdf1b"
+    },
+    {
+      "path": "items/tools/hoe.png",
+      "source": "source/hoe-icon.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "f299476c18fe64bc17c90d6228c6a280424f77430a6c612c1ab531186e345d6a"
+    }
+  ],
+  "audio": [
+    {
+      "id": "village-day",
+      "path": "/assets/audio/village-day.mp3",
+      "source": "mp4/Meadow Village Morning.m4a",
+      "present": true,
+      "sha256": "a233df6d85ab5bbedaae15c6fe87c1d75232a2178afd8d3cd86076820275bde6"
+    },
+    {
+      "id": "forest-day",
+      "path": "/assets/audio/forest-day.mp3",
+      "source": "mp4/Whispering Willow Stream.m4a",
+      "present": true,
+      "sha256": "df88b9235484001c5cefe69543d32c709ce7bbd63862442ab6d0b27c731fc169"
+    },
+    {
+      "id": "coast-day",
+      "path": "/assets/audio/coast-day.mp3",
+      "source": "mp4/Sunlit Shoreline Drift.m4a",
+      "present": true,
+      "sha256": "1c0da20f4ab593c83b8d773e205429f9cf200d9eab24305249a604f4af6bef3f"
+    },
+    {
+      "id": "mine-day",
+      "path": "/assets/audio/mine-day.mp3",
+      "source": "mp4/Crystal Foothill Echoes.m4a",
+      "present": true,
+      "sha256": "2b277500f6b0846ce12ba4cfda9a12330ea78d814aa57ae10e225cacaaf501b0"
+    },
+    {
+      "id": "night",
+      "path": "/assets/audio/night.mp3",
+      "source": "mp4/Starlight Harvest Home.m4a",
+      "present": true,
+      "sha256": "1c73245d22ca7bb3dff83536bd1c372d6e1433c645df1317230c4323b0ebcc7f"
+    }
+  ],
+  "validation": {
+    "asset_count": 278,
+    "all_sprite_alpha": true,
+    "all_sprite_transparent_corners": true
+  },
+  "maps": [
+    {
+      "region": "farm-village",
+      "path": "maps/farm-village.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image repaint referenced from a GPT tile-and-prop blueprint; code only crops and nearest-neighbor normalizes",
+      "painted_source": "source/maps/farm-village-painted.png",
+      "painted_source_sha256": "0baa234df02e336991c49e7a82a3d863b4f61d78150181e37f765a1b080651e4",
+      "blueprint": "source/maps/farm-village-blueprint.png",
+      "sha256": "4744a41fe19e3ca58572e049c1c2117bfe705a8d8cb8d1460e0900daadbf749b"
+    },
+    {
+      "region": "whisper-forest",
+      "path": "maps/whisper-forest.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image repaint referenced from a GPT tile-and-prop blueprint; code only crops and nearest-neighbor normalizes",
+      "painted_source": "source/maps/whisper-forest-painted.png",
+      "painted_source_sha256": "e5f4f69695e6833f293dab01ae72d740c45cf5487f94ca3615fe9c2edd53fd90",
+      "blueprint": "source/maps/whisper-forest-blueprint.png",
+      "sha256": "1c312f5b275ab97e724d159b74ad470bdbeb2f3ff86e55520f4c6758087c059b"
+    },
+    {
+      "region": "river-coast",
+      "path": "maps/river-coast.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image repaint referenced from a GPT tile-and-prop blueprint; code only crops and nearest-neighbor normalizes",
+      "painted_source": "source/maps/river-coast-painted.png",
+      "painted_source_sha256": "e9e8542d66f96ebcae715b5d47b07835e610d860cf0c21119296d2b2209154ac",
+      "blueprint": "source/maps/river-coast-blueprint.png",
+      "sha256": "4428ea47211399ed9e2c397aa0025231ffb6836ba5bd8d6dc6ce13f4fd199f38"
+    },
+    {
+      "region": "mine-foothill",
+      "path": "maps/mine-foothill.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image repaint referenced from a GPT tile-and-prop blueprint; code only crops and nearest-neighbor normalizes",
+      "painted_source": "source/maps/mine-foothill-painted.png",
+      "painted_source_sha256": "efc28bf648fba8835e2188f0424f9438246de956c79898c6979a304b8ba2ee71",
+      "blueprint": "source/maps/mine-foothill-blueprint.png",
+      "sha256": "1fb49d6e983efbabfde8077d046b9aa6675b40b188f8452b80f128e58be7544f"
+    }
+  ],
+  "interiors": [
+    {
+      "id": "farmhouse-interior",
+      "path": "maps/farmhouse-interior.png",
+      "source": "source/maps/farmhouse-interior-room.png",
+      "source_policy": "Existing OpenAI-generated pixel room reused without code-drawn replacement",
+      "width": 384,
+      "height": 256,
+      "sha256": "d6eaab3f982babb484f10e1d5a3e8511e28a54600b1e1b704fe9e10d4e4b0acb"
+    }
+  ]
+}

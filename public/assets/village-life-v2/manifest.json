@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "generator": "scripts/generate-village-life-assets.py",
+  "logical_size": 32,
+  "npc_canvas": {
+    "width": 48,
+    "height": 64
+  },
+  "npcs": [
+    {
+      "id": "farmer-hana",
+      "frames": [
+        "npcs/farmer-0.png",
+        "npcs/farmer-1.png"
+      ]
+    },
+    {
+      "id": "rancher-jun",
+      "frames": [
+        "npcs/rancher-0.png",
+        "npcs/rancher-1.png"
+      ]
+    }
+  ],
+  "animal_instances": [
+    {
+      "id": "chicken-1",
+      "species": "chicken"
+    },
+    {
+      "id": "chicken-2",
+      "species": "chicken"
+    },
+    {
+      "id": "chicken-3",
+      "species": "chicken"
+    },
+    {
+      "id": "cow-1",
+      "species": "cow"
+    },
+    {
+      "id": "cow-2",
+      "species": "cow"
+    }
+  ],
+  "animal_frames": [
+    "0",
+    "1",
+    "sleeping"
+  ],
+  "products": [
+    "egg",
+    "milk",
+    "golden-egg"
+  ],
+  "crops": [
+    "tomato",
+    "corn",
+    "pumpkin"
+  ],
+  "crop_stages": [
+    "planted",
+    "watered",
+    "growing-1",
+    "growing-2",
+    "ready"
+  ],
+  "transparent_background": true,
+  "lighting": "upper-left"
+}

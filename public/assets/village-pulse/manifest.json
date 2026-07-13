@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "generator": "scripts/generate-village-pulse-assets.py",
+  "source": "public/assets/generated-sprites/character-walk",
+  "npc": {
+    "id": "village-keeper",
+    "name": "Lumi",
+    "canvas": {
+      "width": 118,
+      "height": 181
+    },
+    "frames": [
+      "npc/village-keeper/down-0.png",
+      "npc/village-keeper/down-1.png",
+      "npc/village-keeper/down-2.png",
+      "npc/village-keeper/down-3.png",
+      "npc/village-keeper/left-0.png",
+      "npc/village-keeper/left-1.png",
+      "npc/village-keeper/left-2.png",
+      "npc/village-keeper/left-3.png",
+      "npc/village-keeper/right-0.png",
+      "npc/village-keeper/right-1.png",
+      "npc/village-keeper/right-2.png",
+      "npc/village-keeper/right-3.png",
+      "npc/village-keeper/up-0.png",
+      "npc/village-keeper/up-1.png",
+      "npc/village-keeper/up-2.png",
+      "npc/village-keeper/up-3.png"
+    ]
+  },
+  "fallback_reason": "PixelLab MCP token was unavailable; palette-derived frames preserve the generated character proportions."
+}

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "policy": "User-supplied original music only. Missing tracks keep the game in silent mode without synthesis or downloads.",
+  "source_directory": "mp4",
+  "encoding": "MP3 VBR quality 2, 48 kHz stereo",
+  "crossfade_ms": 1000,
+  "tracks": [
+    { "id": "village-day", "file": "village-day.mp3", "source": "Meadow Village Morning.m4a", "present": true, "sha256": "a233df6d85ab5bbedaae15c6fe87c1d75232a2178afd8d3cd86076820275bde6" },
+    { "id": "forest-day", "file": "forest-day.mp3", "source": "Whispering Willow Stream.m4a", "present": true, "sha256": "df88b9235484001c5cefe69543d32c709ce7bbd63862442ab6d0b27c731fc169" },
+    { "id": "coast-day", "file": "coast-day.mp3", "source": "Sunlit Shoreline Drift.m4a", "present": true, "sha256": "1c0da20f4ab593c83b8d773e205429f9cf200d9eab24305249a604f4af6bef3f" },
+    { "id": "mine-day", "file": "mine-day.mp3", "source": "Crystal Foothill Echoes.m4a", "present": true, "sha256": "2b277500f6b0846ce12ba4cfda9a12330ea78d814aa57ae10e225cacaaf501b0" },
+    { "id": "night", "file": "night.mp3", "source": "Starlight Harvest Home.m4a", "present": true, "sha256": "1c73245d22ca7bb3dff83536bd1c372d6e1433c645df1317230c4323b0ebcc7f" }
+  ]
+}

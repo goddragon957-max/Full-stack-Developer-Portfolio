@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from itertools import product
 from pathlib import Path
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageDraw, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'public' / 'assets'
@@ -43,6 +43,15 @@ TREES = [
     {'src': SPRITES / 'sprite-63.png', 'x': 2, 'y': 19, 'size': 40},
     {'src': SPRITES / 'sprite-56.png', 'x': 27, 'y': 19, 'size': 38},
 ]
+
+POND_BANK = '#80633a'
+POND_BANK_LIGHT = '#b38b4e'
+POND_WATER_DARK = '#245d68'
+POND_WATER = '#398996'
+POND_WATER_LIGHT = '#75c2b7'
+RANCH_FENCE_DARK = '#5f3c24'
+RANCH_FENCE = '#a66e37'
+RANCH_FENCE_LIGHT = '#d59a4f'
 
 
 def in_rect(x: int, y: int, left: int, right: int, top: int, bottom: int) -> bool:
@@ -178,6 +187,65 @@ def validate_terrain(canvas: Image.Image) -> None:
         raise ValueError('Terrain contains repeated pale sheet-background pixels')
 
 
+def draw_fishing_pond(canvas: Image.Image) -> None:
+    draw = ImageDraw.Draw(canvas)
+    bank = [
+        (398, 222), (450, 222), (450, 230), (466, 230),
+        (466, 282), (450, 282), (450, 290), (398, 290),
+        (398, 282), (382, 282), (382, 230), (398, 230),
+    ]
+    inner_bank = [
+        (402, 226), (446, 226), (446, 234), (462, 234),
+        (462, 278), (446, 278), (446, 286), (402, 286),
+        (402, 278), (386, 278), (386, 234), (402, 234),
+    ]
+    water = [
+        (406, 230), (442, 230), (442, 238), (458, 238),
+        (458, 274), (442, 274), (442, 282), (406, 282),
+        (406, 274), (390, 274), (390, 238), (406, 238),
+    ]
+    draw.polygon(bank, fill=POND_BANK)
+    draw.line(bank + [bank[0]], fill='#4d432c', width=2, joint='curve')
+    draw.polygon(inner_bank, fill=POND_BANK_LIGHT)
+    draw.polygon(water, fill=POND_WATER)
+    draw.line(water + [water[0]], fill=POND_WATER_DARK, width=2)
+    draw.rectangle((406, 244, 428, 245), fill=POND_WATER_LIGHT)
+    draw.rectangle((433, 257, 452, 258), fill=POND_WATER_DARK)
+    draw.rectangle((398, 266, 416, 267), fill=POND_WATER_LIGHT)
+    draw.point((444, 241), fill='#a8ddd0')
+    draw.point((421, 273), fill='#a8ddd0')
+
+
+def draw_ranch_pen(canvas: Image.Image) -> None:
+    draw = ImageDraw.Draw(canvas)
+    left, top, right, bottom = 166, 274, 238, 338
+    draw.rectangle((left + 3, top + 3, right - 3, bottom - 3), fill='#628f42')
+    for x, y in ((174, 286), (205, 297), (227, 282), (184, 322), (218, 326)):
+        draw.rectangle((x, y, x + 1, y + 1), fill='#86aa4c')
+    for x, y in ((191, 283), (229, 310), (176, 307), (210, 332)):
+        draw.point((x, y), fill='#4f7938')
+
+    gate_left, gate_right = 194, 210
+    draw.rectangle((left, top + 5, gate_left, top + 7), fill=RANCH_FENCE_DARK)
+    draw.rectangle((left, top + 3, gate_left, top + 5), fill=RANCH_FENCE)
+    draw.line((gate_right, top + 5, right, top + 5), fill=RANCH_FENCE_DARK, width=3)
+    draw.line((gate_right, top + 3, right, top + 3), fill=RANCH_FENCE, width=2)
+    draw.line((left + 3, bottom - 4, right - 3, bottom - 4), fill=RANCH_FENCE_DARK, width=3)
+    draw.line((left + 3, bottom - 6, right - 3, bottom - 6), fill=RANCH_FENCE, width=2)
+    draw.line((left + 4, top + 5, left + 4, bottom - 4), fill=RANCH_FENCE_DARK, width=3)
+    draw.line((left + 2, top + 5, left + 2, bottom - 4), fill=RANCH_FENCE, width=2)
+    draw.line((right - 4, top + 5, right - 4, bottom - 4), fill=RANCH_FENCE_DARK, width=3)
+    draw.line((right - 2, top + 5, right - 2, bottom - 4), fill=RANCH_FENCE, width=2)
+
+    for x in (left, gate_left, gate_right, right - 6):
+        draw.rectangle((x, top, x + 5, top + 11), fill=RANCH_FENCE_DARK)
+        draw.rectangle((x + 1, top, x + 4, top + 8), fill=RANCH_FENCE)
+        draw.line((x + 2, top + 1, x + 3, top + 1), fill=RANCH_FENCE_LIGHT, width=1)
+    for x in (left, left + 24, left + 48, right - 6):
+        draw.rectangle((x, bottom - 11, x + 5, bottom), fill=RANCH_FENCE_DARK)
+        draw.rectangle((x + 1, bottom - 9, x + 4, bottom - 1), fill=RANCH_FENCE)
+
+
 def render_terrain() -> Image.Image:
     palette = build_runtime_palette()
     path_tiles = load_wang_tileset(PATH_TILESET, palette)
@@ -200,6 +268,8 @@ def render_terrain() -> Image.Image:
     graded = ImageEnhance.Brightness(graded).enhance(0.96)
     graded = ImageEnhance.Contrast(graded).enhance(1.03)
     canvas = graded.convert('RGBA')
+    draw_ranch_pen(canvas)
+    draw_fishing_pond(canvas)
     validate_terrain(canvas)
     return canvas
 
