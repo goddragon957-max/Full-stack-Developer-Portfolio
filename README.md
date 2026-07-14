@@ -32,10 +32,20 @@ Enter the farmhouse, seed shop, barn, Hana's cottage, and Jun's cottage by appro
 - BAG, FARM, RANCH, and FORAGE inventory tabs
 - Persistent progress through `localStorage`
 - Region-aware background music from `public/assets/audio/`
+- GOLD economy with seed and feed purchases
+- Farmhouse shipping box with next-day quality-aware receipts
+- Two-level watering can, fishing rod, and pickaxe upgrades
+- First shipment, 1,000 GOLD, and master-tool milestones
+- Spring, Summer, Autumn, and Winter with exactly seven days per season and persistent year rollover
+- Deterministic Sunny, Rain, Windy, and winter-only Snow weather; rain waters crops automatically
+- Four season-specific fish plus Harvest Night and Starlight Festival rewards
+- Three daily seasonal shipping demands with a visible `+20%` price bonus
 
 ## Art
 
 Runtime maps, characters, animals, buildings, interiors, crops, fish, props, and effects use GPT Image source artwork processed into pixel-aligned PNG assets. The source files, runtime files, hashes, and provenance are recorded under `public/assets/art-remaster-v1/`.
+
+Seasonal GPT Image map edits, transparent fish, icons, particles, festival props, source files, and SHA-256 hashes are tracked in `public/assets/seasons-v1/manifest.json`.
 
 The five building interiors are `384x256`. Outdoor maps remain `512x352`. Transparent sprites use binary alpha and nearest-neighbor rendering.
 

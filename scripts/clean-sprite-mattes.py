@@ -13,6 +13,7 @@ ASSETS = ROOT / 'public' / 'assets'
 MANIFEST = ASSETS / 'sprite-matte-cleanup.json'
 REMASTER_MANIFEST = ASSETS / 'art-remaster-v1' / 'manifest.json'
 COTTAGE_MANIFEST = ASSETS / 'art-remaster-v1' / 'buildings' / 'cottages-manifest.json'
+SEASONS_MANIFEST = ASSETS / 'seasons-v1' / 'manifest.json'
 
 STATIC_TARGETS = [
     ASSETS / 'game-sprites' / f'sprite-{number}.png'
@@ -185,9 +186,69 @@ def check_targets() -> None:
                 if any(rgba.getpixel(point)[3] != 0 for point in corners):
                     remaster_errors.append(f'art-remaster-v1/{relative_path}: opaque sprite corner found')
 
+    season_sources: list[dict] = []
+    season_maps: list[dict] = []
+    season_assets: list[dict] = []
+    if not SEASONS_MANIFEST.exists():
+        remaster_errors.append('seasons-v1/manifest.json: missing file')
+    else:
+        seasons_manifest = json.loads(SEASONS_MANIFEST.read_text(encoding='utf-8'))
+        season_sources = seasons_manifest.get('sources', [])
+        season_maps = seasons_manifest.get('maps', [])
+        season_assets = seasons_manifest.get('assets', [])
+
+        for entry in season_sources:
+            relative_path = entry.get('path', '')
+            path = ASSETS / 'seasons-v1' / relative_path
+            if not path.exists():
+                remaster_errors.append(f'seasons-v1/{relative_path}: missing source file')
+            elif sha256(path) != entry.get('sha256'):
+                remaster_errors.append(f'seasons-v1/{relative_path}: source hash mismatch')
+
+        for entry in season_maps:
+            relative_path = entry.get('path', '')
+            path = ASSETS / 'seasons-v1' / relative_path
+            if not path.exists():
+                remaster_errors.append(f'seasons-v1/{relative_path}: missing map file')
+                continue
+            if sha256(path) != entry.get('sha256'):
+                remaster_errors.append(f'seasons-v1/{relative_path}: map hash mismatch')
+            with Image.open(path) as source:
+                expected_size = (entry.get('width'), entry.get('height'))
+                if source.size != expected_size or source.size != (512, 352):
+                    remaster_errors.append(f'seasons-v1/{relative_path}: expected 512x352 runtime map')
+
+        for entry in season_assets:
+            relative_path = entry.get('path', '')
+            path = ASSETS / 'seasons-v1' / relative_path
+            if not path.exists():
+                remaster_errors.append(f'seasons-v1/{relative_path}: missing asset file')
+                continue
+            if sha256(path) != entry.get('sha256'):
+                remaster_errors.append(f'seasons-v1/{relative_path}: asset hash mismatch')
+            with Image.open(path) as source:
+                expected_size = (entry.get('width'), entry.get('height'))
+                if source.size != expected_size:
+                    remaster_errors.append(f'seasons-v1/{relative_path}: manifest size mismatch')
+                rgba = source.convert('RGBA')
+                pixels = list(rgba.get_flattened_data())
+                alpha_values = {pixel[3] for pixel in pixels}
+                if alpha_values != {0, 255}:
+                    remaster_errors.append(f'seasons-v1/{relative_path}: expected binary transparency')
+                if any(alpha == 0 and (red or green or blue) for red, green, blue, alpha in pixels):
+                    remaster_errors.append(f'seasons-v1/{relative_path}: color data remains under transparent pixels')
+                corners = ((0, 0), (rgba.width - 1, 0), (0, rgba.height - 1), (rgba.width - 1, rgba.height - 1))
+                if any(rgba.getpixel(point)[3] != 0 for point in corners):
+                    remaster_errors.append(f'seasons-v1/{relative_path}: opaque sprite corner found')
+
     if remaster_errors:
         raise SystemExit('\n'.join(remaster_errors))
-    print(f'sprite matte check passed: {len(TARGETS)} legacy sprites, {len(remaster_assets)} GPT remaster assets, and {len(cottage_assets)} GPT cottages')
+    print(
+        'sprite matte check passed: '
+        f'{len(TARGETS)} legacy sprites, {len(remaster_assets)} GPT remaster assets, '
+        f'{len(cottage_assets)} GPT cottages, {len(season_sources)} GPT season sources, '
+        f'{len(season_maps)} seasonal maps, and {len(season_assets)} seasonal transparent assets'
+    )
 
 
 def main() -> None:

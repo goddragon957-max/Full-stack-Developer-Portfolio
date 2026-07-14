@@ -1,9 +1,10 @@
 import type { RegionId } from './openWorld';
 import type { DayPhase } from './villagePulse';
+import type { Season } from './seasonSystem';
 import { FISH_SPRITES } from './animationCatalog';
 
 export type FishingStatus = 'idle' | 'casting' | 'waiting' | 'bite' | 'success' | 'escaped';
-export type FishId = 'bluegill' | 'carp' | 'perch' | 'koi' | 'moonfin' | 'river-trout' | 'silver-dace' | 'night-eel' | 'shore-sardine' | 'coral-bream' | 'tide-ray';
+export type FishId = 'bluegill' | 'carp' | 'perch' | 'koi' | 'moonfin' | 'river-trout' | 'silver-dace' | 'night-eel' | 'shore-sardine' | 'coral-bream' | 'tide-ray' | 'blossom-dace' | 'sunscale-bass' | 'ember-carp' | 'frostfin';
 export type FishRarity = 'common' | 'rare' | 'moon';
 export type FishHabitat = 'pond' | 'river' | 'coast';
 
@@ -19,7 +20,7 @@ export type FishingSpot = {
 };
 
 export type FishingState = {
-  version: 2;
+  version: 3;
   inventory: Record<FishId, number>;
   discovered: FishId[];
   totalCaught: number;
@@ -35,14 +36,14 @@ export type CatchResult = {
 };
 
 export const FISHING_STORAGE_KEY = 'portfolio-fishing-loop-v1';
-export const FISHING_SAVE_VERSION = 2;
+export const FISHING_SAVE_VERSION = 3;
 export const FISHING_CAST_MS = 420;
 export const FISHING_BITE_MIN_MS = 650;
 export const FISHING_BITE_MAX_MS = 1_100;
 export const FISHING_BITE_WINDOW_MS = 850;
 export const FISHING_RESULT_MS = 1_200;
 
-export const FISH_IDS: FishId[] = ['bluegill', 'carp', 'perch', 'koi', 'moonfin', 'river-trout', 'silver-dace', 'night-eel', 'shore-sardine', 'coral-bream', 'tide-ray'];
+export const FISH_IDS: FishId[] = ['bluegill', 'carp', 'perch', 'koi', 'moonfin', 'river-trout', 'silver-dace', 'night-eel', 'shore-sardine', 'coral-bream', 'tide-ray', 'blossom-dace', 'sunscale-bass', 'ember-carp', 'frostfin'];
 
 export const FISH_INFO: Record<FishId, {
   label: string;
@@ -51,6 +52,7 @@ export const FISH_INFO: Record<FishId, {
   rarity: FishRarity;
   habitat: FishHabitat;
   nightOnly: boolean;
+  season?: Season;
   dayWeight: number;
   nightWeight: number;
   asset: string;
@@ -66,6 +68,10 @@ export const FISH_INFO: Record<FishId, {
   'shore-sardine': { label: '해안정어리', shortLabel: 'SARD', description: '얕은 해안에서 은빛으로 반짝이는 작은 바닷물고기.', rarity: 'common', habitat: 'coast', nightOnly: false, dayWeight: 46, nightWeight: 34, asset: FISH_SPRITES['shore-sardine'] },
   'coral-bream': { label: '산호도미', shortLabel: 'BREAM', description: '따뜻한 물길을 따라 들어오는 붉은빛 도미.', rarity: 'rare', habitat: 'coast', nightOnly: false, dayWeight: 16, nightWeight: 22, asset: FISH_SPRITES['coral-bream'] },
   'tide-ray': { label: '밀물가오리', shortLabel: 'RAY', description: '밤의 밀물과 함께 부두 아래로 다가오는 희귀 가오리.', rarity: 'moon', habitat: 'coast', nightOnly: true, dayWeight: 0, nightWeight: 12, asset: FISH_SPRITES['tide-ray'] },
+  'blossom-dace': { label: '꽃비피라미', shortLabel: 'BLOSS', description: '봄의 꽃잎이 흐르는 강에서만 나타나는 분홍빛 피라미.', rarity: 'rare', habitat: 'river', nightOnly: false, season: 'spring', dayWeight: 16, nightWeight: 10, asset: '/assets/seasons-v1/fish/blossom-dace.png' },
+  'sunscale-bass': { label: '햇살농어', shortLabel: 'SUN', description: '여름 해안에서 금빛 비늘을 번쩍이는 힘센 농어.', rarity: 'rare', habitat: 'coast', nightOnly: false, season: 'summer', dayWeight: 18, nightWeight: 9, asset: '/assets/seasons-v1/fish/sunscale-bass.png' },
+  'ember-carp': { label: '단풍잉어', shortLabel: 'EMBER', description: '가을 연못의 낙엽 사이를 헤엄치는 붉은 잉어.', rarity: 'rare', habitat: 'pond', nightOnly: false, season: 'autumn', dayWeight: 14, nightWeight: 18, asset: '/assets/seasons-v1/fish/ember-carp.png' },
+  frostfin: { label: '서리비늘', shortLabel: 'FROST', description: '겨울 강의 찬 물살에서 푸르게 빛나는 희귀 물고기.', rarity: 'moon', habitat: 'river', nightOnly: false, season: 'winter', dayWeight: 10, nightWeight: 18, asset: '/assets/seasons-v1/fish/frostfin.png' },
 };
 
 export const FISHING_SPOTS: FishingSpot[] = [
@@ -99,7 +105,7 @@ export function normalizeFishingState(value: unknown): FishingState {
   const initial = createInitialFishingState();
   if (!value || typeof value !== 'object') return initial;
   const candidate = value as Partial<Omit<FishingState, 'version'>> & { version?: number };
-  if (candidate.version !== 1 && candidate.version !== FISHING_SAVE_VERSION) return initial;
+  if (![1, 2, FISHING_SAVE_VERSION].includes(Number(candidate.version))) return initial;
   const inventoryCandidate = candidate.inventory && typeof candidate.inventory === 'object'
     ? candidate.inventory as Partial<Record<FishId, number>>
     : {};
@@ -164,12 +170,14 @@ export function isNightFishingPhase(phase: DayPhase) {
   return phase === 'night';
 }
 
-export function getFishingPool(isNight: boolean, habitat: FishHabitat = 'pond') {
-  return FISH_IDS.filter((fish) => FISH_INFO[fish].habitat === habitat && (!FISH_INFO[fish].nightOnly || isNight));
+export function getFishingPool(isNight: boolean, habitat: FishHabitat = 'pond', season: Season = 'spring') {
+  return FISH_IDS.filter((fish) => FISH_INFO[fish].habitat === habitat
+    && (!FISH_INFO[fish].nightOnly || isNight)
+    && (!FISH_INFO[fish].season || FISH_INFO[fish].season === season));
 }
 
-export function chooseFish(isNight: boolean, roll: number, habitat: FishHabitat = 'pond'): FishId {
-  const pool = getFishingPool(isNight, habitat);
+export function chooseFish(isNight: boolean, roll: number, habitat: FishHabitat = 'pond', season: Season = 'spring'): FishId {
+  const pool = getFishingPool(isNight, habitat, season);
   const weighted = pool.map((fish) => ({ fish, weight: isNight ? FISH_INFO[fish].nightWeight : FISH_INFO[fish].dayWeight }));
   const totalWeight = weighted.reduce((total, item) => total + item.weight, 0);
   let cursor = Math.max(0, Math.min(0.999_999, roll)) * totalWeight;

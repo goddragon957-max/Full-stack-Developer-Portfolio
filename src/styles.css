@@ -247,6 +247,21 @@ main[data-app="mossbell-farm"] {
   filter: none;
 }
 .entity-life-npc.is-nearby .generated-sprite { filter: saturate(1.12); }
+.entity-festivalDisplay {
+  align-items: end;
+}
+.entity-festivalDisplay .generated-sprite {
+  width: 64px;
+  height: 64px;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+}
+.entity-festivalDisplay.is-nearby .generated-sprite {
+  filter: saturate(1.12) brightness(1.06);
+}
 .game-entity b {
   position: absolute;
   left: 50%;
@@ -726,6 +741,78 @@ main[data-app="mossbell-farm"] {
 @keyframes village-star-twinkle {
   50% { opacity: .35; scale: .65; }
 }
+.weather-layer {
+  position: absolute;
+  inset: 0 var(--inventory-rail-width) var(--dialogue-bar-height) 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+.weather-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.weather-rain::after { background: rgba(63, 102, 124, .09); }
+.weather-snow::after { background: rgba(224, 240, 235, .05); }
+.weather-windy::after { background: rgba(216, 196, 129, .035); }
+.weather-layer i {
+  position: absolute;
+  top: -40px;
+  width: 32px;
+  height: 32px;
+  background-image: url('/assets/seasons-v1/effects/weather-atlas.png');
+  background-repeat: no-repeat;
+  background-size: 128px 128px;
+  image-rendering: pixelated;
+  opacity: .82;
+  animation-delay: calc(var(--particle-index) * -.13s);
+}
+.weather-layer i:nth-child(4n + 1) { left: 4%; background-position-x: 0; }
+.weather-layer i:nth-child(4n + 2) { left: 29%; background-position-x: -32px; }
+.weather-layer i:nth-child(4n + 3) { left: 54%; background-position-x: -64px; }
+.weather-layer i:nth-child(4n + 4) { left: 79%; background-position-x: -96px; }
+.weather-layer i:nth-child(n + 5):nth-child(-n + 8) { margin-left: 11%; animation-delay: calc(var(--particle-index) * -.17s); }
+.weather-layer i:nth-child(n + 9):nth-child(-n + 12) { margin-left: 5%; animation-delay: calc(var(--particle-index) * -.21s); }
+.weather-layer i:nth-child(n + 13) { margin-left: 16%; animation-delay: calc(var(--particle-index) * -.27s); }
+.weather-rain i {
+  background-position-y: 0;
+  animation-name: weather-rain-fall;
+  animation-duration: 1.2s;
+  animation-timing-function: steps(8, end);
+  animation-iteration-count: infinite;
+}
+.weather-snow i {
+  background-position-y: -32px;
+  opacity: .9;
+  animation-name: weather-snow-fall;
+  animation-duration: 3.8s;
+  animation-timing-function: steps(12, end);
+  animation-iteration-count: infinite;
+}
+.weather-windy i {
+  background-position-y: -64px;
+  opacity: .68;
+  animation-name: weather-leaf-drift;
+  animation-duration: 2.7s;
+  animation-timing-function: steps(10, end);
+  animation-iteration-count: infinite;
+}
+@keyframes weather-rain-fall {
+  0% { translate: -18px -40px; }
+  100% { translate: 68px calc(100dvh + 72px); }
+}
+@keyframes weather-snow-fall {
+  0% { translate: -16px -40px; }
+  50% { translate: 28px 48dvh; }
+  100% { translate: -4px calc(100dvh + 48px); }
+}
+@keyframes weather-leaf-drift {
+  0% { translate: -96px 10dvh; }
+  50% { translate: 42vw 44dvh; }
+  100% { translate: calc(100vw + 72px) 76dvh; }
+}
 .harvest-feedback {
   position: absolute;
   width: 104px;
@@ -779,6 +866,49 @@ main[data-app="mossbell-farm"] {
   22% { opacity: 1; }
   100% { opacity: 0; translate: var(--spark-x) var(--spark-y); }
 }
+.festival-day-banner {
+  position: absolute;
+  left: calc((100% - var(--inventory-rail-width)) / 2);
+  top: 18px;
+  z-index: 84;
+  width: min(306px, calc(100% - var(--inventory-rail-width) - 150px));
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  translate: -50% 0;
+  padding: 5px 8px;
+  color: #fff7d8;
+  background: rgba(58, 38, 23, .94);
+  border: 3px solid #efb84d;
+  box-shadow: 0 4px 0 rgba(25, 15, 7, .42);
+  pointer-events: none;
+}
+.festival-day-banner > img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.festival-day-banner p { min-width: 0; margin: 0; }
+.festival-day-banner span,
+.festival-day-banner strong,
+.festival-day-banner small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.festival-day-banner span { display: block; color: #9fe089; font-size: 7px; font-weight: 950; }
+.festival-day-banner strong { display: block; margin-top: 4px; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.festival-day-banner small {
+  max-width: 78px;
+  color: #ffd770;
+  font-size: 7px;
+  font-weight: 950;
+  line-height: 1.3;
+  text-align: right;
+}
+.festival-day-banner.festival-starlight-festival { border-color: #b9b4e8; }
+.festival-day-banner.is-complete { border-color: #9fe089; }
 .celebration-layer {
   position: absolute;
   inset: 0 var(--inventory-rail-width) var(--dialogue-bar-height) 0;
@@ -869,6 +999,7 @@ main[data-app="mossbell-farm"] {
 .gear-button,
 .inventory-rail,
 .settings-window,
+.commerce-window,
 .dialogue-box,
 .touch-pad {
   pointer-events: auto;
@@ -901,7 +1032,7 @@ main[data-app="mossbell-farm"] {
   width: auto;
   height: var(--dialogue-bar-height);
   min-height: var(--dialogue-bar-height);
-  overflow: auto;
+  overflow: hidden;
   padding: 14px clamp(16px, 4vw, 48px) 13px;
   color: #2d2114;
   background: rgba(255, 247, 216, .97);
@@ -989,6 +1120,26 @@ main[data-app="mossbell-farm"] {
   text-transform: uppercase;
 }
 
+.dialogue-box.is-open {
+  overflow: hidden;
+  padding: 10px clamp(16px, 4vw, 48px) 9px;
+}
+.dialogue-box.is-open span { font-size: 9px; }
+.dialogue-box.is-open strong {
+  margin: 3px 0 4px;
+  font-size: 15px;
+  line-height: 1.05;
+}
+.dialogue-box.is-open p {
+  font-size: 12px;
+  line-height: 1.25;
+}
+.dialogue-box.is-open p + p { margin-top: 2px; }
+.dialogue-box.is-open em {
+  margin-top: 5px;
+  font-size: 9px;
+}
+
 .inventory-rail {
   position: absolute;
   inset: 0 0 0 auto;
@@ -1068,6 +1219,21 @@ main[data-app="mossbell-farm"] {
   color: #bce59f;
   font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
+.inventory-gold {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  padding: 5px 11px;
+  color: #fff3c9;
+  background: #68431f;
+  border-bottom: 3px solid #dcae4c;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.inventory-gold img { width: 24px; height: 24px; image-rendering: pixelated; }
+.inventory-gold span { color: #ffd770; }
+.inventory-gold strong { color: #fff7d8; font-size: 13px; }
 .inventory-player-status strong {
   display: block;
   margin: 5px 0;
@@ -1099,6 +1265,33 @@ main[data-app="mossbell-farm"] {
 .village-clock strong { font-size: 10px; letter-spacing: 0; }
 .village-clock[data-day-phase="night"] { background: #2f3043; border-bottom-color: #8e84b7; }
 .village-clock[data-day-phase="night"] svg { color: #d8cdf2; }
+.season-weather-status {
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) 24px auto;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 10px;
+  color: #f9edc9;
+  background: #304f32;
+  border-bottom: 3px solid #87b85a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.season-weather-status > img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.season-weather-status p { min-width: 0; margin: 0; }
+.season-weather-status span,
+.season-weather-status strong { display: block; }
+.season-weather-status span { color: #bce59f; font-size: 6px; font-weight: 950; }
+.season-weather-status strong { margin-top: 3px; overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.season-weather-status small { color: #f6d881; font-size: 7px; font-weight: 950; white-space: nowrap; }
+.season-weather-status[data-today-weather="rain"] { background: #31566d; border-bottom-color: #80d8df; }
+.season-weather-status[data-today-weather="snow"] { color: #f7f3e7; background: #4c5367; border-bottom-color: #c9d7da; }
+.season-weather-status[data-today-weather="windy"] { background: #5b5a32; border-bottom-color: #d9c768; }
 .farm-toolbelt {
   padding: 8px 10px 9px;
   color: #fff3c9;
@@ -1161,6 +1354,19 @@ main[data-app="mossbell-farm"] {
   border: 1px solid #f3c56d;
   font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
+.farm-tool-row small {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  min-width: 20px;
+  height: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff7d8;
+  background: #31502c;
+  border: 1px solid #9fe089;
+  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
 .farm-seed-selector {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1188,6 +1394,7 @@ main[data-app="mossbell-farm"] {
   border-color: #fff0a8;
 }
 .farm-seed-selector button {
+  position: relative;
   min-width: 0;
   height: 25px;
   padding: 0 3px;
@@ -1195,6 +1402,19 @@ main[data-app="mossbell-farm"] {
   background: #d4d0a0;
   border: 2px solid #3a2617;
   font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-seed-selector button small {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  min-width: 12px;
+  height: 11px;
+  display: grid;
+  place-items: center;
+  color: #fff7d8;
+  background: #3a2617;
+  border: 1px solid #f3c56d;
+  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .farm-seed-selector button[data-seed-type="potato"] { background: #d5af73; }
 .farm-seed-selector button[data-seed-type="strawberry"] { background: #e66f76; }
@@ -1849,6 +2069,51 @@ main[data-app="mossbell-farm"] {
 .open-world-map button:disabled { cursor: default; opacity: .78; }
 .open-world-map[data-fast-travel="ready"] button:not(:disabled) { outline: 3px solid #9fe089; outline-offset: -6px; }
 .open-world-map + .mini-map { height: 105px; }
+.season-calendar {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 9px;
+  color: #fff7d8;
+  background: #344835;
+  border: 3px solid #1f2e1f;
+  box-shadow: inset 0 0 0 2px rgba(255, 247, 216, .08);
+}
+.season-calendar > header {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  gap: 8px;
+  align-items: center;
+}
+.season-calendar > header img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
+.season-calendar > header p { min-width: 0; margin: 0; }
+.season-calendar > header span,
+.season-calendar > header strong { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.season-calendar > header span { color: #bce59f; font-size: 7px; font-weight: 950; }
+.season-calendar > header strong { margin-top: 4px; font-size: 12px; }
+.season-calendar > div { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.season-calendar > div > span {
+  position: relative;
+  min-width: 0;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: #ead7a0;
+  background: #253426;
+  border: 2px solid #526a4e;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.season-calendar > div > span.is-today { color: #2d2114; background: #ffd770; border-color: #fff3b3; }
+.season-calendar > div > span.is-festival { border-color: #e69455; }
+.season-calendar > div > span i {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  background: #ff806e;
+}
+.season-calendar > small { color: #d9c792; font-size: 8px; font-weight: 850; line-height: 1.35; }
 .world-link { position: absolute; z-index: 1; display: block; background: #d8b565; opacity: .7; }
 .link-farm-forest { left: 25%; top: 49%; width: 50%; height: 3px; }
 .link-forest-coast { left: 49%; top: 25%; width: 3px; height: 50%; }
@@ -2045,6 +2310,267 @@ main[data-app="mossbell-farm"] {
   height: 142px;
 }
 
+.commerce-window {
+  position: absolute;
+  left: calc((100% - var(--inventory-rail-width)) / 2);
+  top: calc((100% - var(--dialogue-bar-height)) / 2);
+  z-index: 98;
+  width: min(620px, calc(100% - var(--inventory-rail-width) - 32px));
+  max-height: calc(100dvh - var(--dialogue-bar-height) - 32px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  translate: -50% -50%;
+  color: #342315;
+  background: #f4dfa2;
+  border: 5px solid #6d4526;
+  box-shadow: 0 0 0 3px #f3c56d, 0 10px 0 rgba(25,15,7,.48), 0 28px 70px rgba(0,0,0,.38);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.commerce-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto 38px;
+  gap: 9px;
+  align-items: center;
+  padding: 8px 10px;
+  color: #fff7d8;
+  background: #3a2617;
+  border-bottom: 4px solid #a76d31;
+}
+.commerce-header > img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.commerce-header span,
+.commerce-header strong { display: block; }
+.commerce-header span { color: #9fe089; font-size: 8px; font-weight: 950; }
+.commerce-header strong { margin-top: 5px; font-size: 15px; }
+.commerce-gold {
+  min-width: 86px;
+  height: 34px;
+  display: grid;
+  grid-template-columns: 25px auto;
+  gap: 5px;
+  place-items: center;
+  padding: 3px 7px;
+  color: #fff7d8;
+  background: #68431f;
+  border: 2px solid #ffd770;
+}
+.commerce-gold img { width: 24px; height: 24px; image-rendering: pixelated; }
+.commerce-gold b { font-size: 11px; }
+.commerce-close {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #fff7d8;
+  background: #6d4526;
+  border: 2px solid #f3c56d;
+}
+.commerce-close svg { width: 20px; height: 20px; }
+.commerce-tabs {
+  position: sticky;
+  top: 64px;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: #6d4526;
+  border-bottom: 3px solid #4a2b1a;
+}
+.commerce-tabs button {
+  min-width: 0;
+  height: 36px;
+  color: #ead7a0;
+  background: #4f301b;
+  border: 0;
+  border-right: 2px solid #80532d;
+  font-size: 9px;
+  font-weight: 950;
+}
+.commerce-tabs button:last-child { border-right: 0; }
+.commerce-tabs button.is-active { color: #2d2114; background: #9fe089; }
+.season-demand-strip {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 7px 10px;
+  color: #fff7d8;
+  background: #31502c;
+  border-bottom: 3px solid #8fba57;
+}
+.season-demand-strip header { display: grid; gap: 3px; }
+.season-demand-strip header span { color: #bce59f; font-size: 7px; font-weight: 950; }
+.season-demand-strip header strong { color: #ffd770; font-size: 10px; }
+.season-demand-strip > div { min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.season-demand-strip > div > span {
+  min-width: 0;
+  height: 34px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 4px;
+  align-items: center;
+  padding: 2px 4px;
+  background: rgba(255, 247, 216, .1);
+  border: 2px solid rgba(255, 215, 112, .38);
+}
+.season-demand-strip img { width: 26px; height: 26px; object-fit: contain; image-rendering: pixelated; }
+.season-demand-strip b { overflow: hidden; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
+.commerce-row strong em { color: #2e7b39; font-size: 8px; font-style: normal; }
+.commerce-list { display: grid; }
+.commerce-row {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 10px;
+  background: #f4dfa2;
+  border-bottom: 2px solid #c7984d;
+}
+.commerce-row:nth-child(even) { background: #efd18a; }
+.commerce-row > img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.commerce-row strong,
+.commerce-row span { display: block; }
+.commerce-row strong { font-size: 11px; line-height: 1.2; }
+.commerce-row span { margin-top: 4px; color: #765027; font-size: 8px; font-weight: 900; }
+.quantity-stepper,
+.purchase-stepper {
+  display: grid;
+  grid-template-columns: 30px 28px 30px;
+  align-items: center;
+  justify-content: end;
+}
+.quantity-stepper button,
+.purchase-stepper button {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #fff7d8;
+  background: #6d4526;
+  border: 2px solid #a76d31;
+}
+.quantity-stepper button:disabled,
+.purchase-stepper button:disabled,
+.buy-button:disabled { opacity: .42; cursor: default; }
+.quantity-stepper svg,
+.purchase-stepper svg { width: 16px; height: 16px; }
+.quantity-stepper b,
+.purchase-stepper b {
+  min-width: 28px;
+  text-align: center;
+  font-size: 11px;
+}
+.purchase-stepper {
+  grid-template-columns: minmax(0, 1fr) 30px 28px 30px;
+  gap: 0;
+  width: 100%;
+  padding: 7px 10px;
+  color: #fff7d8;
+  background: #563720;
+  border-bottom: 3px solid #9b6731;
+}
+.purchase-stepper > span { color: #ffd770; font-size: 9px; font-weight: 950; }
+.buy-button {
+  min-width: 78px;
+  height: 32px;
+  padding: 0 8px;
+  color: #2d2114;
+  background: #9fe089;
+  border: 3px solid #31502c;
+  box-shadow: 0 2px 0 rgba(0,0,0,.24);
+  font-size: 9px;
+  font-weight: 950;
+}
+.shipping-total {
+  position: sticky;
+  bottom: 0;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 11px;
+  color: #fff7d8;
+  background: #3a2617;
+  border-top: 4px solid #a76d31;
+}
+.shipping-total span { display: flex; align-items: center; gap: 6px; color: #9fe089; font-size: 9px; font-weight: 950; }
+.shipping-total svg { width: 18px; height: 18px; }
+.shipping-total strong { font-size: 11px; }
+.commerce-empty { margin: 0; padding: 24px 12px; text-align: center; color: #765027; font-size: 10px; font-weight: 900; }
+.shipping-receipt {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  color: #fff7d8;
+  background: #68431f;
+  border-top: 3px solid #dcae4c;
+}
+.shipping-receipt header,
+.shipping-receipt > span { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.shipping-receipt header { padding-bottom: 5px; color: #ffd770; font-size: 9px; }
+.shipping-receipt > span { padding-top: 4px; border-top: 1px solid #8e6434; font-size: 8px; }
+.shipping-receipt b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shipping-receipt em { color: #ead7a0; font-style: normal; white-space: nowrap; }
+.tool-upgrade-list { border-top: 4px solid #6d4526; }
+.tool-upgrade-list h3 {
+  margin: 0;
+  padding: 8px 10px;
+  color: #ffd770;
+  background: #563720;
+  font-size: 10px;
+}
+.earnings-feedback {
+  position: absolute;
+  left: calc((100% - var(--inventory-rail-width)) / 2);
+  top: 10%;
+  z-index: 97;
+  width: min(420px, calc(100% - var(--inventory-rail-width) - 24px));
+  min-height: 70px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  translate: -50% 0;
+  padding: 8px 12px;
+  color: #fff7d8;
+  background: #3a2617;
+  border: 4px solid #ffd770;
+  box-shadow: 0 6px 0 rgba(25,15,7,.5);
+  pointer-events: none;
+  animation: earnings-pop 3.2s steps(7, end) both;
+}
+.earnings-feedback > img { width: 48px; height: 48px; grid-row: 1 / 3; image-rendering: pixelated; }
+.earnings-feedback p { margin: 0; }
+.earnings-feedback span,
+.earnings-feedback strong { display: block; }
+.earnings-feedback span { color: #9fe089; font-size: 9px; font-weight: 950; }
+.earnings-feedback strong { margin-top: 5px; font-size: 18px; }
+.earnings-feedback small { grid-column: 2; overflow: hidden; color: #ead7a0; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes earnings-pop {
+  0% { opacity: 0; translate: -50% -14px; scale: .86; }
+  12%, 78% { opacity: 1; translate: -50% 0; scale: 1; }
+  100% { opacity: 0; translate: -50% -10px; scale: .94; }
+}
+.commerce-open .gear-button,
+.commerce-open .settings-window,
+.commerce-open .touch-pad { visibility: hidden; }
+
 .touch-pad {
   position: absolute;
   left: calc((100% - var(--inventory-rail-width)) / 2);
@@ -2225,6 +2751,11 @@ main[data-app="mossbell-farm"] {
   }
   .dialogue-box::after { display: none; }
   .dialogue-box p { font-size: 12.5px; }
+  .dialogue-box.is-open { padding: 8px 8px 7px; }
+  .dialogue-box.is-open strong { margin: 2px 0 3px; font-size: 13px; }
+  .dialogue-box.is-open p { font-size: 11px; line-height: 1.2; }
+  .dialogue-box.is-open p + p { margin-top: 1px; }
+  .dialogue-box.is-open em { margin-top: 4px; font-size: 8px; }
   .gear-button { width: 46px; height: 46px; font-size: 21px; }
   .settings-window {
     left: 8px;
@@ -2260,6 +2791,17 @@ main[data-app="mossbell-farm"] {
     border-width: 2px;
   }
   .inventory-player-status > div { display: none; }
+  .inventory-gold {
+    min-height: 29px;
+    grid-template-columns: 20px 1fr;
+    gap: 2px;
+    justify-items: center;
+    padding: 3px;
+    border-bottom-width: 2px;
+  }
+  .inventory-gold img { width: 20px; height: 20px; }
+  .inventory-gold span { display: none; }
+  .inventory-gold strong { font-size: 8px; }
   .village-clock {
     min-height: 24px;
     grid-template-columns: 1fr;
@@ -2271,6 +2813,38 @@ main[data-app="mossbell-farm"] {
   .village-clock svg { width: 15px; height: 15px; }
   .village-clock span,
   .village-clock strong { display: none; }
+  .season-weather-status {
+    min-height: 29px;
+    grid-template-columns: 20px minmax(0, 1fr) 20px;
+    gap: 2px;
+    padding: 3px 4px;
+    border-bottom-width: 2px;
+  }
+  .season-weather-status > img { width: 20px; height: 20px; }
+  .season-weather-status span { display: none; }
+  .season-weather-status strong { margin: 0; font-size: 6px; text-align: center; }
+  .season-weather-status small { display: none; }
+  .festival-day-banner {
+    left: calc((100% - var(--inventory-rail-width)) / 2);
+    top: 66px;
+    width: min(226px, calc(100% - var(--inventory-rail-width) - 16px));
+    min-height: 42px;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 5px;
+    padding: 4px 6px;
+    border-width: 2px;
+  }
+  .festival-day-banner > img { width: 31px; height: 31px; }
+  .festival-day-banner span { font-size: 5.5px; }
+  .festival-day-banner strong { margin-top: 3px; font-size: 8px; }
+  .festival-day-banner small { display: none; }
+  .weather-layer i { width: 24px; height: 24px; background-size: 96px 96px; }
+  .weather-layer i:nth-child(4n + 1) { background-position-x: 0; }
+  .weather-layer i:nth-child(4n + 2) { background-position-x: -24px; }
+  .weather-layer i:nth-child(4n + 3) { background-position-x: -48px; }
+  .weather-layer i:nth-child(4n + 4) { background-position-x: -72px; }
+  .weather-snow i { background-position-y: -24px; }
+  .weather-windy i { background-position-y: -48px; }
   .celebration-banner {
     top: 9%;
     width: min(236px, calc(100% - 20px));
@@ -2305,6 +2879,7 @@ main[data-app="mossbell-farm"] {
     height: 11px;
     font-size: 6px;
   }
+  .farm-tool-row small { left: 1px; top: 1px; min-width: 15px; height: 9px; font-size: 4.5px; }
   .farm-seed-selector {
     gap: 3px;
     margin-top: 5px;
@@ -2317,6 +2892,7 @@ main[data-app="mossbell-farm"] {
     border-width: 1px;
     font-size: 7px;
   }
+  .farm-seed-selector button small { min-width: 9px; height: 8px; font-size: 4.5px; }
   .inventory-summary {
     display: block;
     padding: 7px 6px;
@@ -2483,9 +3059,96 @@ main[data-app="mossbell-farm"] {
   .forage-feedback { width: 104px; translate: -36px 0; }
   .life-feedback.tone-perfect { width: 118px; }
   .item-pickup-toast strong { font-size: 12px; }
+  .commerce-window {
+    left: 8px;
+    right: calc(var(--inventory-rail-width) + 8px);
+    top: 8px;
+    bottom: auto;
+    width: auto;
+    max-height: calc(100dvh - var(--dialogue-bar-height) - 16px);
+    translate: 0 0;
+    border-width: 3px;
+    box-shadow: 0 0 0 2px #f3c56d, 0 5px 0 rgba(25,15,7,.45);
+  }
+  .commerce-header {
+    min-height: 48px;
+    grid-template-columns: 31px minmax(0, 1fr) 30px;
+    gap: 5px;
+    padding: 5px 6px;
+    border-bottom-width: 3px;
+  }
+  .commerce-header > img { width: 29px; height: 29px; }
+  .commerce-header span { font-size: 6px; }
+  .commerce-header strong { margin-top: 3px; font-size: 9px; }
+  .commerce-gold { min-width: 0; height: 28px; grid-template-columns: 18px auto; gap: 2px; padding: 2px 4px; border-width: 1px; }
+  .commerce-gold img { width: 18px; height: 18px; }
+  .commerce-gold b { font-size: 7px; }
+  .commerce-close { position: absolute; right: 3px; top: 51px; z-index: 3; width: 26px; height: 26px; border-width: 1px; }
+  .commerce-close svg { width: 15px; height: 15px; }
+  .commerce-tabs { top: 48px; padding-right: 28px; border-bottom-width: 2px; }
+  .commerce-tabs button { height: 29px; border-right-width: 1px; font-size: 6px; }
+  .season-demand-strip { grid-template-columns: 56px minmax(0, 1fr); gap: 4px; padding: 5px 6px; border-bottom-width: 2px; }
+  .season-demand-strip header span { font-size: 5px; }
+  .season-demand-strip header strong { font-size: 7px; }
+  .season-demand-strip > div { gap: 3px; }
+  .season-demand-strip > div > span { height: 28px; grid-template-columns: 22px minmax(0, 1fr); gap: 2px; padding: 1px 2px; border-width: 1px; }
+  .season-demand-strip img { width: 22px; height: 22px; }
+  .season-demand-strip b { font-size: 5px; }
+  .commerce-row { min-height: 45px; grid-template-columns: 31px minmax(0, 1fr) auto; gap: 5px; padding: 5px 6px; border-bottom-width: 1px; }
+  .commerce-row > img { width: 29px; height: 29px; }
+  .commerce-row strong { font-size: 8px; }
+  .commerce-row span { margin-top: 3px; font-size: 6px; }
+  .quantity-stepper { grid-template-columns: 24px 20px 24px; }
+  .quantity-stepper button,
+  .purchase-stepper button { width: 24px; height: 24px; border-width: 1px; }
+  .quantity-stepper svg,
+  .purchase-stepper svg { width: 13px; height: 13px; }
+  .quantity-stepper b,
+  .purchase-stepper b { min-width: 20px; font-size: 8px; }
+  .purchase-stepper { grid-template-columns: minmax(0, 1fr) 24px 20px 24px; padding: 5px 34px 5px 6px; border-bottom-width: 2px; }
+  .purchase-stepper > span { font-size: 6px; }
+  .buy-button { min-width: 54px; height: 27px; padding: 0 4px; border-width: 2px; font-size: 6px; }
+  .shipping-total { min-height: 38px; gap: 5px; padding: 6px; border-top-width: 3px; }
+  .shipping-total span { font-size: 6px; }
+  .shipping-total svg { width: 14px; height: 14px; }
+  .shipping-total strong { font-size: 7px; }
+  .shipping-receipt { gap: 3px; padding: 6px; border-top-width: 2px; }
+  .shipping-receipt header { font-size: 6px; }
+  .shipping-receipt > span { font-size: 5.5px; }
+  .tool-upgrade-list { border-top-width: 3px; }
+  .tool-upgrade-list h3 { padding: 6px; font-size: 7px; }
+  .earnings-feedback {
+    left: 8px;
+    top: 12px;
+    width: calc(100% - var(--inventory-rail-width) - 16px);
+    min-height: 56px;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 5px;
+    translate: 0 0;
+    padding: 6px;
+    border-width: 3px;
+    animation-name: earnings-pop-mobile;
+  }
+  .earnings-feedback > img { width: 36px; height: 36px; }
+  .earnings-feedback span { font-size: 6px; }
+  .earnings-feedback strong { margin-top: 3px; font-size: 11px; }
+  .earnings-feedback small { font-size: 6px; }
+  @keyframes earnings-pop-mobile {
+    0% { opacity: 0; translate: 0 -12px; scale: .86; }
+    12%, 78% { opacity: 1; translate: 0 0; scale: 1; }
+    100% { opacity: 0; translate: 0 -8px; scale: .94; }
+  }
   .touch-pad { bottom: calc(var(--dialogue-bar-height) + 12px); grid-template-columns: repeat(5, 43px); }
   .touch-pad button { width: 43px; height: 40px; }
   .intro-card { padding: 22px 16px; }
+  .season-calendar { gap: 6px; padding: 7px; border-width: 2px; }
+  .season-calendar > header { grid-template-columns: 27px minmax(0, 1fr) 27px; gap: 5px; }
+  .season-calendar > header img { width: 27px; height: 27px; }
+  .season-calendar > header span { font-size: 6px; }
+  .season-calendar > header strong { margin-top: 2px; font-size: 9px; }
+  .season-calendar > div { gap: 2px; }
+  .season-calendar > div > span { height: 23px; border-width: 1px; font-size: 7px; }
+  .season-calendar > small { font-size: 6px; }
 }
 @media (max-width: 380px) {
   .game-viewport { --world-scale: 1; }
@@ -2513,6 +3176,8 @@ main[data-app="mossbell-farm"] {
   .fishing-feedback,
   .harvest-feedback,
   .harvest-feedback i,
+  .weather-layer i,
   .firework-burst i,
   .celebration-banner { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .earnings-feedback { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }

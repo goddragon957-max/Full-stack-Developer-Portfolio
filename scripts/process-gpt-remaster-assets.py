@@ -41,6 +41,7 @@ SHEETS = {
     "items": Sheet("items-sheet-pure-game.png", 5, 6, "Pure farming RPG harvest, ranch, forage, ore and fish icon pack"),
     "gameplay": Sheet("gameplay-sheet.png", 3, 6, "Tools, soil states and ambient effect pack"),
     "world-props": Sheet("world-props-sheet.png", 3, 5, "Market, village, ranch, coast, mine and landmark prop pack", dynamic_columns=True),
+    "economy": Sheet("economy-progression-sheet.png", 3, 3, "Shipping box, GOLD coin, seed pouch, feed and three tool upgrade icons"),
 }
 
 TERRAIN_SOURCES = {
@@ -309,6 +310,21 @@ def process_hoe_icon(assets: list[dict]) -> None:
     save_asset(sprite, "items/tools/hoe.png", source_name, (0, 0), assets)
 
 
+def process_economy_pack(assets: list[dict]) -> None:
+    sheet = SHEETS["economy"]
+    image = remove_chroma(Image.open(SOURCE_ROOT / sheet.source))
+    grid = detect_grid(image, sheet)
+    specs = [
+        [("props/shipping-box.png", (64, 64), (60, 60)), ("economy/coin.png", (32, 32), (30, 30)), ("economy/seed-pouch.png", (32, 32), (30, 30))],
+        [("economy/feed.png", (32, 32), (30, 30)), ("economy/watering-upgrade.png", (32, 32), (30, 30)), ("economy/fishing-upgrade.png", (32, 32), (30, 30))],
+        [("economy/pickaxe-upgrade.png", (32, 32), (30, 30)), ("effects/coin-burst.png", (32, 32), (30, 30)), ("economy/shipping-ledger.png", (32, 32), (30, 30))],
+    ]
+    for row, row_specs in enumerate(specs):
+        for column, (path, canvas, content_box) in enumerate(row_specs):
+            sprite = normalize_sprite(sheet_cell(image, grid, row, column), canvas, content_box)
+            save_asset(sprite, path, sheet.source, (row, column), assets)
+
+
 def main() -> None:
     manifest_path = ASSET_ROOT / "manifest.json"
     existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
@@ -360,6 +376,7 @@ def main() -> None:
     ], (32, 32), (30, 30), assets)
     process_world_props(assets)
     process_hoe_icon(assets)
+    process_economy_pack(assets)
 
     source_records = []
     style_source = SOURCE_ROOT / "style-anchor-chroma.png"

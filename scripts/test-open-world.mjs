@@ -36,11 +36,18 @@ for (const [region, position, direction, expectedId] of visualGateChecks) {
 
 assert(world.REGION_TRANSITION_SWAP_MS >= 300 && world.REGION_TRANSITION_SWAP_MS <= 500, 'Region map swap must wait for a 300-500ms pixel fade');
 
+for (const x of [20, 21, 22]) {
+  assert(world.isRegionBlocked('whisper-forest', x, 9), `Forest stream tile ${x},9 above the bridge must be blocked`);
+  assert(!world.isRegionBlocked('whisper-forest', x, 10), `Forest bridge tile ${x},10 must remain walkable`);
+  assert(!world.isRegionBlocked('whisper-forest', x, 11), `Forest bridge tile ${x},11 must remain walkable`);
+  assert(world.isRegionBlocked('whisper-forest', x, 12), `Forest stream tile ${x},12 below the bridge must be blocked`);
+}
+
 const unsafeSavedState = world.createInitialOpenWorldState();
 unsafeSavedState.currentRegion = 'whisper-forest';
 unsafeSavedState.positions = {
   'farm-village': { x: 4, y: 3, facing: 'down' },
-  'whisper-forest': { x: 21, y: 3, facing: 'left' },
+  'whisper-forest': { x: 21, y: 12, facing: 'left' },
   'river-coast': { x: 25, y: 12, facing: 'up' },
   'mine-foothill': { x: 12, y: 3, facing: 'right' },
 };
@@ -50,6 +57,7 @@ for (const region of world.REGION_IDS) {
   assert(!world.isRegionBlocked(region, recovered.x, recovered.y), `${region} saved position must recover outside collision terrain and buildings`);
 }
 assert(recoveredState.positions['farm-village'].x !== 4 || recoveredState.positions['farm-village'].y !== 3, 'Farmhouse collision save must move to a safe village tile');
+assert(recoveredState.positions['whisper-forest'].y === 11, 'A saved position below the forest bridge must recover onto the walkable bridge row');
 
 assert(world.getRegionExit('farm-village', { x: 30, y: 8 }, 'left') === null, 'A gate must require outward movement');
 assert(world.getRegionExit('farm-village', { x: 20, y: 8 }, 'right') === null, 'A gate must not trigger away from the edge');

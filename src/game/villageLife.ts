@@ -63,11 +63,10 @@ export const ANIMAL_IDS: AnimalId[] = ['chicken-1', 'chicken-2', 'chicken-3', 'c
 export const RANCH_PRODUCTS: RanchProduct[] = ['egg', 'milk', 'golden-egg'];
 export const DAILY_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
 export const RANCH_FENCE_CELLS = [
-  { x: 10, y: 17 }, { x: 11, y: 17 }, { x: 13, y: 17 }, { x: 14, y: 17 },
-  { x: 10, y: 18 }, { x: 14, y: 18 },
-  { x: 10, y: 19 }, { x: 14, y: 19 },
-  { x: 10, y: 20 }, { x: 14, y: 20 },
-  { x: 10, y: 21 }, { x: 11, y: 21 }, { x: 12, y: 21 }, { x: 13, y: 21 }, { x: 14, y: 21 },
+  { x: 10, y: 15 }, { x: 11, y: 15 }, { x: 12, y: 15 }, { x: 13, y: 15 }, { x: 14, y: 15 },
+  { x: 10, y: 16 }, { x: 14, y: 16 },
+  { x: 10, y: 17 }, { x: 14, y: 17 },
+  { x: 10, y: 18 }, { x: 11, y: 18 }, { x: 13, y: 18 }, { x: 14, y: 18 },
 ] as const;
 
 export const LIFE_NPC_INFO: Record<LifeNpcId, {
@@ -136,11 +135,11 @@ const NPC_POSITIONS: Record<LifeNpcId, Record<DayPhase, { x: number; y: number; 
 };
 
 const DAY_ANIMAL_POSITIONS: Record<AnimalId, { x: number; y: number }> = {
-  'chicken-1': { x: 11, y: 18 },
-  'chicken-2': { x: 12, y: 18 },
-  'chicken-3': { x: 13, y: 18 },
-  'cow-1': { x: 11, y: 20 },
-  'cow-2': { x: 13, y: 20 },
+  'chicken-1': { x: 11, y: 16 },
+  'chicken-2': { x: 12, y: 16 },
+  'chicken-3': { x: 13, y: 16 },
+  'cow-1': { x: 11.35, y: 16.85 },
+  'cow-2': { x: 12.65, y: 16.85 },
 };
 
 const NIGHT_ANIMAL_POSITIONS: Record<AnimalId, { x: number; y: number }> = {

@@ -1,4 +1,5 @@
 import type { RegionId } from './openWorld';
+import type { WeatherAudioMix } from './weatherSystem';
 
 export type AudioTrackId = 'village-day' | 'forest-day' | 'coast-day' | 'mine-day' | 'night';
 export type AudioSettings = { muted: boolean; volume: number };
@@ -54,6 +55,10 @@ export class RegionAudioController {
   private unlocked = false;
   private interior = false;
   private settings: AudioSettings;
+  private weatherMix: WeatherAudioMix = { musicMultiplier: 1, ambience: 'none', ambienceVolume: 0 };
+  private ambienceContext: AudioContext | null = null;
+  private ambienceSource: AudioBufferSourceNode | null = null;
+  private ambienceGain: GainNode | null = null;
 
   constructor(settings: AudioSettings) {
     this.settings = settings;
@@ -61,21 +66,65 @@ export class RegionAudioController {
 
   unlock() {
     this.unlocked = true;
+    this.refreshAmbience();
   }
 
   updateSettings(settings: AudioSettings) {
     this.settings = settings;
     if (this.active) this.active.volume = this.getOutputVolume();
+    this.refreshAmbience();
   }
 
   setInterior(interior: boolean) {
     this.interior = interior;
     if (this.active) this.active.volume = this.getOutputVolume();
+    this.refreshAmbience();
+  }
+
+  setWeatherMix(mix: WeatherAudioMix) {
+    this.weatherMix = mix;
+    if (this.active) this.active.volume = this.getOutputVolume();
+    this.refreshAmbience();
   }
 
   private getOutputVolume() {
     if (this.settings.muted) return 0;
-    return this.settings.volume * (this.interior ? AUDIO_INTERIOR_GAIN : 1);
+    return this.settings.volume * this.weatherMix.musicMultiplier * (this.interior ? AUDIO_INTERIOR_GAIN : 1);
+  }
+
+  private stopAmbience() {
+    this.ambienceSource?.stop();
+    this.ambienceSource?.disconnect();
+    this.ambienceGain?.disconnect();
+    this.ambienceSource = null;
+    this.ambienceGain = null;
+  }
+
+  private refreshAmbience() {
+    this.stopAmbience();
+    if (!this.unlocked || this.settings.muted || this.interior || this.weatherMix.ambience === 'none' || typeof window === 'undefined') return;
+    const AudioContextClass = window.AudioContext ?? (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = this.ambienceContext ?? new AudioContextClass();
+    this.ambienceContext = context;
+    const frames = Math.max(1, Math.round(context.sampleRate * 2));
+    const buffer = context.createBuffer(1, frames, context.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let index = 0; index < frames; index += 1) data[index] = Math.random() * 2 - 1;
+    const source = context.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    const filter = context.createBiquadFilter();
+    filter.type = this.weatherMix.ambience === 'rain' ? 'highpass' : 'lowpass';
+    filter.frequency.value = this.weatherMix.ambience === 'rain' ? 1_250 : this.weatherMix.ambience === 'wind' ? 520 : 280;
+    const gain = context.createGain();
+    gain.gain.value = this.settings.volume * this.weatherMix.ambienceVolume;
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(context.destination);
+    source.start();
+    this.ambienceSource = source;
+    this.ambienceGain = gain;
   }
 
   transition(trackId: AudioTrackId) {
@@ -116,6 +165,9 @@ export class RegionAudioController {
     if (this.fadeTimer !== null) window.clearInterval(this.fadeTimer);
     this.active?.pause();
     this.active = null;
+    this.stopAmbience();
+    void this.ambienceContext?.close();
+    this.ambienceContext = null;
   }
 }
 

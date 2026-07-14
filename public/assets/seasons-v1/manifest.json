@@ -1,0 +1,458 @@
+{
+  "version": 1,
+  "theme": "Mossbell Farm seasons, weather, and festivals",
+  "generation": {
+    "model": "gpt-image",
+    "policy": "All visual pixels originate in GPT Image outputs; scripts only copy, crop, chroma-key, resize, assemble, and validate."
+  },
+  "runtime_map_size": {
+    "width": 512,
+    "height": 352
+  },
+  "sources": [
+    {
+      "path": "source/maps/farm-village-spring-gpt.png",
+      "sha256": "8623f9cd73e00d26245ce5543426fe11ff0bcc170fbe7730ae38e15f543dda7a"
+    },
+    {
+      "path": "source/maps/farm-village-summer-gpt.png",
+      "sha256": "00ea9e5cc32a6b3fd8af85920b01fa82d1c12d4080a1d2544df9b063912cd25b"
+    },
+    {
+      "path": "source/maps/farm-village-autumn-gpt.png",
+      "sha256": "7b16ddccdd05b731923da8bc3c0731eafe235c07126939893d621642e2e77fbc"
+    },
+    {
+      "path": "source/maps/farm-village-winter-gpt.png",
+      "sha256": "4d42c46cc866afd58df4aa21fc7e0d1b36b7ae7a7f4e79b4effe4c0b1f1d6463"
+    },
+    {
+      "path": "source/maps/whisper-forest-spring-gpt.png",
+      "sha256": "d6c6ec3cb0f6c05c0d20d1fd61477f5843f6ceb82e3aea99abe88e3fa268d726"
+    },
+    {
+      "path": "source/maps/whisper-forest-summer-gpt.png",
+      "sha256": "cac4a462ca96d2e8b9ef38fa7cdce7946b57d4f7f04c80c65154eed66f679c1e"
+    },
+    {
+      "path": "source/maps/whisper-forest-autumn-gpt.png",
+      "sha256": "ce21710db3f6ffc2e46275e24172dace47d8d436c0c74406a923743b12a1cc2f"
+    },
+    {
+      "path": "source/maps/whisper-forest-winter-gpt.png",
+      "sha256": "55410695c1343f3593b83ae1dc9df63e316680247de2013b489ea35d2f459ddc"
+    },
+    {
+      "path": "source/maps/river-coast-spring-gpt.png",
+      "sha256": "b5d4296c82415bd1bd26acb892d5a055110e2f94efd6ba8e3e13be4d150a15a5"
+    },
+    {
+      "path": "source/maps/river-coast-summer-gpt.png",
+      "sha256": "aaf09e80486ce2f7eb9eadfeb5f3f830680d4e7cbe7317bbae8fe54c73acb50e"
+    },
+    {
+      "path": "source/maps/river-coast-autumn-gpt.png",
+      "sha256": "fd0084d124557784c60eb63aca63691b92578ce0d35f45b84009285e1ba96762"
+    },
+    {
+      "path": "source/maps/river-coast-winter-gpt.png",
+      "sha256": "45c7316ae17d1f113286b5bb7bd3d399b910ce33fb9235728a5896490a83b74f"
+    },
+    {
+      "path": "source/maps/mine-foothill-spring-gpt.png",
+      "sha256": "baee05181981b5277daa5649b303e1543c709fd1d9d76dfd25a81f23a06185e0"
+    },
+    {
+      "path": "source/maps/mine-foothill-summer-gpt.png",
+      "sha256": "c4a48e69efe464b1a3a4e4645cb8ffd067a25b9c237f293eeeaf7491d0257015"
+    },
+    {
+      "path": "source/maps/mine-foothill-autumn-gpt.png",
+      "sha256": "d4fe388aa3dfe948c2a316947466592e93c58926e4668369d4b5910bc99771e7"
+    },
+    {
+      "path": "source/maps/mine-foothill-winter-gpt.png",
+      "sha256": "739c2b12068634390ca15ffe9559df619d7ec9c1a49fccf94ea4f24107957996"
+    },
+    {
+      "path": "source/season-weather-fish-festival-sheet.png",
+      "sha256": "4739045586dbfcae07fe1e44810c61dfd3b611d3084b048029eaf5f20a3c23bd"
+    },
+    {
+      "path": "source/weather-particle-sheet.png",
+      "sha256": "4b7ca04bc4fed9830e9991a9480accdfcbbdbf6e905ca705d9863a14a1b93943"
+    }
+  ],
+  "maps": [
+    {
+      "region": "farm-village",
+      "season": "spring",
+      "path": "maps/farm-village-spring.png",
+      "source": "source/maps/farm-village-spring-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
+      "sha256": "d08b18de7fdd19e583d4b935f87a61a2129603dcb5fefaa7aa7b0a9451d18f0d"
+    },
+    {
+      "region": "farm-village",
+      "season": "summer",
+      "path": "maps/farm-village-summer.png",
+      "source": "source/maps/farm-village-summer-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
+      "sha256": "7336e984a51306cfe27b4278bd569c4912293cfca7898bf7b14dac8ab5dab917"
+    },
+    {
+      "region": "farm-village",
+      "season": "autumn",
+      "path": "maps/farm-village-autumn.png",
+      "source": "source/maps/farm-village-autumn-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
+      "sha256": "466aef97aec54973dcb7dccbc0c520bfce3b6477376f3abde58df7f845079af7"
+    },
+    {
+      "region": "farm-village",
+      "season": "winter",
+      "path": "maps/farm-village-winter.png",
+      "source": "source/maps/farm-village-winter-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
+      "sha256": "30f8f31bde5ee44a3005a8d66e7ddece03952daad891e5ba594a54b1efed1fb2"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "spring",
+      "path": "maps/whisper-forest-spring.png",
+      "source": "source/maps/whisper-forest-spring-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "a0e2613251a34569c30b5ea008222f86f3e710124f67e6518df99399234064b5"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "summer",
+      "path": "maps/whisper-forest-summer.png",
+      "source": "source/maps/whisper-forest-summer-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "62a221414b00890ff6e443092f4c69c1eb68c79ef9d34fc659adeeef44bc2496"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "autumn",
+      "path": "maps/whisper-forest-autumn.png",
+      "source": "source/maps/whisper-forest-autumn-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "8b4361f567f9f5ca40e157dd3a83ffa1f6253d044611c68e855033dc87dccc56"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "winter",
+      "path": "maps/whisper-forest-winter.png",
+      "source": "source/maps/whisper-forest-winter-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "607edecb72c2f902a35ea69a54b8eb7644a38fd33a39db3c8e41469c163229b4"
+    },
+    {
+      "region": "river-coast",
+      "season": "spring",
+      "path": "maps/river-coast-spring.png",
+      "source": "source/maps/river-coast-spring-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "8a6aa794e12f9a0e837fd4e3b5b34ac49eefff69c5f82e35ec8c6c8ce1140d89"
+    },
+    {
+      "region": "river-coast",
+      "season": "summer",
+      "path": "maps/river-coast-summer.png",
+      "source": "source/maps/river-coast-summer-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "6f31502b71ee2f161218d8cb35598895c4110c3f4fd698b987c39c7df61c0016"
+    },
+    {
+      "region": "river-coast",
+      "season": "autumn",
+      "path": "maps/river-coast-autumn.png",
+      "source": "source/maps/river-coast-autumn-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "eea8810c6f0effbda60d61f90f60ba5c682ffa761fb88765505a4a01123825c9"
+    },
+    {
+      "region": "river-coast",
+      "season": "winter",
+      "path": "maps/river-coast-winter.png",
+      "source": "source/maps/river-coast-winter-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "c1182ea7c75f88e9c6df90c2097463df34c1067d93f1f5d286f7e3cb44dcdee4"
+    },
+    {
+      "region": "mine-foothill",
+      "season": "spring",
+      "path": "maps/mine-foothill-spring.png",
+      "source": "source/maps/mine-foothill-spring-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "102091ae67911bcfe017cafc643f3220f406e31c48e114f469c270828646144f"
+    },
+    {
+      "region": "mine-foothill",
+      "season": "summer",
+      "path": "maps/mine-foothill-summer.png",
+      "source": "source/maps/mine-foothill-summer-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "0f6012de07eac2377b73b80a6873149107c1b42f1d941f00fc066531c59f1602"
+    },
+    {
+      "region": "mine-foothill",
+      "season": "autumn",
+      "path": "maps/mine-foothill-autumn.png",
+      "source": "source/maps/mine-foothill-autumn-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "42aced491dd38af67062c8fe1fdfb9db90ac2d1d088e73362e620de50bdd7040"
+    },
+    {
+      "region": "mine-foothill",
+      "season": "winter",
+      "path": "maps/mine-foothill-winter.png",
+      "source": "source/maps/mine-foothill-winter-gpt.png",
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
+      "sha256": "f82b7a33d4fc722bea8ea54f20b3ab2a6fa3c26e582ec4c1a51ecf7ee3b8af1b"
+    }
+  ],
+  "assets": [
+    {
+      "path": "icons/spring.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "ef24080ca3ca40fe9f0b1a76eeaaf2734a8619a1ac3663b39948158c45fd839f"
+    },
+    {
+      "path": "icons/summer.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "31044ce5412bd9aea3cba452ffd6dbac8f2cba1e83da1cf2e57dcf3559e9b231"
+    },
+    {
+      "path": "icons/autumn.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "c91c1ce531cb3654ccca916fc3b2cc7787560adc6861edc525eeb23f4eb03b1d"
+    },
+    {
+      "path": "icons/winter.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 3
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "94ab7027ba7abb0ffe67a4382d6627e401150d7dab4ad337627f656a811de3eb"
+    },
+    {
+      "path": "icons/weather-sunny.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "df4adf9621ec660f748810df82d15cef00a66880554c8111dbf0a312fc3ee72e"
+    },
+    {
+      "path": "icons/weather-rain.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "cd514a0e7dc32dd48445615c3894812cda1465a98782db4cfe95cc153fc82603"
+    },
+    {
+      "path": "icons/weather-windy.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "d9cafda083412733916f3862bff4622d2b4d440f85e35ffa1b12712fba12762d"
+    },
+    {
+      "path": "icons/weather-snow.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 3
+      },
+      "width": 32,
+      "height": 32,
+      "alpha": true,
+      "sha256": "d44f175dd4f7d5a91e310b75f80c5788e1e2cf42ce93119f850727c4b7f8a47e"
+    },
+    {
+      "path": "fish/blossom-dace.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "width": 64,
+      "height": 48,
+      "alpha": true,
+      "sha256": "1bf2bf4be3e0f9cf6e48976b23c578e83b2bf418f33132832df42bc8b917c360"
+    },
+    {
+      "path": "fish/sunscale-bass.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "width": 64,
+      "height": 48,
+      "alpha": true,
+      "sha256": "4289f92c7ba86bb645b21909fd064b2770e73a26c8a4bdf3be5789127f950740"
+    },
+    {
+      "path": "fish/ember-carp.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "width": 64,
+      "height": 48,
+      "alpha": true,
+      "sha256": "235487a38fe6f750649febe1452ecdd18873d9d88c83be3a9bb31ae0ef781ea9"
+    },
+    {
+      "path": "fish/frostfin.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 3
+      },
+      "width": 64,
+      "height": 48,
+      "alpha": true,
+      "sha256": "dc84ac8e739cd4cde7b8b477ce36fb980ec8b1a8670ed2fd280afe4ec8400331"
+    },
+    {
+      "path": "festivals/harvest-display.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 0
+      },
+      "width": 96,
+      "height": 64,
+      "alpha": true,
+      "sha256": "928925064556f9ec9530ebccc3e211713ac75e39ec74809ca27a36efcd7dc382"
+    },
+    {
+      "path": "festivals/starlight-lantern.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 1
+      },
+      "width": 64,
+      "height": 80,
+      "alpha": true,
+      "sha256": "37324074a06f5666a65df5d798b8d418a969e7dd9455837d7c12a5231c8cab17"
+    },
+    {
+      "path": "festivals/harvest-ribbon.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 2
+      },
+      "width": 48,
+      "height": 64,
+      "alpha": true,
+      "sha256": "599ae6da780c67c5d343a54a91d22ba366e760f7998d8f97393bdc7205f8859b"
+    },
+    {
+      "path": "festivals/starlight-charm.png",
+      "source": "source/season-weather-fish-festival-sheet.png",
+      "cell": {
+        "row": 3,
+        "column": 3
+      },
+      "width": 48,
+      "height": 64,
+      "alpha": true,
+      "sha256": "9859b33fecaa1d432b3776fec109f3276c79839894b24d9604b61a515f68ab3c"
+    },
+    {
+      "path": "effects/weather-atlas.png",
+      "source": "source/weather-particle-sheet.png",
+      "cell": null,
+      "width": 128,
+      "height": 128,
+      "alpha": true,
+      "sha256": "f6773f281e3f7aee823313385a22100e02e895d6d507798cd30f950d35819e36"
+    }
+  ],
+  "validation": {
+    "binary_alpha": true,
+    "transparent_corners": true,
+    "color_under_zero_alpha": false,
+    "map_geometry_policy": "same four regions and runtime collision coordinates",
+    "ranch_enclosure": "front fence and center gate connect to both side fences in every season"
+  }
+}

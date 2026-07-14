@@ -1,6 +1,6 @@
 export type TimeMode = 'auto' | 'day' | 'night';
 export type DayPhase = 'dawn' | 'day' | 'sunset' | 'night';
-export type CelebrationKind = 'first-harvest' | 'quest-complete' | 'rare-fish' | 'npc-quest' | 'golden-egg' | 'area-discovered' | 'world-explorer' | 'rare-forage' | 'rare-crystal' | 'open-world-quest';
+export type CelebrationKind = 'first-harvest' | 'quest-complete' | 'rare-fish' | 'npc-quest' | 'golden-egg' | 'area-discovered' | 'world-explorer' | 'rare-forage' | 'rare-crystal' | 'open-world-quest' | 'tool-upgraded' | 'economy-milestone' | 'harvest-night' | 'starlight-festival';
 
 export type VillageTime = {
   phase: DayPhase;
@@ -38,6 +38,10 @@ export const CELEBRATION_COPY: Record<CelebrationKind, { eyebrow: string; title:
   'rare-forage': { eyebrow: 'RARE FORAGE', title: '숲에서 희귀한 달빛꽃을 발견했습니다!' },
   'rare-crystal': { eyebrow: 'CRYSTAL FIND', title: '광맥에서 희귀한 별빛 수정을 얻었습니다!' },
   'open-world-quest': { eyebrow: 'EXPEDITION COMPLETE', title: '오늘의 탐험 의뢰를 완수했습니다!' },
+  'tool-upgraded': { eyebrow: 'TOOL UPGRADED', title: '농장 도구가 한 단계 더 강해졌습니다!' },
+  'economy-milestone': { eyebrow: 'MILESTONE', title: '모스벨 성장 기록이 새로 열렸습니다!' },
+  'harvest-night': { eyebrow: 'HARVEST NIGHT', title: '올해의 수확물이 광장을 밝혔습니다!' },
+  'starlight-festival': { eyebrow: 'STARLIGHT FESTIVAL', title: '별빛 등불이 겨울밤을 밝혔습니다!' },
 };
 
 function normalizeMinutes(value: number) {
@@ -103,6 +107,6 @@ export function getVillageKeeperDialogue(phase: DayPhase) {
   };
   return [
     phaseLines[phase],
-    '저는 루미, 마을 기록가예요. 개발 기록이 카드가 아니라 이 마을의 발견물이 되도록 정리하고 있어요.',
+    '저는 루미, 마을 기록가예요. 밭과 숲, 바다에서 만난 이야기를 마을 연대기에 적고 있어요.',
   ];
 }

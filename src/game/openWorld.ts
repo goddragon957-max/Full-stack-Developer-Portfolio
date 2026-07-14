@@ -116,7 +116,7 @@ export const FAST_TRAVEL_ARRIVALS: Record<RegionId, WorldPosition> = Object.from
 const FOREST_BLOCKED_RECTS = [
   { x: 0, y: 0, w: 16, h: 1 }, { x: 19, y: 0, w: 13, h: 1 },
   { x: 0, y: 21, w: 32, h: 1 }, { x: 0, y: 1, w: 1, h: 8 }, { x: 0, y: 13, w: 1, h: 8 },
-  { x: 31, y: 1, w: 1, h: 20 }, { x: 20, y: 1, w: 3, h: 8 }, { x: 20, y: 13, w: 3, h: 8 },
+  { x: 31, y: 1, w: 1, h: 20 }, { x: 20, y: 1, w: 3, h: 9 }, { x: 20, y: 12, w: 3, h: 9 },
   { x: 4, y: 3, w: 4, h: 3 }, { x: 25, y: 4, w: 4, h: 4 }, { x: 4, y: 15, w: 5, h: 4 },
 ];
 

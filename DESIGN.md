@@ -25,7 +25,11 @@ Mossbell Farm is a game-first cozy farming RPG. The first screen is the playable
 - The game world remains the primary full-screen surface.
 - A fixed right rail contains player status, tools, inventory tabs, and the current objective.
 - Dialogue stays in a bottom bar.
-- The gear menu contains MAP, JOURNAL, and SETTINGS.
+- The gear menu contains MAP, JOURNAL, AUDIO, and RESET.
+- The right rail always shows GOLD; world commerce opens as a compact in-game window without changing the rail width.
+- The farmhouse shipping box accepts same-day edits and settles an itemized receipt on the next date.
+- A compact season and weather strip stays below the village clock; the seven-day calendar remains inside the MAP menu.
+- Harvest Night and Starlight Festival reuse the Farm Village plaza, dialogue bar, journal, inventory, and celebration layers.
 - Mobile uses the same world and systems with touch movement and an `E` action button.
 
 ## Domain Boundaries
@@ -37,6 +41,12 @@ Mossbell Farm is a game-first cozy farming RPG. The first screen is the playable
 - `src/game/foragingLoop.ts`: forage and mining nodes
 - `src/game/interiorWorld.ts`: building-to-interior mapping, room collisions, and interior persistence
 - `src/game/audioSystem.ts`: music selection, volume, mute, and crossfade
+- `src/game/economySystem.ts`: GOLD, seed and feed stock, prices, purchases, and milestones
+- `src/game/shippingLoop.ts`: quality-aware shipment entries, reconciliation, receipts, and inventory deduction
+- `src/game/toolProgression.ts`: two-level watering can, fishing rod, and pickaxe upgrades
+- `src/game/seasonSystem.ts`: four seven-day seasons, year rollover, crop preferences, and daily demand
+- `src/game/weatherSystem.ts`: deterministic daily weather, rain application, and audio mix rules
+- `src/game/festivalSystem.ts`: annual festival schedule, plaza interactions, souvenirs, and journal completion
 
 ## Constraints
 
@@ -44,3 +54,4 @@ Mossbell Farm is a game-first cozy farming RPG. The first screen is the playable
 - Do not add a new runtime dependency for game logic or visuals.
 - Do not copy commercial farming RPG or RPG Maker assets.
 - Do not expand the outdoor map resolution or right rail width.
+- Seasonal maps preserve the same collision, building, fishing, exit, and interaction coordinates as their base region.

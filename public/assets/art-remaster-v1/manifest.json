@@ -160,6 +160,17 @@
       "sha256": "4dd628a3fd04d95b98230ae82f906883e77c9a0b2690e8897b0a6d6196f205b1"
     },
     {
+      "id": "economy",
+      "path": "source/economy-progression-sheet.png",
+      "generator": "OpenAI GPT Image built-in tool",
+      "prompt_summary": "Shipping box, GOLD coin, seed pouch, feed and three tool upgrade icons",
+      "grid": {
+        "rows": 3,
+        "columns": 3
+      },
+      "sha256": "37878868124184055702a137b78b2acc1bbde605cadb1ebf04abfb72d3659601"
+    },
+    {
       "id": "terrain-grass-path",
       "path": "source/terrain-grass-path.png",
       "generator": "OpenAI GPT Image built-in tool",
@@ -4446,6 +4457,141 @@
       "alpha": true,
       "transparent_corners": true,
       "sha256": "f299476c18fe64bc17c90d6228c6a280424f77430a6c612c1ab531186e345d6a"
+    },
+    {
+      "path": "props/shipping-box.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 0
+      },
+      "canvas": {
+        "width": 64,
+        "height": 64
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "609eacda48ea9fc08b8c18f526cf036c6feb094dd49611f14f5a89f8fd912de9"
+    },
+    {
+      "path": "economy/coin.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "7c700030de96f6ea865b1e391160f7a2f270804eb4f09dd2939b43755b7f76e8"
+    },
+    {
+      "path": "economy/seed-pouch.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 0,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5930ab7157cda55f27cabd9a853a00f253cf7796d9b645b480d36f964c6c5288"
+    },
+    {
+      "path": "economy/feed.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "5099e303beeedbe45328bf09476a9c7f52fa49589ec9ca442218d9392bd7cd6e"
+    },
+    {
+      "path": "economy/watering-upgrade.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "83ff5d830d8b5f7042413e85e6f595a7136c43cb1934bd6c45a7845ae3caf24b"
+    },
+    {
+      "path": "economy/fishing-upgrade.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 1,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "0002939f7583a3f37ea1140c4f96c014e082199fda60906cbf587413279c79b3"
+    },
+    {
+      "path": "economy/pickaxe-upgrade.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 0
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "811e8f81626688b3b45361ccb3c3e2c442ca22b0613e6b98e3445485d498f8fb"
+    },
+    {
+      "path": "effects/coin-burst.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 1
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "4f940c2daeb1631b960499f24b0b9e335b46c123d558c6bb278f84756b075566"
+    },
+    {
+      "path": "economy/shipping-ledger.png",
+      "source": "source/economy-progression-sheet.png",
+      "cell": {
+        "row": 2,
+        "column": 2
+      },
+      "canvas": {
+        "width": 32,
+        "height": 32
+      },
+      "alpha": true,
+      "transparent_corners": true,
+      "sha256": "8f534b51ca36756f416be7c101cae8698e364260560d71bbf828171415751fd3"
     }
   ],
   "audio": [
@@ -4486,7 +4632,7 @@
     }
   ],
   "validation": {
-    "asset_count": 278,
+    "asset_count": 287,
     "all_sprite_alpha": true,
     "all_sprite_transparent_corners": true
   },

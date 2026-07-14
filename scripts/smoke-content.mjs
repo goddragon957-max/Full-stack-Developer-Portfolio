@@ -10,13 +10,19 @@ const openWorld = existsSync('src/game/openWorld.ts') ? readFileSync('src/game/o
 const foragingLoop = existsSync('src/game/foragingLoop.ts') ? readFileSync('src/game/foragingLoop.ts', 'utf8') : '';
 const animationCatalog = existsSync('src/game/animationCatalog.ts') ? readFileSync('src/game/animationCatalog.ts', 'utf8') : '';
 const audioSystem = existsSync('src/game/audioSystem.ts') ? readFileSync('src/game/audioSystem.ts', 'utf8') : '';
+const economySystem = existsSync('src/game/economySystem.ts') ? readFileSync('src/game/economySystem.ts', 'utf8') : '';
+const shippingLoop = existsSync('src/game/shippingLoop.ts') ? readFileSync('src/game/shippingLoop.ts', 'utf8') : '';
+const toolProgression = existsSync('src/game/toolProgression.ts') ? readFileSync('src/game/toolProgression.ts', 'utf8') : '';
+const seasonSystem = existsSync('src/game/seasonSystem.ts') ? readFileSync('src/game/seasonSystem.ts', 'utf8') : '';
+const weatherSystem = existsSync('src/game/weatherSystem.ts') ? readFileSync('src/game/weatherSystem.ts', 'utf8') : '';
+const festivalSystem = existsSync('src/game/festivalSystem.ts') ? readFileSync('src/game/festivalSystem.ts', 'utf8') : '';
 const css = readFileSync('src/styles.css', 'utf8');
 const design = readFileSync('DESIGN.md', 'utf8');
 const readme = readFileSync('README.md', 'utf8');
 const verify = readFileSync('VERIFY.md', 'utf8');
 const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${game}\n${farmLoop}\n${villagePulse}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}\n${audioSystem}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
+const joined = `${app}\n${game}\n${farmLoop}\n${villagePulse}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}\n${audioSystem}\n${economySystem}\n${shippingLoop}\n${toolProgression}\n${seasonSystem}\n${weatherSystem}\n${festivalSystem}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
 const publicJoined = `${app}\n${game}\n${css}`;
 
 const required = [
@@ -39,7 +45,11 @@ const required = [
   'PLAYER_WALK_SPRITES',
   'data-sprite-normalization="bottom-centered-transparent-canvas"',
   'data-walk-cycle="coherent-generated-frames"',
-  'data-world-scale-mode="pixel-locked-fit"',
+  'data-world-scale-mode="pixel-locked-cover"',
+  'const DESKTOP_PROMPT_BAR_HEIGHT = 72;',
+  'const DESKTOP_DIALOGUE_BAR_HEIGHT = 144;',
+  'const SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT = 140;',
+  'const MOBILE_DIALOGUE_BAR_HEIGHT = 160;',
   'data-mobile-fit-mode="camera-fullscreen-safe-area"',
   'data-camera-mode="player-centered-fullscreen"',
   'data-map-grid="32x22"',
@@ -173,6 +183,20 @@ const required = [
   'data-music-muted',
   'data-music-volume',
   'data-audio-track',
+  'data-economy-system="v1"',
+  'data-commerce-window',
+  'data-day-earnings',
+  'data-tool-upgrades="three-tools-two-levels"',
+  'Mossbell Shipping Box',
+  'DAY EARNINGS',
+  'TOOL UPGRADED',
+  'data-season-system="v1"',
+  'data-weather-system="v1"',
+  'data-festival-system="v1"',
+  'data-season-date',
+  'data-today-weather',
+  'HARVEST NIGHT',
+  'STARLIGHT FESTIVAL',
   'AREA DISCOVERED',
   'WORLD EXPLORER',
   'whisper-forest',
@@ -322,6 +346,10 @@ const requiredFiles = [
   'src/game/animationCatalog.ts',
   'src/game/audioSystem.ts',
   'src/game/interiorWorld.ts',
+  'src/game/economySystem.ts',
+  'src/game/shippingLoop.ts',
+  'src/game/toolProgression.ts',
+  'scripts/test-economy-progression.mjs',
   'scripts/process-gpt-interiors.py',
   'scripts/process-gpt-cottages.py',
   'scripts/test-open-world.mjs',
@@ -490,6 +518,16 @@ const requiredFiles = [
   'public/assets/art-remaster-v1/maps/jun-cottage-interior.png',
   'public/assets/art-remaster-v1/interiors/manifest.json',
   'public/assets/art-remaster-v1/buildings/cottages-manifest.json',
+  'public/assets/art-remaster-v1/source/economy-progression-sheet.png',
+  'public/assets/art-remaster-v1/props/shipping-box.png',
+  'public/assets/art-remaster-v1/economy/coin.png',
+  'public/assets/art-remaster-v1/economy/seed-pouch.png',
+  'public/assets/art-remaster-v1/economy/feed.png',
+  'public/assets/art-remaster-v1/economy/watering-upgrade.png',
+  'public/assets/art-remaster-v1/economy/fishing-upgrade.png',
+  'public/assets/art-remaster-v1/economy/pickaxe-upgrade.png',
+  'public/assets/art-remaster-v1/economy/shipping-ledger.png',
+  'public/assets/art-remaster-v1/effects/coin-burst.png',
   'public/assets/art-remaster-v1/props/buildings/hana-cottage.png',
   'public/assets/art-remaster-v1/props/buildings/jun-cottage.png',
   'public/assets/audio/manifest.json',
@@ -642,8 +680,8 @@ if (
   || remasterManifest.logical_tile_size !== 16
   || remasterManifest.runtime_map_size?.width !== 512
   || remasterManifest.runtime_map_size?.height !== 352
-  || remasterManifest.sources?.length !== 19
-  || remasterManifest.assets?.length !== 278
+  || remasterManifest.sources?.length !== 20
+  || remasterManifest.assets?.length !== 287
   || remasterManifest.maps?.length !== 4
   || remasterManifest.interiors?.length !== 5
   || remasterManifest.audio?.length !== 5

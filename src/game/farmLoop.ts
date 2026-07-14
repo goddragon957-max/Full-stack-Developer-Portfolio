@@ -36,6 +36,20 @@ export type FarmInteractionResult = {
   firstOfType: boolean;
 };
 
+export type RainWateringResult = {
+  state: FarmState;
+  changed: boolean;
+  wateredPlotIds: string[];
+};
+
+export type HarvestSubmissionResult = {
+  state: FarmState;
+  crop: CropType;
+  quality: CropQuality;
+} | null;
+
+export type CropGrowthMultiplierResolver = (crop: CropType) => number;
+
 export const FARM_STORAGE_KEY = 'portfolio-farm-loop-v1';
 export const FARM_SAVE_VERSION = 3;
 export const FARM_GROWTH_STEP_MS = 1000;
@@ -238,29 +252,69 @@ export function normalizeFarmState(value: unknown): FarmState {
   };
 }
 
-export function advancePlotForTime(plot: FarmPlot, now: number): FarmPlot {
+export function advancePlotForTime(plot: FarmPlot, now: number, growthMultiplier = 1): FarmPlot {
   if (!plot.crop || plot.wateredAt === null) return plot;
   if (!['watered', 'growing-1', 'growing-2'].includes(plot.stage)) return plot;
 
   const elapsed = Math.max(0, now - plot.wateredAt);
-  const stage: FarmPlotStage = elapsed >= FARM_GROWTH_STEP_MS * 3
+  const growthStep = FARM_GROWTH_STEP_MS * Math.max(1, Math.min(2, growthMultiplier));
+  const stage: FarmPlotStage = elapsed >= growthStep * 3
     ? 'ready'
-    : elapsed >= FARM_GROWTH_STEP_MS * 2
+    : elapsed >= growthStep * 2
       ? 'growing-2'
-      : elapsed >= FARM_GROWTH_STEP_MS
+      : elapsed >= growthStep
         ? 'growing-1'
         : 'watered';
   return stage === plot.stage ? plot : { ...plot, stage };
 }
 
-export function advanceFarmState(state: FarmState, now = Date.now()): FarmState {
+export function advanceFarmState(
+  state: FarmState,
+  now = Date.now(),
+  getGrowthMultiplier: CropGrowthMultiplierResolver = () => 1,
+): FarmState {
   let changed = false;
   const plots = state.plots.map((plot) => {
-    const advanced = advancePlotForTime(plot, now);
+    const advanced = advancePlotForTime(plot, now, plot.crop ? getGrowthMultiplier(plot.crop) : 1);
     if (advanced !== plot) changed = true;
     return advanced;
   });
   return changed ? { ...state, plots } : state;
+}
+
+export function waterAllPlantedPlots(state: FarmState, now = Date.now()): RainWateringResult {
+  const wateredPlotIds: string[] = [];
+  const plots = state.plots.map((plot) => {
+    if (plot.stage !== 'planted' || !plot.crop) return plot;
+    wateredPlotIds.push(plot.id);
+    return { ...plot, stage: 'watered' as const, wateredAt: now };
+  });
+  return {
+    state: wateredPlotIds.length > 0 ? { ...state, plots } : state,
+    changed: wateredPlotIds.length > 0,
+    wateredPlotIds,
+  };
+}
+
+export function takeOneHarvestForFestival(state: FarmState): HarvestSubmissionResult {
+  const crop = FARM_CROPS.find((candidate) => state.inventory[candidate] > 0);
+  if (!crop) return null;
+  const quality = CROP_QUALITIES.find((candidate) => state.qualityInventory[crop][candidate] > 0) ?? 'normal';
+  return {
+    state: {
+      ...state,
+      inventory: { ...state.inventory, [crop]: Math.max(0, state.inventory[crop] - 1) },
+      qualityInventory: {
+        ...state.qualityInventory,
+        [crop]: {
+          ...state.qualityInventory[crop],
+          [quality]: Math.max(0, state.qualityInventory[crop][quality] - 1),
+        },
+      },
+    },
+    crop,
+    quality,
+  };
 }
 
 export function loadFarmState(): FarmState {
@@ -316,10 +370,11 @@ function unchanged(state: FarmState, message: string): FarmInteractionResult {
   return { state, message, changed: false, harvestedCrop: null, harvestedQuality: null, firstOfType: false };
 }
 
-export function chooseCropQuality(roll: number, wateringStreak: number, careBonus = 0): CropQuality {
+export function chooseCropQuality(roll: number, wateringStreak: number, careBonus = 0, seasonBonus = 0): CropQuality {
   const normalized = Math.max(0, Math.min(0.999_999, roll));
-  const goldChance = Math.min(0.3, 0.07 + Math.min(wateringStreak, 9) * 0.012 + Math.min(careBonus, 5) * 0.018);
-  const silverChance = Math.min(0.55, 0.25 + Math.min(wateringStreak, 9) * 0.018 + Math.min(careBonus, 5) * 0.02);
+  const boundedSeasonBonus = Math.max(0, Math.min(1, seasonBonus));
+  const goldChance = Math.min(0.3, 0.07 + Math.min(wateringStreak, 9) * 0.012 + Math.min(careBonus, 5) * 0.018 + boundedSeasonBonus * 0.025);
+  const silverChance = Math.min(0.55, 0.25 + Math.min(wateringStreak, 9) * 0.018 + Math.min(careBonus, 5) * 0.02 + boundedSeasonBonus * 0.03);
   if (normalized < goldChance) return 'gold';
   if (normalized < goldChance + silverChance) return 'silver';
   return 'normal';
@@ -331,15 +386,17 @@ export function interactWithFarmPlot(
   now = Date.now(),
   qualityRoll = 0.5,
   careBonus = 0,
+  getGrowthMultiplier: CropGrowthMultiplierResolver = () => 1,
+  seasonQualityBonus = 0,
 ): FarmInteractionResult {
-  const advancedState = advanceFarmState(state, now);
+  const advancedState = advanceFarmState(state, now, getGrowthMultiplier);
   const plot = advancedState.plots.find((candidate) => candidate.id === plotId);
   if (!plot) return unchanged(advancedState, '선택한 밭을 찾을 수 없습니다.');
 
   if (plot.stage === 'ready' && plot.crop) {
     const crop = plot.crop;
     const firstOfType = advancedState.inventory[crop] === 0;
-    const harvestedQuality = chooseCropQuality(qualityRoll, advancedState.wateringStreak, careBonus);
+    const harvestedQuality = chooseCropQuality(qualityRoll, advancedState.wateringStreak, careBonus, seasonQualityBonus);
     const nextPlot: FarmPlot = { ...plot, stage: 'tilled', crop: null, wateredAt: null };
     const nextState = replacePlot({
       ...advancedState,
