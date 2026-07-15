@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "name": "Mossbell Story v1",
+  "generation": {
+    "model": "gpt-image",
+    "method": "one isolated pixel-art object per chroma-key source",
+    "runtimeProcessing": [
+      "connected-component chroma removal",
+      "alpha bounds crop",
+      "nearest-neighbor resize",
+      "binary-alpha validation"
+    ],
+    "artDrawingByScript": false
+  },
+  "sources": [
+    {
+      "path": "source/old-bell-gpt.png",
+      "sha256": "355a40ff33aa453494a4c0c3459be4859fde1150aef7ec48794d6f104bffff02",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/faded-letter-gpt.png",
+      "sha256": "88bb067bff34fb97e4ee27660ece6f4f98cda3804f4a0d135fb58e026a9baeff",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/seal-sprout-gpt.png",
+      "sha256": "23acd3ed26d970b1f43e25cd1df44a6a08ed9e135f8f369c3868cf7606792d94",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/seal-tide-gpt.png",
+      "sha256": "817f526fdb35263197cf96d7900a1e816c9b2dc20aa249d7069f4b3db0f47afb",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/seal-harvest-gpt.png",
+      "sha256": "da674bbf1067fa486dd8d7efaed96c37e63c567ce88c8ea3be09108d628630d8",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/seal-starlight-gpt.png",
+      "sha256": "fc963bbf1ebcee9bb3fa3d26cf68eb20bdb146ce722b0745ffffa01033e2ae9a",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    },
+    {
+      "path": "source/bell-keepsake-gpt.png",
+      "sha256": "5f7b1de44777739006008e41acdb429085bafc37d3a2d2793b43ab958671a847",
+      "generator": "gpt-image",
+      "background": "#FF00FF chroma key"
+    }
+  ],
+  "assets": [
+    {
+      "path": "runtime/old-bell.png",
+      "source": "source/old-bell-gpt.png",
+      "sha256": "b7a2774cfd4e7363b50b8b0087826423ee0dd7a3bb943722de1727bed874fa19",
+      "width": 96,
+      "height": 96,
+      "role": "world landmark and finale altar"
+    },
+    {
+      "path": "runtime/faded-letter.png",
+      "source": "source/faded-letter-gpt.png",
+      "sha256": "4ad784c936ac5ee70759bf696469bb58fdd4235662af344419a2ae7902b8b169",
+      "width": 48,
+      "height": 48,
+      "role": "prologue letter"
+    },
+    {
+      "path": "runtime/seal-sprout.png",
+      "source": "source/seal-sprout-gpt.png",
+      "sha256": "2def0b18a2f89696b0490bb31a77350f45a0cc41bd38cf06fdce9d9f9d0ef43c",
+      "width": 48,
+      "height": 48,
+      "role": "spring story seal"
+    },
+    {
+      "path": "runtime/seal-tide.png",
+      "source": "source/seal-tide-gpt.png",
+      "sha256": "6f5de4ad88029a0cc241675e67615b35b4f087b7bff225f736720a0b80d69f93",
+      "width": 48,
+      "height": 48,
+      "role": "summer story seal"
+    },
+    {
+      "path": "runtime/seal-harvest.png",
+      "source": "source/seal-harvest-gpt.png",
+      "sha256": "f970a7a949e9a9b663613379bef806ba3222f05425b51f96491bd8e287ded800",
+      "width": 48,
+      "height": 48,
+      "role": "autumn story seal"
+    },
+    {
+      "path": "runtime/seal-starlight.png",
+      "source": "source/seal-starlight-gpt.png",
+      "sha256": "029486afd8814a85339062b28897378555be89998b9fa79cdc157a0130b20f60",
+      "width": 48,
+      "height": 48,
+      "role": "winter story seal"
+    },
+    {
+      "path": "runtime/bell-keepsake.png",
+      "source": "source/bell-keepsake-gpt.png",
+      "sha256": "b9b5e1252998d90f9f097d7ca27e2e1bcff8843b22e63fa6f412ffd3a59f38ca",
+      "width": 48,
+      "height": 48,
+      "role": "ending keepsake reward"
+    }
+  ]
+}

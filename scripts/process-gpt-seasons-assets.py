@@ -18,11 +18,12 @@ GENERATED_ROOT = Path(os.environ.get(
     r"C:\Users\eum0742\.codex\generated_images\019f4542-fb15-73e2-b95d-93f25d8065bb",
 ))
 MAP_SIZE = (512, 352)
-RANCH_SIDE_EXTENSION_BOXES = (
-    (152, 264, 176, 282),
-    (226, 264, 250, 282),
-)
-RANCH_SIDE_EXTENSION_OFFSET_Y = 12
+RANCH_CLEANUP_BOXES = ((145, 228, 260, 332),)
+RANCH_GROUND_SOURCE_BOX = (168, 0, 280, 104)
+RANCH_GROUND_POSITION = (148, 228)
+RANCH_INTERIOR_DIRT_BOX = (177, 256, 224, 282)
+RANCH_ROAD_SOURCE_BOX = (136, 228, 139, 332)
+RANCH_ROAD_POSITION = (145, 228)
 
 MAP_SOURCES = {
     ("farm-village", "spring"): "exec-280e8516-afd3-4039-a6d5-5e6e2fa86f0a.png",
@@ -90,11 +91,17 @@ def fit_map(source: Image.Image) -> Image.Image:
     return source.resize(MAP_SIZE, Image.Resampling.NEAREST)
 
 
-def close_ranch_enclosure(source: Image.Image) -> Image.Image:
+def remove_baked_ranch_enclosure(source: Image.Image) -> Image.Image:
     output = source.convert("RGB")
-    side_extensions = [output.crop(box) for box in RANCH_SIDE_EXTENSION_BOXES]
-    for box, extension in zip(RANCH_SIDE_EXTENSION_BOXES, side_extensions, strict=True):
-        output.paste(extension, (box[0], box[1] + RANCH_SIDE_EXTENSION_OFFSET_Y))
+    interior_dirt = output.crop(RANCH_INTERIOR_DIRT_BOX)
+    ground = output.crop(RANCH_GROUND_SOURCE_BOX)
+
+    # The source patch contains one decorative rock. Replace it with nearby
+    # source-map ground before assembling the clean ranch lawn.
+    ground.paste(ground.crop((16, 48, 36, 72)), (48, 48))
+    output.paste(ground, RANCH_GROUND_POSITION)
+    output.paste(output.crop(RANCH_ROAD_SOURCE_BOX), RANCH_ROAD_POSITION)
+    output.paste(interior_dirt, RANCH_INTERIOR_DIRT_BOX[:2])
     return output
 
 
@@ -102,7 +109,7 @@ def color_distance_squared(first: tuple[int, int, int], second: tuple[int, int, 
     return sum((first[index] - second[index]) ** 2 for index in range(3))
 
 
-def remove_chroma(source: Image.Image) -> Image.Image:
+def remove_chroma(source: Image.Image, remove_enclosed_key: bool = False) -> Image.Image:
     rgb = source.convert("RGB")
     width, height = rgb.size
     pixels = rgb.load()
@@ -129,6 +136,13 @@ def remove_chroma(source: Image.Image) -> Image.Image:
             queue.append((x, y - 1))
         if y + 1 < height:
             queue.append((x, y + 1))
+
+    if remove_enclosed_key:
+        enclosed_key_threshold = 48 ** 2
+        for y in range(height):
+            for x in range(width):
+                if color_distance_squared(pixels[x, y], key) < enclosed_key_threshold:
+                    background.add((x, y))
 
     contracted = set(background)
     for x, y in background:
@@ -282,7 +296,7 @@ def process_maps(sources: list[dict]) -> list[dict]:
         output.parent.mkdir(parents=True, exist_ok=True)
         normalized = fit_map(Image.open(source))
         if region == "farm-village":
-            normalized = close_ranch_enclosure(normalized)
+            normalized = remove_baked_ranch_enclosure(normalized)
         normalized.save(output, optimize=True)
         sources.append({"path": f"source/{relative_source.as_posix()}", "sha256": sha256(source)})
         maps.append({
@@ -294,7 +308,8 @@ def process_maps(sources: list[dict]) -> list[dict]:
             "height": MAP_SIZE[1],
             "source_policy": (
                 "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, "
-                "and extends the original GPT ranch side-fence pixels to the front gate"
+                "and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable "
+                "PixelLab fence sprites can render at runtime"
                 if region == "farm-village"
                 else "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes"
             ),
@@ -370,7 +385,7 @@ def main() -> None:
             "transparent_corners": True,
             "color_under_zero_alpha": False,
             "map_geometry_policy": "same four regions and runtime collision coordinates",
-            "ranch_enclosure": "front fence and center gate connect to both side fences in every season",
+            "ranch_enclosure": "baked enclosure removed in all seasons; editable 32px PixelLab fence sprites render at runtime",
         },
     }
     manifest_path = ASSET_ROOT / "manifest.json"

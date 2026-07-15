@@ -135,6 +135,9 @@ closeTo(forest.volume, 0.25, 'Clearing weather must restore the outdoor mix');
 audio.persistAudioSettings({ muted: false, volume: 0.25 });
 const restored = audio.loadAudioSettings();
 assert(restored.muted === false && restored.volume === 0.25, 'Audio settings must persist');
+assert(audio.parseAudioVolumePercent('70') === 0.7, 'Volume slider percentages must convert to a normalized gain');
+assert(audio.parseAudioVolumePercent('250') === 1, 'Volume slider input must clamp above 100 percent');
+assert(audio.parseAudioVolumePercent('invalid') === 0, 'Invalid volume slider input must fail silently to zero');
 
 controller.updateSettings({ muted: true, volume: 0.25 });
 assert(controller.transition('coast-day') === false, 'Muted transition must stay silent');
@@ -148,5 +151,15 @@ const coast = FakeAudio.instances[2];
 closeTo(coast.volume, 0.25, 'Coast track final volume');
 controller.dispose();
 assert(coast.paused && timers.size === 0, 'Dispose must stop playback and clear timers');
+
+const gameSource = readFileSync('src/components/MossbellFarmGame.tsx', 'utf8');
+assert(
+  gameSource.includes('const volume = parseAudioVolumePercent(event.currentTarget.value);'),
+  'The range event value must be captured synchronously before React clears currentTarget',
+);
+assert(
+  !gameSource.includes('volume: Number(event.currentTarget.value) / 100'),
+  'A deferred state updater must never read event.currentTarget',
+);
 
 console.log('audio system test passed: unlock, five-track mapping, 1000ms crossfade, mute, weather mix, volume, persistence');

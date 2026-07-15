@@ -7,21 +7,20 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "lint": "tsc --noEmit",
-    "test": "node scripts/smoke-content.mjs && node scripts/test-viewport-layout.mjs && node scripts/test-audio-system.mjs && node scripts/test-game-progress.mjs && node scripts/test-farm-migration.mjs && node scripts/test-ranch-layout.mjs && python scripts/test-ranch-enclosure.py && node scripts/test-open-world.mjs && node scripts/test-interior-world.mjs && node scripts/test-interaction-targeting.mjs && node scripts/test-economy-progression.mjs && node scripts/test-seasons-weather-festivals.mjs",
+    "test": "node scripts/test-phaser-renderer.mjs && node scripts/smoke-content.mjs && node scripts/test-viewport-layout.mjs && node scripts/test-game-menu.mjs && node scripts/test-audio-system.mjs && node scripts/test-game-progress.mjs && node scripts/test-farm-migration.mjs && node scripts/test-expandable-farm.mjs && node scripts/test-ranch-layout.mjs && python scripts/test-ranch-enclosure.py && node scripts/test-open-world.mjs && node scripts/test-interior-world.mjs && node scripts/test-interaction-targeting.mjs && node scripts/test-shoreline-fishing.mjs && node scripts/test-economy-progression.mjs && node scripts/test-seasons-weather-festivals.mjs && node scripts/test-story-system.mjs",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
     "@tailwindcss/vite": "latest",
-    "@types/three": "^0.185.0",
     "@vitejs/plugin-react": "latest",
     "class-variance-authority": "latest",
     "clsx": "latest",
     "lucide-react": "latest",
+    "phaser": "^4.2.1",
     "react": "latest",
     "react-dom": "latest",
     "tailwind-merge": "latest",
     "tailwindcss": "latest",
-    "three": "^0.185.1",
     "typescript": "latest",
     "vite": "latest",
     "zustand": "latest"

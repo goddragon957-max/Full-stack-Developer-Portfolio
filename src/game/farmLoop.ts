@@ -1,3 +1,5 @@
+import { CROP_SPRITES, SOIL_SPRITES, TOOL_SPRITES } from './animationCatalog';
+
 export type FarmTool = 'hoe' | 'seeds' | 'watering-can';
 export type CropType = 'potato' | 'strawberry' | 'carrot' | 'tomato' | 'corn' | 'pumpkin';
 type LegacyCropType = 'frontend' | 'backend' | 'bim';
@@ -17,7 +19,7 @@ export type FarmInventory = Record<CropType, number>;
 export type FarmQualityInventory = Record<CropType, Record<CropQuality, number>>;
 
 export type FarmState = {
-  version: 3;
+  version: 4;
   plots: FarmPlot[];
   selectedTool: FarmTool;
   selectedSeed: CropType;
@@ -50,9 +52,25 @@ export type HarvestSubmissionResult = {
 
 export type CropGrowthMultiplierResolver = (crop: CropType) => number;
 
+export type FarmFacing = 'up' | 'down' | 'left' | 'right';
+
+export type FarmBuildTarget = {
+  id: string;
+  x: number;
+  y: number;
+};
+
+export type FarmBuildPolicy = (x: number, y: number) => boolean;
+
 export const FARM_STORAGE_KEY = 'portfolio-farm-loop-v1';
-export const FARM_SAVE_VERSION = 3;
+export const FARM_SAVE_VERSION = 4;
 export const FARM_GROWTH_STEP_MS = 1000;
+export const FARM_WORLD_BOUNDS = {
+  minX: 1,
+  maxX: 30,
+  minY: 1,
+  maxY: 20,
+} as const;
 
 export const FARM_TOOLS: FarmTool[] = ['hoe', 'seeds', 'watering-can'];
 export const FARM_CROPS: CropType[] = ['potato', 'strawberry', 'carrot', 'tomato', 'corn', 'pumpkin'];
@@ -138,6 +156,12 @@ const FARM_PLOT_LAYOUT = [
 const stageSet = new Set<string>(FARM_PLOT_STAGES);
 const toolSet = new Set<string>(FARM_TOOLS);
 const cropSet = new Set<string>(FARM_CROPS);
+const farmFacingDelta: Record<FarmFacing, readonly [number, number]> = {
+  up: [0, -1],
+  down: [0, 1],
+  left: [-1, 0],
+  right: [1, 0],
+};
 const LEGACY_CROP_MAP: Record<LegacyCropType, CropType> = {
   frontend: 'potato',
   backend: 'strawberry',
@@ -153,6 +177,15 @@ export function migrateLegacyCropId(value: unknown): CropType | null {
   if (typeof value !== 'string') return null;
   if (cropSet.has(value)) return value as CropType;
   return LEGACY_CROP_MAP[value as LegacyCropType] ?? null;
+}
+
+export function isFarmCoordinateWithinWorld(x: number, y: number): boolean {
+  return Number.isInteger(x)
+    && Number.isInteger(y)
+    && x >= FARM_WORLD_BOUNDS.minX
+    && x <= FARM_WORLD_BOUNDS.maxX
+    && y >= FARM_WORLD_BOUNDS.minY
+    && y <= FARM_WORLD_BOUNDS.maxY;
 }
 
 export function createInitialFarmState(): FarmState {
@@ -229,13 +262,36 @@ export function normalizeFarmState(value: unknown): FarmState {
   if (!value || typeof value !== 'object') return initial;
   const candidate = value as Partial<FarmState>;
   const version = Number((value as { version?: unknown }).version);
-  if (![1, 2, FARM_SAVE_VERSION].includes(version)) return initial;
+  if (![1, 2, 3, FARM_SAVE_VERSION].includes(version)) return initial;
 
   const savedPlots = Array.isArray(candidate.plots) ? candidate.plots : [];
-  const plots = initial.plots.map((fallback) => {
-    const saved = savedPlots.find((plot) => plot && typeof plot === 'object' && (plot as Partial<FarmPlot>).id === fallback.id);
+  const plots: FarmPlot[] = initial.plots.map((fallback) => {
+    const saved = savedPlots.find((plot) => {
+      if (!plot || typeof plot !== 'object') return false;
+      const savedPlot = plot as Partial<FarmPlot>;
+      return savedPlot.id === fallback.id || (savedPlot.x === fallback.x && savedPlot.y === fallback.y);
+    });
     return normalizePlot(saved, fallback);
   });
+  const occupied = new Set(plots.map(({ x, y }) => `${x},${y}`));
+  for (const saved of savedPlots) {
+    if (!saved || typeof saved !== 'object') continue;
+    const candidatePlot = saved as Partial<FarmPlot>;
+    const x = Number(candidatePlot.x);
+    const y = Number(candidatePlot.y);
+    if (!isFarmCoordinateWithinWorld(x, y)) continue;
+    const key = `${x},${y}`;
+    if (occupied.has(key)) continue;
+    plots.push(normalizePlot(saved, {
+      id: `field-${x}-${y}`,
+      x,
+      y,
+      stage: 'tilled',
+      crop: null,
+      wateredAt: null,
+    }));
+    occupied.add(key);
+  }
 
   const inventory = normalizeInventory(candidate.inventory);
   return {
@@ -351,6 +407,31 @@ export function getNearestFarmPlot(
     .sort((a, b) => a.distance - b.distance)[0]?.plot ?? null;
 }
 
+export function getFarmBuildTarget(
+  player: { x: number; y: number; facing: FarmFacing },
+  plots: FarmPlot[],
+  canBuildAt: FarmBuildPolicy = isFarmCoordinateWithinWorld,
+): FarmBuildTarget | null {
+  const [deltaX, deltaY] = farmFacingDelta[player.facing];
+  const x = Math.round(player.x + deltaX);
+  const y = Math.round(player.y + deltaY);
+  if (!isFarmCoordinateWithinWorld(x, y) || !canBuildAt(x, y)) return null;
+  if (plots.some((plot) => plot.x === x && plot.y === y)) return null;
+  return { id: `field-${x}-${y}`, x, y };
+}
+
+export function getFarmInteractionTarget(
+  player: { x: number; y: number; facing: FarmFacing },
+  plots: FarmPlot[],
+  maxDistance = 1.9,
+): FarmPlot | null {
+  const [deltaX, deltaY] = farmFacingDelta[player.facing];
+  const targetX = Math.round(player.x + deltaX);
+  const targetY = Math.round(player.y + deltaY);
+  return plots.find((plot) => plot.x === targetX && plot.y === targetY)
+    ?? getNearestFarmPlot(player, plots, maxDistance);
+}
+
 export function getFarmGroundAsset(stage: FarmPlotStage): string {
   if (stage === 'untilled') return SOIL_SPRITES.untilled;
   if (stage === 'watered') return SOIL_SPRITES.watered;
@@ -368,6 +449,38 @@ function replacePlot(state: FarmState, nextPlot: FarmPlot): FarmState {
 
 function unchanged(state: FarmState, message: string): FarmInteractionResult {
   return { state, message, changed: false, harvestedCrop: null, harvestedQuality: null, firstOfType: false };
+}
+
+export function createFarmPlotAt(
+  state: FarmState,
+  x: number,
+  y: number,
+  canBuildAt: FarmBuildPolicy = isFarmCoordinateWithinWorld,
+): FarmInteractionResult {
+  if (state.selectedTool !== 'hoe') return unchanged(state, '괭이를 선택하면 빈 땅을 밭으로 만들 수 있습니다.');
+  if (!isFarmCoordinateWithinWorld(x, y) || !canBuildAt(x, y)) {
+    return unchanged(state, '집, 길, 물가와 오브젝트가 없는 빈 땅만 갈 수 있습니다.');
+  }
+  if (state.plots.some((plot) => plot.x === x && plot.y === y)) {
+    return unchanged(state, '이미 밭으로 사용 중인 땅입니다.');
+  }
+
+  const plot: FarmPlot = {
+    id: `field-${x}-${y}`,
+    x,
+    y,
+    stage: 'tilled',
+    crop: null,
+    wateredAt: null,
+  };
+  return {
+    state: { ...state, plots: [...state.plots, plot] },
+    message: '빈 땅을 갈아 새 밭을 만들었습니다.',
+    changed: true,
+    harvestedCrop: null,
+    harvestedQuality: null,
+    firstOfType: false,
+  };
 }
 
 export function chooseCropQuality(roll: number, wateringStreak: number, careBonus = 0, seasonBonus = 0): CropQuality {
@@ -463,4 +576,3 @@ export function interactWithFarmPlot(
 
   return unchanged(advancedState, '이 밭에서는 지금 사용할 수 없는 도구입니다.');
 }
-import { CROP_SPRITES, SOIL_SPRITES, TOOL_SPRITES } from './animationCatalog';

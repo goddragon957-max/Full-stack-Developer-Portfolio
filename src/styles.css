@@ -59,7 +59,8 @@ main[data-app="mossbell-farm"] {
     linear-gradient(180deg, #2b1c11 0%, #61411f 52%, #1c130d 100%);
   word-break: keep-all;
   --dialogue-bar-height: 120px;
-  --inventory-rail-width: 320px;
+  --inventory-rail-width: 368px;
+  --inventory-content-width: 368px;
 }
 .game-shell {
   position: absolute;
@@ -81,9 +82,30 @@ main[data-app="mossbell-farm"] {
   padding: 0 0 var(--dialogue-bar-height);
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(20, 33, 15, .15), rgba(20, 33, 15, .55)),
-    #14210f;
+    linear-gradient(180deg, rgba(245, 214, 116, .06), rgba(28, 36, 24, .2)),
+    #1c2418;
   --world-scale: 1;
+}
+.phaser-game-host {
+  position: absolute;
+  inset: 0 0 var(--dialogue-bar-height) 0;
+  z-index: 1;
+  overflow: hidden;
+  background: #18130f;
+  contain: strict;
+  touch-action: none;
+}
+.phaser-game-host canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  outline: 0;
+}
+.phaser-world-ui {
+  z-index: 4;
 }
 .tile-world {
   position: absolute;
@@ -113,6 +135,10 @@ main[data-app="mossbell-farm"] {
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
+}
+.farm-game[data-camera-mode="fixed-overview"] .tile-world,
+.farm-game[data-camera-mode="fixed-overview"] .world-hint-layer {
+  transition: none;
 }
 .ambient-world-layer {
   position: absolute;
@@ -357,6 +383,102 @@ main[data-app="mossbell-farm"] {
   outline-offset: -3px;
 }
 .farm-game[data-hints-visible="false"] .farm-plot.is-nearby::after { display: none; }
+.ranch-fence-piece {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+.ranch-fence-piece > img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ranch-fence-piece.orientation-horizontal > img { scale: 1.24; }
+.ranch-fence-piece.orientation-vertical > img { scale: 1.18; }
+.ranch-fence-piece.orientation-gate > img { scale: 1.12; }
+.ranch-fence-target {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  pointer-events: none;
+  background: rgba(250, 211, 92, .22);
+  border: 3px solid #ffe477;
+  box-shadow: inset 0 0 0 2px rgba(60, 83, 42, .78), 0 0 0 1px rgba(58, 38, 23, .76);
+}
+.ranch-fence-target.action-remove {
+  background: rgba(179, 61, 43, .24);
+  border-color: #ff8f72;
+}
+.ranch-fence-target > svg {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 14px;
+  height: 14px;
+  color: #fff2ad;
+  stroke-width: 3;
+  filter: drop-shadow(1px 1px 0 #3a2617);
+}
+.ranch-fence-target > kbd {
+  position: absolute;
+  left: 50%;
+  top: -17px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  translate: -50% 0;
+  color: #3a2617;
+  background: #fff19c;
+  border: 2px solid #6f441f;
+  border-radius: 50%;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-game[data-hints-visible="false"] .ranch-fence-target > kbd { display: none; }
+.farm-build-target {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  pointer-events: none;
+  background: rgba(88, 138, 55, .28);
+  border: 3px solid #ffe477;
+  box-shadow: inset 0 0 0 2px rgba(50, 91, 37, .8), 0 0 0 1px rgba(58, 38, 23, .72);
+  image-rendering: pixelated;
+}
+.farm-build-target > img {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(1px 1px 0 #3a2617);
+}
+.farm-build-target > kbd {
+  position: absolute;
+  left: 50%;
+  top: -17px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  translate: -50% 0;
+  color: #3a2617;
+  background: #fff19c;
+  border: 2px solid #6f441f;
+  border-radius: 50%;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.farm-game[data-hints-visible="false"] .farm-build-target > kbd { display: none; }
 .ranch-animal {
   position: absolute;
   width: 32px;
@@ -463,9 +585,10 @@ main[data-app="mossbell-farm"] {
   border-color: rgba(255, 246, 205, .92);
   filter: drop-shadow(0 1px 0 rgba(49, 61, 48, .72));
 }
-.fishing-line.facing-right { left: -20px; top: 13px; width: 23px; border-top: 1px solid; }
-.fishing-line.facing-up { left: 15px; top: 19px; height: 25px; border-left: 1px solid; }
-.fishing-line.facing-down { left: 15px; bottom: 19px; height: 25px; border-left: 1px solid; }
+.fishing-line.facing-right { right: 26px; top: 15px; width: var(--fishing-line-length, 32px); border-top: 1px solid; }
+.fishing-line.facing-left { left: 26px; top: 15px; width: var(--fishing-line-length, 32px); border-top: 1px solid; }
+.fishing-line.facing-up { left: 15px; top: 26px; height: var(--fishing-line-length, 32px); border-left: 1px solid; }
+.fishing-line.facing-down { left: 15px; bottom: 26px; height: var(--fishing-line-length, 32px); border-left: 1px solid; }
 .forage-node {
   position: absolute;
   width: 32px;
@@ -481,13 +604,13 @@ main[data-app="mossbell-farm"] {
 }
 .forage-node.category-mine > img { width: 36px; height: 36px; translate: -2px -3px; }
 .forage-node.is-nearby > img { filter: drop-shadow(0 2px 0 rgba(45, 31, 20, .28)) saturate(1.18); }
-.forage-node > kbd {
+.forage-key-hint {
   position: absolute;
   left: 50%;
-  top: -14px;
+  top: -18px;
   z-index: 4;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
   translate: -50% 0;
@@ -495,7 +618,87 @@ main[data-app="mossbell-farm"] {
   background: #fff19c;
   border: 2px solid #6f441f;
   border-radius: 50%;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.world-hint-layer {
+  position: absolute;
+  left: var(--camera-left, 0px);
+  top: var(--camera-top, 0px);
+  z-index: 4;
+  width: 1024px;
+  height: 704px;
+  overflow: visible;
+  transform: scale(var(--world-scale));
+  transform-origin: left top;
+  transition: left .09s linear, top .09s linear;
+  pointer-events: none;
+}
+.forage-action-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  z-index: 4;
+  min-width: 132px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 7px;
+  align-items: center;
+  translate: -50% 0;
+  padding: 6px 8px 6px 5px;
+  color: #fff7d8;
+  background: #31502c;
+  border: 3px solid #d8f3a5;
+  box-shadow: 3px 4px 0 rgba(45, 31, 20, .5);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  white-space: nowrap;
+}
+.world-hint-layer .forage-action-hint {
+  bottom: auto;
+  translate: -50% calc(-100% - 9px);
+}
+.forage-action-hint > kbd {
+  grid-row: 1 / 3;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: #3a2617;
+  background: #fff19c;
+  border: 2px solid #6f441f;
+  border-radius: 50%;
+  font: 950 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.forage-action-hint > span {
+  align-self: end;
+  font-size: 12px;
+  font-weight: 950;
+  line-height: 1.05;
+}
+.forage-action-hint > strong {
+  align-self: start;
+  margin-top: 2px;
+  color: #d7f1be;
+  font-size: 10px;
+  line-height: 1;
+}
+.fishing-action-hint {
+  background: #234d5d;
+  border-color: #9ce7ea;
+  box-shadow: 0 3px 0 #16313c, inset 0 0 0 1px rgba(255, 255, 255, .12);
+}
+.fishing-action-hint > kbd {
+  color: #183641;
+  background: #fff3ae;
+  border-color: #80d8df;
+}
+.fishing-action-hint > strong { color: #c7f5f2; }
+.world-hint-layer .fishing-action-hint { translate: -50% calc(-100% - 58px); }
+.world-hint-layer .fishing-action-hint.is-below-player { translate: -50% 38px; }
+@media (min-width: 621px) {
+  .dialogue-box.is-collapsed span { font-size: 11px; }
+  .dialogue-box.is-collapsed strong { font-size: 16px; }
+  .dialogue-box.is-collapsed em { font-size: 11px; }
 }
 .forage-feedback {
   position: absolute;
@@ -535,22 +738,6 @@ main[data-app="mossbell-farm"] {
 }
 @keyframes region-pixel-fade-out { from { opacity: 0; } to { opacity: 1; } }
 @keyframes region-pixel-fade-in { from { opacity: 1; } to { opacity: 0; } }
-.fishing-spot > kbd {
-  position: absolute;
-  left: 50%;
-  top: -16px;
-  z-index: 5;
-  width: 18px;
-  height: 18px;
-  display: grid;
-  place-items: center;
-  translate: -50% 0;
-  color: #203345;
-  background: #fff19c;
-  border: 2px solid #31566d;
-  border-radius: 50%;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-}
 .fishing-feedback {
   position: absolute;
   width: 104px;
@@ -1146,11 +1333,11 @@ main[data-app="mossbell-farm"] {
   z-index: 94;
   width: var(--inventory-rail-width);
   min-width: var(--inventory-rail-width);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden auto;
+  overflow: hidden;
   color: #342315;
-  background: #f4dfa2;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 224, 154, .07) 0 2px, transparent 2px 32px),
+    repeating-linear-gradient(90deg, #4b301d 0 48px, #563720 48px 96px);
   border: 0;
   border-left: 5px solid #6d4526;
   box-shadow:
@@ -1158,19 +1345,68 @@ main[data-app="mossbell-farm"] {
     -14px 0 34px rgba(0,0,0,.28),
     inset 0 0 0 3px rgba(255,255,255,.28);
 }
+.inventory-rail-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+  color: #342315;
+  background: #f4dfa2;
+  box-shadow: -3px 0 0 rgba(243, 197, 109, .5);
+}
+.inventory-rail-status-column,
+.inventory-rail-items-column {
+  display: contents;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-inner {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) var(--inventory-content-width);
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-status-column,
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-items-column {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-status-column {
+  grid-column: 1;
+  grid-row: 1;
+  background: #4b301d;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-items-column {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  background: #f4dfa2;
+  border-left: 4px solid #a76d31;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective {
+  grid-column: 1;
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 .inventory-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 72px;
-  padding: 12px 14px;
+  gap: 12px;
+  min-height: 76px;
+  padding: 13px 16px;
   color: #fff7d8;
   background: #3a2617;
   border-bottom: 4px solid #a76d31;
 }
 .inventory-header-icon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 5px;
   color: #fff7d8;
   background: #6d4526;
@@ -1179,7 +1415,7 @@ main[data-app="mossbell-farm"] {
 .inventory-header span {
   display: block;
   color: #9fe089;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 950;
   line-height: 1;
   letter-spacing: .08em;
@@ -1188,24 +1424,24 @@ main[data-app="mossbell-farm"] {
   display: block;
   margin-top: 4px;
   color: #fff7d8;
-  font-size: 19px;
+  font-size: 21px;
   font-weight: 950;
   line-height: 1;
 }
 .inventory-player-status {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
-  min-height: 68px;
-  padding: 7px 12px;
+  min-height: 74px;
+  padding: 8px 14px;
   color: #f9edc9;
   background: #31502c;
   border-bottom: 4px solid #8fba57;
 }
 .inventory-player-status > img {
-  width: 48px;
-  height: 52px;
+  width: 54px;
+  height: 58px;
   object-fit: contain;
   object-position: center bottom;
   image-rendering: pixelated;
@@ -1217,83 +1453,83 @@ main[data-app="mossbell-farm"] {
 .inventory-player-status small {
   display: block;
   color: #bce59f;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .inventory-gold {
-  min-height: 34px;
+  min-height: 38px;
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) auto;
-  gap: 7px;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 8px;
   align-items: center;
-  padding: 5px 11px;
+  padding: 6px 13px;
   color: #fff3c9;
   background: #68431f;
   border-bottom: 3px solid #dcae4c;
-  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-.inventory-gold img { width: 24px; height: 24px; image-rendering: pixelated; }
+.inventory-gold img { width: 26px; height: 26px; image-rendering: pixelated; }
 .inventory-gold span { color: #ffd770; }
-.inventory-gold strong { color: #fff7d8; font-size: 13px; }
+.inventory-gold strong { color: #fff7d8; font-size: 15px; }
 .inventory-player-status strong {
   display: block;
   margin: 5px 0;
   overflow: hidden;
   color: #fff7d8;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .inventory-player-status small {
   color: #e7d595;
-  font-size: 8px;
+  font-size: 10px;
 }
 .village-clock {
-  min-height: 32px;
+  min-height: 36px;
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) auto;
-  gap: 7px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: 8px;
   align-items: center;
-  padding: 6px 12px;
+  padding: 7px 14px;
   color: #fff3c9;
   background: #563720;
   border-bottom: 3px solid #9b6731;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-.village-clock svg { width: 17px; height: 17px; color: #ffd770; }
-.village-clock span { font-size: 8px; font-weight: 950; }
-.village-clock strong { font-size: 10px; letter-spacing: 0; }
+.village-clock svg { width: 18px; height: 18px; color: #ffd770; }
+.village-clock span { font-size: 10px; font-weight: 950; }
+.village-clock strong { font-size: 12px; letter-spacing: 0; }
 .village-clock[data-day-phase="night"] { background: #2f3043; border-bottom-color: #8e84b7; }
 .village-clock[data-day-phase="night"] svg { color: #d8cdf2; }
 .season-weather-status {
-  min-height: 40px;
+  min-height: 44px;
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) 24px auto;
-  gap: 6px;
+  grid-template-columns: 28px minmax(0, 1fr) 26px auto;
+  gap: 7px;
   align-items: center;
-  padding: 5px 10px;
+  padding: 6px 12px;
   color: #f9edc9;
   background: #304f32;
   border-bottom: 3px solid #87b85a;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .season-weather-status > img {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   image-rendering: pixelated;
 }
 .season-weather-status p { min-width: 0; margin: 0; }
 .season-weather-status span,
 .season-weather-status strong { display: block; }
-.season-weather-status span { color: #bce59f; font-size: 6px; font-weight: 950; }
-.season-weather-status strong { margin-top: 3px; overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
-.season-weather-status small { color: #f6d881; font-size: 7px; font-weight: 950; white-space: nowrap; }
+.season-weather-status span { color: #bce59f; font-size: 8px; font-weight: 950; }
+.season-weather-status strong { margin-top: 3px; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.season-weather-status small { color: #f6d881; font-size: 9px; font-weight: 950; white-space: nowrap; }
 .season-weather-status[data-today-weather="rain"] { background: #31566d; border-bottom-color: #80d8df; }
 .season-weather-status[data-today-weather="snow"] { color: #f7f3e7; background: #4c5367; border-bottom-color: #c9d7da; }
 .season-weather-status[data-today-weather="windy"] { background: #5b5a32; border-bottom-color: #d9c768; }
 .farm-toolbelt {
-  padding: 8px 10px 9px;
+  padding: 9px 12px 10px;
   color: #fff3c9;
   background: #563720;
   border-bottom: 4px solid #9b6731;
@@ -1304,7 +1540,7 @@ main[data-app="mossbell-farm"] {
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 7px;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .farm-toolbelt > header span { color: #9fe089; }
 .farm-toolbelt > header strong {
@@ -1315,8 +1551,8 @@ main[data-app="mossbell-farm"] {
 }
 .farm-tool-row {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
 }
 .farm-tool-row button {
   position: relative;
@@ -1336,8 +1572,8 @@ main[data-app="mossbell-farm"] {
   outline: 2px solid #2e542b;
 }
 .farm-tool-row img {
-  width: min(34px, 72%);
-  height: min(34px, 72%);
+  width: min(38px, 72%);
+  height: min(38px, 72%);
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -1352,7 +1588,7 @@ main[data-app="mossbell-farm"] {
   color: #fff7d8;
   background: #3a2617;
   border: 1px solid #f3c56d;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .farm-tool-row small {
   position: absolute;
@@ -1365,7 +1601,38 @@ main[data-app="mossbell-farm"] {
   color: #fff7d8;
   background: #31502c;
   border: 1px solid #9fe089;
-  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.ranch-build-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 6px;
+}
+.ranch-build-selector button {
+  min-width: 0;
+  height: 32px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  padding: 1px 6px;
+  color: #4a2a16;
+  background: #e3c67d;
+  border: 2px solid #8c5b2e;
+  font: 900 10px/1 Pretendard, sans-serif;
+}
+.ranch-build-selector button.is-active {
+  color: #213d22;
+  background: #fff0a8;
+  border-color: #73b566;
+  box-shadow: inset 0 0 0 1px #31502c;
+}
+.ranch-build-selector img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 .farm-seed-selector {
   display: grid;
@@ -1381,12 +1648,12 @@ main[data-app="mossbell-farm"] {
 }
 .seed-group-tabs button {
   min-width: 0;
-  height: 20px;
+  height: 22px;
   padding: 0 3px;
   color: #d9c995;
   background: #3d291b;
   border: 2px solid #80532d;
-  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .seed-group-tabs button.is-active {
   color: #302116;
@@ -1396,12 +1663,12 @@ main[data-app="mossbell-farm"] {
 .farm-seed-selector button {
   position: relative;
   min-width: 0;
-  height: 25px;
+  height: 28px;
   padding: 0 3px;
   color: #302116;
   background: #d4d0a0;
   border: 2px solid #3a2617;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .farm-seed-selector button small {
   position: absolute;
@@ -1414,7 +1681,7 @@ main[data-app="mossbell-farm"] {
   color: #fff7d8;
   background: #3a2617;
   border: 1px solid #f3c56d;
-  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .farm-seed-selector button[data-seed-type="potato"] { background: #d5af73; }
 .farm-seed-selector button[data-seed-type="strawberry"] { background: #e66f76; }
@@ -1429,11 +1696,11 @@ main[data-app="mossbell-farm"] {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 11px;
+  padding: 10px 13px;
   color: #765027;
   background: #e9c978;
   border-bottom: 3px solid #9b6731;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 950;
 }
 .inventory-summary strong {
@@ -1452,13 +1719,13 @@ main[data-app="mossbell-farm"] {
 }
 .inventory-tabs button {
   min-width: 0;
-  height: 30px;
+  height: 36px;
   padding: 0 3px;
   color: #e4d39e;
   background: #4b301d;
   border: 0;
   border-right: 2px solid #7e5732;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .inventory-tabs button:last-child { border-right: 0; }
 .inventory-tabs button.is-active {
@@ -1469,8 +1736,8 @@ main[data-app="mossbell-farm"] {
 .inventory-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
-  padding: 12px;
+  gap: 8px;
+  padding: 14px;
 }
 .inventory-slot {
   position: relative;
@@ -1484,8 +1751,8 @@ main[data-app="mossbell-farm"] {
   box-shadow: inset 0 0 0 3px rgba(255,245,203,.38), 0 3px 0 rgba(66,38,18,.32);
 }
 .inventory-slot svg {
-  width: min(30px, 54%);
-  height: min(30px, 54%);
+  width: min(36px, 58%);
+  height: min(36px, 58%);
   filter: drop-shadow(0 2px 0 rgba(255,255,255,.24));
 }
 .inventory-slot[data-item-tone="journal"] { background: #9bd8dc; }
@@ -1509,8 +1776,8 @@ main[data-app="mossbell-farm"] {
 .inventory-slot[data-item-tone="ore"] { background: #a7aaa0; }
 .inventory-slot[data-item-tone="crystal"] { background: #80d8df; }
 .inventory-slot > .inventory-pixel-icon {
-  width: min(34px, 64%);
-  height: min(34px, 64%);
+  width: min(42px, 68%);
+  height: min(42px, 68%);
   object-fit: contain;
   image-rendering: pixelated;
   filter: drop-shadow(0 2px 0 rgba(255,255,255,.24));
@@ -1532,36 +1799,36 @@ main[data-app="mossbell-farm"] {
   position: absolute;
   right: 3px;
   bottom: 2px;
-  min-width: 18px;
-  height: 18px;
+  min-width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
   padding: 0 3px;
   color: #fff7d8;
   background: #3a2617;
   border: 2px solid #f3c56d;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .inventory-detail {
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
-  padding: 12px;
+  padding: 14px;
   border-top: 4px solid #9b6731;
   background: #fff0bd;
 }
 .inventory-detail > svg {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   padding: 8px;
   color: #3f2b1b;
   background: #e9c978;
   border: 3px solid #7a4f29;
 }
 .inventory-detail > .inventory-pixel-icon {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   padding: 5px;
   object-fit: contain;
   image-rendering: pixelated;
@@ -1571,26 +1838,26 @@ main[data-app="mossbell-farm"] {
 .inventory-detail span {
   display: block;
   color: #8b5c21;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 950;
   line-height: 1;
 }
 .inventory-detail strong {
   display: block;
   margin-top: 4px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.2;
 }
 .inventory-detail p {
   margin: 6px 0 0;
   color: #5d4325;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 750;
   line-height: 1.45;
   word-break: keep-all;
 }
 .fish-catalog {
-  padding: 9px 12px 10px;
+  padding: 10px 14px 11px;
   color: #e9f7e0;
   background: #31566d;
   border-top: 4px solid #80d8df;
@@ -1601,7 +1868,7 @@ main[data-app="mossbell-farm"] {
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 7px;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .fish-catalog header span { color: #aeeaf0; }
 .fish-catalog header b { color: #ffd770; }
@@ -1620,8 +1887,8 @@ main[data-app="mossbell-farm"] {
   background: #f3df9d;
   border: 2px solid #183948;
 }
-.fish-catalog img { width: 28px; height: 28px; object-fit: contain; image-rendering: pixelated; }
-.fish-catalog strong { overflow: hidden; width: 100%; color: #284253; font-size: 6px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.fish-catalog img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
+.fish-catalog strong { overflow: hidden; width: 100%; color: #284253; font-size: 8px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 .fish-catalog > div > span > b {
   position: absolute;
   right: 1px;
@@ -1632,7 +1899,7 @@ main[data-app="mossbell-farm"] {
   place-items: center;
   color: #fff7d8;
   background: #203345;
-  font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .fish-catalog .is-unknown img { opacity: .22; filter: grayscale(1) brightness(.55); }
 .fish-catalog .is-unknown strong { color: #7e7b67; }
@@ -1660,8 +1927,8 @@ main[data-app="mossbell-farm"] {
   white-space: nowrap;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-.farm-quality-ledger strong { color: #d7f1be; font-size: 7px; }
-.farm-quality-ledger b { color: #fff3c9; font-size: 7px; }
+.farm-quality-ledger strong { color: #d7f1be; font-size: 9px; }
+.farm-quality-ledger b { color: #fff3c9; font-size: 9px; }
 .ranch-ledger {
   display: grid;
   gap: 6px;
@@ -1673,11 +1940,11 @@ main[data-app="mossbell-farm"] {
 .ranch-ledger header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .ranch-ledger header span,
 .ranch-ledger header b,
-.ranch-ledger > strong { font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.ranch-ledger > strong { font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
 .ranch-ledger header span { color: #aeeaf0; }
 .ranch-ledger header b,
 .ranch-ledger > strong { color: #ffd770; }
-.ranch-ledger p { margin: 0; font-size: 9px; font-weight: 800; line-height: 1.35; }
+.ranch-ledger p { margin: 0; font-size: 11px; font-weight: 800; line-height: 1.35; }
 .forage-ledger {
   display: grid;
   gap: 6px;
@@ -1689,11 +1956,11 @@ main[data-app="mossbell-farm"] {
 .forage-ledger header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .forage-ledger header span,
 .forage-ledger header b,
-.forage-ledger > strong { font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.forage-ledger > strong { font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
 .forage-ledger header span { color: #bce59f; }
 .forage-ledger header b,
 .forage-ledger > strong { color: #ffd770; }
-.forage-ledger p { margin: 0; font-size: 9px; font-weight: 800; line-height: 1.35; }
+.forage-ledger p { margin: 0; font-size: 11px; font-weight: 800; line-height: 1.35; }
 .inventory-rail-journal {
   flex: 1 1 auto;
   min-height: 96px;
@@ -1711,7 +1978,7 @@ main[data-app="mossbell-farm"] {
   padding-bottom: 9px;
   color: #8b5c21;
   border-bottom: 2px solid rgba(139, 92, 33, .26);
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .inventory-rail-journal header b {
   min-width: 20px;
@@ -1725,7 +1992,7 @@ main[data-app="mossbell-farm"] {
 .inventory-rail-journal > p {
   margin: 14px 0 0;
   color: #87673e;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 720;
   line-height: 1.5;
   word-break: keep-all;
@@ -1743,7 +2010,7 @@ main[data-app="mossbell-farm"] {
   color: #4d3620;
   background: rgba(255, 248, 215, .64);
   border-left: 3px solid #8ed777;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.2;
   text-overflow: ellipsis;
@@ -1759,34 +2026,85 @@ main[data-app="mossbell-farm"] {
 .inventory-rail-objective > span {
   display: block;
   color: #9fe089;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 .inventory-rail-objective > strong {
   display: block;
   margin-top: 6px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.2;
 }
 .inventory-rail-objective > p {
   margin: 7px 0 14px;
   color: #f4ddb0;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 720;
   line-height: 1.45;
   word-break: keep-all;
 }
-.inventory-rail-objective > div {
+.inventory-rail-objective-sidequest {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   padding-top: 10px;
   border-top: 2px solid #7c5634;
+  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.inventory-rail-objective-context {
+  display: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 2px 0 14px;
+}
+.inventory-rail-objective-context > span {
+  min-width: 0;
+  padding: 9px 8px;
+  background: #3b281a;
+  border: 2px solid #765236;
+}
+.inventory-rail-objective-context small,
+.inventory-rail-objective-context b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inventory-rail-objective-context small {
+  color: #9fe089;
   font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.inventory-rail-objective-context b {
+  margin-top: 6px;
+  color: #fff3c9;
+  font-size: 12px;
+  line-height: 1.1;
+}
+.inventory-rail-objective-map {
+  display: none;
+  min-height: 0;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-map {
+  height: clamp(104px, 14vh, 148px);
+  display: block;
+  margin: 1px 0 12px;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-map .mini-map {
+  height: 100%;
+  aspect-ratio: auto;
+  border-width: 3px;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective > p {
+  max-width: 46ch;
+  font-size: 14px;
+}
+.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-context {
+  display: grid;
+  margin-top: auto;
 }
 .inventory-rail-objective b {
   color: #ffd770;
-  font-size: 12px;
+  font-size: 13px;
 }
 .item-pickup-toast {
   position: absolute;
@@ -1905,8 +2223,8 @@ main[data-app="mossbell-farm"] {
   right: calc(var(--inventory-rail-width) + clamp(12px, 2vw, 24px));
   top: clamp(76px, 9vw, 92px);
   z-index: 92;
-  width: min(360px, calc(100vw - 24px));
-  max-height: min(680px, calc(100dvh - 110px));
+  width: min(420px, calc(100vw - 24px));
+  max-height: min(800px, calc(100dvh - 100px));
   overflow: auto;
   color: #fff3c9;
   background: rgba(61, 38, 21, .96);
@@ -1964,6 +2282,7 @@ main[data-app="mossbell-farm"] {
   border-color: #2d2114;
 }
 .map-panel,
+.calendar-panel,
 .journal-panel,
 .settings-panel {
   padding: 12px;
@@ -1978,17 +2297,44 @@ main[data-app="mossbell-farm"] {
   font-weight: 950;
   text-transform: uppercase;
 }
+.map-title-row > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.map-title-row > span small {
+  color: #bce59f;
+  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.map-title-row > b {
+  align-self: end;
+  white-space: nowrap;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
 .mini-map {
   position: relative;
-  height: 210px;
+  width: 100%;
+  aspect-ratio: 16 / 11;
   overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255,255,255,.12) 1px, transparent 1px),
-    #7fc35e;
-  background-size: 16px 16px;
+  background: #253426;
   border: 4px solid #3a2617;
   box-shadow: inset 0 0 0 4px rgba(255,255,255,.12);
+}
+.mini-map-image,
+.mini-map-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mini-map-image {
+  object-fit: fill;
+  image-rendering: pixelated;
+}
+.mini-map-shade {
+  display: block;
+  background: rgba(30, 43, 27, .08);
+  box-shadow: inset 0 0 24px rgba(22, 13, 7, .25);
 }
 .map-road {
   position: absolute;
@@ -2006,8 +2352,8 @@ main[data-app="mossbell-farm"] {
   border-radius: 999px;
 }
 .map-node {
-  width: 12px;
-  height: 12px;
+  width: 9px;
+  height: 9px;
   background: #4b8f43;
   border: 2px solid #244d26;
   box-shadow: 0 0 0 2px rgba(255,255,255,.18);
@@ -2016,9 +2362,15 @@ main[data-app="mossbell-farm"] {
 .map-node.node-door { background: #ffca5c; border-color: #3a2617; }
 .map-node.node-crop { background: #ff6b6b; border-color: #3a2617; }
 .map-node.is-nearby { box-shadow: 0 0 0 4px #fff19c; }
+.map-node.is-story-target {
+  background: #ffd770;
+  border-color: #fff7d8;
+  box-shadow: 0 0 0 3px #6d4526, 0 0 0 5px #ffd770;
+  animation: story-target-pulse 1.2s steps(2, end) infinite;
+}
 .map-player {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   background: #fff19c;
   border: 3px solid #2d2114;
   box-shadow: 0 0 0 4px rgba(156,255,130,.45);
@@ -2036,9 +2388,9 @@ main[data-app="mossbell-farm"] {
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 10px;
-  padding: 12px;
+  padding: 10px;
   background: #2d3d2b;
   border: 4px solid #3a2617;
   box-shadow: inset 0 0 0 3px rgba(255, 247, 216, .08);
@@ -2046,79 +2398,179 @@ main[data-app="mossbell-farm"] {
 .open-world-map button {
   position: relative;
   z-index: 2;
+  isolation: isolate;
   min-width: 0;
-  min-height: 68px;
+  min-height: 92px;
+  overflow: hidden;
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  gap: 2px 7px;
-  align-items: center;
+  grid-template-columns: 25px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  gap: 2px 6px;
+  align-content: end;
   padding: 8px;
   color: #fff3c9;
-  background: #466744;
+  background: #3d543a;
   border: 3px solid #1f2e1f;
   box-shadow: 0 3px 0 rgba(0, 0, 0, .28);
   text-align: left;
 }
-.open-world-map button svg { grid-row: 1 / 3; width: 26px; height: 26px; color: #ffd770; }
-.open-world-map button span { color: #bce59f; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.world-region-thumb,
+.world-region-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.world-region-thumb { z-index: -2; object-fit: cover; image-rendering: pixelated; }
+.world-region-shade { z-index: -1; display: block; background: rgba(28, 22, 13, .54); }
+.world-region-icon { grid-row: 1 / 4; align-self: end; width: 23px; height: 23px; color: #ffd770; }
+.open-world-map button .world-region-kicker { color: #bce59f; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
 .open-world-map button strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-.open-world-map button.is-current { background: #76502d; border-color: #ffd770; }
+.open-world-map button em { overflow: hidden; color: #ffe59b; font: normal 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; text-overflow: ellipsis; white-space: nowrap; }
+.open-world-map button.is-current { border-color: #ffd770; box-shadow: 0 0 0 2px #69441f, 0 3px 0 rgba(0, 0, 0, .28); }
+.open-world-map button.is-story-target {
+  border-color: #9cff82;
+  box-shadow: inset 0 0 0 3px rgba(255, 247, 216, .45), 0 3px 0 rgba(0, 0, 0, .28);
+}
+.open-world-map button.is-current .world-region-shade { background: rgba(68, 42, 20, .34); }
 .open-world-map button.is-hidden { color: #8e9585; background: #313b31; border-color: #202820; }
-.open-world-map button.is-hidden svg { color: #6d7569; }
+.open-world-map button.is-hidden .world-region-icon { color: #6d7569; }
 .open-world-map button:disabled { cursor: default; opacity: .78; }
 .open-world-map[data-fast-travel="ready"] button:not(:disabled) { outline: 3px solid #9fe089; outline-offset: -6px; }
-.open-world-map + .mini-map { height: 105px; }
-.season-calendar {
-  display: grid;
+.map-local-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  margin-top: 10px;
-  padding: 9px;
+  margin: 2px 0 6px;
+  color: #bce59f;
+  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.map-local-heading small { color: #d9c792; font-size: 7px; }
+.map-fast-travel-note {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 9px;
+  color: #ead7a0;
+  background: rgba(35, 22, 12, .46);
+  border-left: 4px solid #9cff82;
+}
+.map-fast-travel-note svg { width: 18px; height: 18px; color: #9cff82; }
+.map-fast-travel-note p { margin: 0; font-size: 10px; line-height: 1.35; }
+.calendar-panel {
+  display: grid;
+  gap: 10px;
   color: #fff7d8;
+}
+.calendar-season-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+.calendar-season-track > span {
+  min-width: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #cdbf9d;
+  background: #2b3229;
+  border: 2px solid #4f584b;
+  opacity: .58;
+}
+.calendar-season-track > span.is-discovered { opacity: .82; }
+.calendar-season-track > span.is-current { color: #2d2114; background: #9cff82; border-color: #fff3b3; opacity: 1; }
+.calendar-season-track img { width: 24px; height: 24px; object-fit: contain; image-rendering: pixelated; }
+.calendar-season-track small { font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.calendar-hero {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 38px;
+  gap: 9px;
+  align-items: center;
+  padding: 10px;
   background: #344835;
   border: 3px solid #1f2e1f;
   box-shadow: inset 0 0 0 2px rgba(255, 247, 216, .08);
 }
-.season-calendar > header {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) 32px;
-  gap: 8px;
-  align-items: center;
-}
-.season-calendar > header img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
-.season-calendar > header p { min-width: 0; margin: 0; }
-.season-calendar > header span,
-.season-calendar > header strong { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
-.season-calendar > header span { color: #bce59f; font-size: 7px; font-weight: 950; }
-.season-calendar > header strong { margin-top: 4px; font-size: 12px; }
-.season-calendar > div { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
-.season-calendar > div > span {
+.calendar-hero > img { width: 100%; height: auto; object-fit: contain; image-rendering: pixelated; }
+.calendar-hero > div { min-width: 0; }
+.calendar-hero span,
+.calendar-hero strong,
+.calendar-hero small { display: block; }
+.calendar-hero span { color: #bce59f; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.calendar-hero strong { margin-top: 4px; font-size: 17px; line-height: 1; }
+.calendar-hero small { margin-top: 6px; color: #d9c792; font-size: 8px; font-weight: 850; }
+.calendar-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.calendar-week > article {
   position: relative;
   min-width: 0;
-  height: 28px;
+  height: 78px;
   display: grid;
+  grid-template-rows: auto auto 22px auto;
   place-items: center;
+  align-content: center;
+  gap: 3px;
   color: #ead7a0;
   background: #253426;
   border: 2px solid #526a4e;
-  font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
-.season-calendar > div > span.is-today { color: #2d2114; background: #ffd770; border-color: #fff3b3; }
-.season-calendar > div > span.is-festival { border-color: #e69455; }
-.season-calendar > div > span i {
+.calendar-week > article > span { color: #8fb28c; font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.calendar-week > article > strong { font: 950 12px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.calendar-week > article > img { width: 22px; height: 22px; object-fit: contain; image-rendering: pixelated; }
+.calendar-week > article > small { max-width: 100%; overflow: hidden; font-size: 6px; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+.calendar-week > article.is-past { opacity: .58; }
+.calendar-week > article.is-today { color: #2d2114; background: #ffd770; border-color: #fff3b3; opacity: 1; }
+.calendar-week > article.is-today > span { color: #6d4526; }
+.calendar-week > article.is-festival { border-color: #e69455; }
+.calendar-week > article > i {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 4px;
-  height: 4px;
+  right: 3px;
+  top: 3px;
+  width: 6px;
+  height: 6px;
   background: #ff806e;
 }
-.season-calendar > small { color: #d9c792; font-size: 8px; font-weight: 850; line-height: 1.35; }
+.calendar-week > article > .calendar-story-bell {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  width: 13px;
+  height: 13px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1px 0 #2d2114);
+}
+.calendar-week > article.has-story { box-shadow: inset 0 0 0 1px #ffd770; }
+.calendar-agenda {
+  display: grid;
+  gap: 6px;
+}
+.calendar-agenda > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  background: rgba(255, 247, 216, .08);
+  border-left: 4px solid #d8b565;
+}
+.calendar-agenda svg,
+.calendar-agenda img { width: 24px; height: 24px; color: #ffd770; object-fit: contain; image-rendering: pixelated; }
+.calendar-agenda p { min-width: 0; margin: 0; }
+.calendar-agenda span,
+.calendar-agenda strong { display: block; }
+.calendar-agenda span { color: #bce59f; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.calendar-agenda strong { margin-top: 4px; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .world-link { position: absolute; z-index: 1; display: block; background: #d8b565; opacity: .7; }
-.link-farm-forest { left: 25%; top: 49%; width: 50%; height: 3px; }
-.link-forest-coast { left: 49%; top: 25%; width: 3px; height: 50%; }
-.link-coast-mine { left: 25%; top: 49%; width: 50%; height: 3px; }
-.link-mine-farm { left: 49%; top: 25%; width: 3px; height: 50%; }
+.link-farm-forest { left: 45%; top: 25%; width: 10%; height: 3px; }
+.link-forest-coast { left: 75%; top: 45%; width: 3px; height: 10%; }
+.link-coast-mine { left: 45%; top: 75%; width: 10%; height: 3px; }
+.link-mine-farm { left: 25%; top: 45%; width: 3px; height: 10%; }
 .menu-quest-objective {
   display: grid;
   gap: 4px;
@@ -2138,13 +2590,14 @@ main[data-app="mossbell-farm"] {
 }
 .journal-panel dl {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
   margin: 12px 0;
 }
 .journal-panel dl div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
   padding: 8px;
   background: rgba(255, 247, 216, .1);
   border: 2px solid rgba(255, 215, 112, .35);
@@ -2156,8 +2609,10 @@ main[data-app="mossbell-farm"] {
 .journal-panel dd {
   margin: 0;
   color: #fff7d8;
-  text-align: right;
+  overflow: hidden;
   font-weight: 820;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .journal-panel ul {
   margin: 12px 0 0;
@@ -2168,6 +2623,215 @@ main[data-app="mossbell-farm"] {
   font-weight: 780;
 }
 .journal-panel h3 { margin: 12px 0 0; color: #9fe089; font-size: 11px; }
+.main-story-panel {
+  display: grid;
+  gap: 9px;
+  margin: 0 0 14px;
+  padding: 0 0 14px;
+  color: #fff7d8;
+  border-bottom: 3px solid #9b6731;
+}
+.main-story-panel > header {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  padding: 9px;
+  background: #344835;
+  border: 3px solid #1f2e1f;
+  box-shadow: inset 0 0 0 2px rgba(255, 247, 216, .08);
+}
+.main-story-panel > header > img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.main-story-panel > header > div { min-width: 0; }
+.main-story-panel > header span,
+.main-story-panel > header small {
+  display: block;
+  overflow: hidden;
+  color: #bce59f;
+  font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.main-story-panel > header h3 { margin: 4px 0; color: #fff7d8; font-size: 16px; line-height: 1.1; }
+.main-story-panel > header small { color: #d9c792; font-size: 6px; }
+.main-story-panel > header > b { color: #ffd770; font: 950 13px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.story-seal-track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.story-seal-track > span {
+  position: relative;
+  min-width: 0;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  color: #d9c792;
+  background: #253426;
+  border: 2px solid #526a4e;
+}
+.story-seal-track img { width: 31px; height: 31px; object-fit: contain; image-rendering: pixelated; }
+.story-seal-track small { max-width: 100%; overflow: hidden; font-size: 7px; font-weight: 900; text-overflow: ellipsis; white-space: nowrap; }
+.story-seal-track svg { position: absolute; right: 3px; top: 3px; width: 10px; height: 10px; }
+.story-seal-track > span.is-locked img { filter: grayscale(1) brightness(.45); opacity: .45; }
+.story-seal-track > span.is-acquired { color: #fff7d8; border-color: #ffd770; background: #3d543a; }
+.story-objective-list { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.story-objective-list li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  padding: 7px 8px;
+  background: rgba(255, 247, 216, .07);
+  border-left: 3px solid #7b6744;
+}
+.story-objective-list li.is-complete { border-color: #9cff82; opacity: .7; }
+.story-objective-list li > i {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #d8b565;
+  font-style: normal;
+}
+.story-objective-list li > i svg { width: 12px; height: 12px; color: #9cff82; }
+.story-objective-list li > i span { width: 5px; height: 5px; background: #d8b565; }
+.story-objective-list p { min-width: 0; display: flex; justify-content: space-between; gap: 6px; margin: 0; }
+.story-objective-list strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.story-objective-list small { color: #ffd770; font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.main-story-panel > footer {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  padding: 8px;
+  background: #4f301b;
+  border-left: 4px solid #ffd770;
+}
+.main-story-panel > footer svg { width: 17px; height: 17px; color: #9cff82; }
+.main-story-panel > footer p { min-width: 0; margin: 0; }
+.main-story-panel > footer span,
+.main-story-panel > footer strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.main-story-panel > footer span { color: #bce59f; font: 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.main-story-panel > footer strong { margin-top: 3px; font-size: 10px; }
+.main-story-panel > footer > small { color: #ffd770; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+
+.story-cutscene {
+  position: absolute;
+  inset: 0 var(--inventory-rail-width) var(--dialogue-bar-height) 0;
+  z-index: 130;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  overflow: hidden;
+  color: #fff7d8;
+  background: rgba(22, 15, 9, .94);
+  pointer-events: auto;
+  animation: story-scene-in .28s steps(4, end) both;
+}
+.story-cutscene > button {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 4;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: #fff7d8;
+  background: #6d4526;
+  border: 3px solid #f3c56d;
+  box-shadow: 0 3px 0 #1b1209;
+}
+.story-cutscene > button svg { width: 20px; height: 20px; }
+.story-cutscene-stage {
+  position: relative;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.story-cutscene-art {
+  position: relative;
+  z-index: 2;
+  width: min(180px, 32vh);
+  height: min(180px, 32vh);
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 8px 0 rgba(0, 0, 0, .45));
+  animation: story-art-arrive .8s steps(6, end) both;
+}
+.story-season-light {
+  position: absolute;
+  z-index: 1;
+  width: 9px;
+  height: 42%;
+  opacity: .72;
+}
+.story-season-light.light-spring { left: calc(50% - 110px); background: #8fd36d; }
+.story-season-light.light-summer { left: calc(50% - 92px); background: #66c6d8; }
+.story-season-light.light-autumn { right: calc(50% - 92px); background: #e89548; }
+.story-season-light.light-winter { right: calc(50% - 110px); background: #b8c9ef; }
+.story-cutscene-copy {
+  position: relative;
+  z-index: 3;
+  min-height: 142px;
+  padding: 18px clamp(20px, 8vw, 90px) 16px;
+  background: #2d2114;
+  border-top: 4px solid #d8b565;
+  text-align: center;
+}
+.story-cutscene-copy span,
+.story-cutscene-copy strong,
+.story-cutscene-copy em { display: block; }
+.story-cutscene-copy span { color: #9cff82; font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; letter-spacing: 0; }
+.story-cutscene-copy strong { margin-top: 7px; color: #ffd770; font-size: 24px; line-height: 1.1; }
+.story-cutscene-copy p { margin: 7px auto 0; max-width: 680px; color: #fff7d8; font-size: 12px; line-height: 1.35; font-weight: 760; }
+.story-cutscene-copy em { margin-top: 10px; color: #bcae88; font: normal 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.story-finale-cast {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  translate: -50% 0;
+}
+.story-finale-cast img { width: 38px; height: 52px; object-fit: contain; image-rendering: pixelated; }
+.story-cutscene-finale .story-cutscene-art { translate: 0 -28px; }
+
+@keyframes story-target-pulse { 50% { opacity: .56; } }
+@keyframes story-scene-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes story-art-arrive { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+
+@media (max-width: 620px) {
+  .story-cutscene > button { right: 7px; top: 7px; width: 34px; height: 34px; border-width: 2px; }
+  .story-cutscene-art { width: min(118px, 28vh); height: min(118px, 28vh); }
+  .story-season-light { height: 36%; width: 6px; }
+  .story-season-light.light-spring { left: calc(50% - 76px); }
+  .story-season-light.light-summer { left: calc(50% - 64px); }
+  .story-season-light.light-autumn { right: calc(50% - 64px); }
+  .story-season-light.light-winter { right: calc(50% - 76px); }
+  .story-cutscene-copy { min-height: 124px; padding: 12px 10px 10px; border-top-width: 3px; }
+  .story-cutscene-copy strong { margin-top: 5px; font-size: 17px; }
+  .story-cutscene-copy p { margin-top: 5px; font-size: 10px; line-height: 1.25; }
+  .story-cutscene-copy em { margin-top: 7px; font-size: 6px; }
+  .story-finale-cast { gap: 3px; bottom: 5px; }
+  .story-finale-cast img { width: 28px; height: 38px; }
+  .story-cutscene-finale .story-cutscene-art { translate: 0 -18px; }
+  .main-story-panel > header { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 6px; padding: 7px; }
+  .main-story-panel > header > img { width: 38px; height: 38px; }
+  .main-story-panel > header h3 { font-size: 13px; }
+  .story-seal-track > span { height: 45px; }
+  .story-seal-track img { width: 26px; height: 26px; }
+  .story-objective-list strong { font-size: 9px; }
+}
 .settings-panel {
   display: grid;
   gap: 10px;
@@ -2188,6 +2852,54 @@ main[data-app="mossbell-farm"] {
   height: 18px;
   accent-color: #9cff82;
 }
+.setup-panel { align-content: start; }
+.settings-section-title {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 1px 0;
+  color: #9fe089;
+  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+}
+.settings-section-title small { color: #d9c792; font-size: 7px; }
+.audio-now-playing {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 32px;
+  gap: 9px;
+  align-items: center;
+  padding: 10px;
+  color: #fff7d8;
+  background: #2c4858;
+  border: 3px solid #80d8df;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .08);
+}
+.audio-now-playing > svg { width: 30px; height: 30px; color: #80d8df; }
+.audio-now-playing > img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
+.audio-now-playing p { min-width: 0; margin: 0; }
+.audio-now-playing span,
+.audio-now-playing strong,
+.audio-now-playing small { display: block; }
+.audio-now-playing span { color: #9fe7eb; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.audio-now-playing strong { margin-top: 4px; overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.audio-now-playing small { margin-top: 4px; overflow: hidden; color: #d1e7e5; font-size: 7px; font-weight: 850; text-overflow: ellipsis; white-space: nowrap; }
+.reset-warning {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  padding: 10px;
+  color: #fff1c7;
+  background: #5d3023;
+  border: 2px solid #d9875b;
+}
+.reset-warning > svg { width: 27px; height: 27px; color: #ffd770; }
+.reset-warning p { min-width: 0; margin: 0; }
+.reset-warning span,
+.reset-warning strong { display: block; }
+.reset-warning span { color: #ffd770; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.reset-warning strong { margin-top: 4px; font-size: 11px; }
 .music-setting {
   display: grid;
   grid-template-columns: 92px minmax(0, 1fr);
@@ -2473,7 +3185,7 @@ main[data-app="mossbell-farm"] {
 .purchase-stepper b {
   min-width: 28px;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
 }
 .purchase-stepper {
   grid-template-columns: minmax(0, 1fr) 30px 28px 30px;
@@ -2880,6 +3592,17 @@ main[data-app="mossbell-farm"] {
     font-size: 6px;
   }
   .farm-tool-row small { left: 1px; top: 1px; min-width: 15px; height: 9px; font-size: 4.5px; }
+  .ranch-build-selector { gap: 3px; margin-top: 5px; }
+  .ranch-build-selector button {
+    height: 31px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 20px 7px;
+    gap: 0;
+    padding: 1px;
+    border-width: 1px;
+    font-size: 5.5px;
+  }
+  .ranch-build-selector img { width: 20px; height: 20px; }
   .farm-seed-selector {
     gap: 3px;
     margin-top: 5px;
@@ -3033,7 +3756,7 @@ main[data-app="mossbell-farm"] {
     font-size: 9px;
     line-height: 1.35;
   }
-  .inventory-rail-objective > div { display: block; }
+  .inventory-rail-objective-sidequest { display: block; }
   .inventory-rail-objective b {
     display: block;
     margin-top: 4px;
@@ -3141,14 +3864,32 @@ main[data-app="mossbell-farm"] {
   .touch-pad { bottom: calc(var(--dialogue-bar-height) + 12px); grid-template-columns: repeat(5, 43px); }
   .touch-pad button { width: 43px; height: 40px; }
   .intro-card { padding: 22px 16px; }
-  .season-calendar { gap: 6px; padding: 7px; border-width: 2px; }
-  .season-calendar > header { grid-template-columns: 27px minmax(0, 1fr) 27px; gap: 5px; }
-  .season-calendar > header img { width: 27px; height: 27px; }
-  .season-calendar > header span { font-size: 6px; }
-  .season-calendar > header strong { margin-top: 2px; font-size: 9px; }
-  .season-calendar > div { gap: 2px; }
-  .season-calendar > div > span { height: 23px; border-width: 1px; font-size: 7px; }
-  .season-calendar > small { font-size: 6px; }
+  .settings-tabs { gap: 4px; padding: 7px; }
+  .settings-tabs button { min-height: 32px; border-width: 2px; font-size: 7px; }
+  .open-world-map { gap: 5px; padding: 7px; border-width: 3px; }
+  .open-world-map button { min-height: 72px; grid-template-columns: 19px minmax(0, 1fr); gap: 2px 4px; padding: 5px; border-width: 2px; }
+  .world-region-icon { width: 18px; height: 18px; }
+  .open-world-map button strong { font-size: 8px; }
+  .open-world-map button em { font-size: 5px; }
+  .mini-map { border-width: 3px; }
+  .calendar-panel { gap: 7px; padding: 8px; }
+  .calendar-season-track { gap: 3px; }
+  .calendar-season-track > span { height: 34px; gap: 2px; border-width: 1px; }
+  .calendar-season-track img { width: 19px; height: 19px; }
+  .calendar-season-track small { font-size: 5px; }
+  .calendar-hero { grid-template-columns: 34px minmax(0, 1fr) 30px; gap: 6px; padding: 7px; border-width: 2px; }
+  .calendar-hero strong { font-size: 12px; }
+  .calendar-hero small { margin-top: 3px; font-size: 6px; }
+  .calendar-week { gap: 2px; }
+  .calendar-week > article { height: 60px; grid-template-rows: auto auto 17px; gap: 2px; border-width: 1px; }
+  .calendar-week > article > strong { font-size: 9px; }
+  .calendar-week > article > img { width: 17px; height: 17px; }
+  .calendar-week > article > small { display: none; }
+  .calendar-agenda > div { grid-template-columns: 22px minmax(0, 1fr) auto; gap: 6px; padding: 7px; }
+  .calendar-agenda svg,
+  .calendar-agenda img { width: 19px; height: 19px; }
+  .calendar-agenda strong { font-size: 8px; }
+  .journal-panel dl { grid-template-columns: 1fr; }
 }
 @media (max-width: 380px) {
   .game-viewport { --world-scale: 1; }

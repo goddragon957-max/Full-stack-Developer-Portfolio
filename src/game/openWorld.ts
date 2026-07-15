@@ -130,8 +130,10 @@ const COAST_BLOCKED_RECTS = [
 const MINE_BLOCKED_RECTS = [
   { x: 0, y: 0, w: 32, h: 2 }, { x: 0, y: 21, w: 14, h: 1 }, { x: 18, y: 21, w: 14, h: 1 },
   { x: 0, y: 2, w: 1, h: 2 }, { x: 0, y: 8, w: 1, h: 13 }, { x: 31, y: 2, w: 1, h: 19 },
-  { x: 11, y: 2, w: 10, h: 5 }, { x: 4, y: 10, w: 5, h: 4 }, { x: 24, y: 10, w: 5, h: 5 },
-  { x: 10, y: 17, w: 4, h: 3 }, { x: 20, y: 17, w: 4, h: 3 },
+  { x: 11, y: 2, w: 10, h: 5 }, { x: 25, y: 2, w: 4, h: 4 }, { x: 24, y: 9, w: 5, h: 3 },
+  { x: 1, y: 7, w: 9, h: 7 },
+  { x: 1, y: 12, w: 13, h: 9 },
+  { x: 18, y: 12, w: 13, h: 9 },
 ];
 
 const FARM_BLOCKED_RECTS = [
@@ -142,6 +144,26 @@ const FARM_BLOCKED_RECTS = [
   { x: 4, y: 17, w: 4, h: 4 },
   { x: 27, y: 17, w: 4, h: 4 },
   { x: 23, y: 14, w: 7, h: 6 },
+];
+
+const FARM_VILLAGE_PATH_RECTS = [
+  { x: 7, y: 0, w: 3, h: 22 },
+  { x: 0, y: 7, w: 32, h: 3 },
+  { x: 5, y: 10, w: 5, h: 8 },
+  { x: 10, y: 11, w: 10, h: 2 },
+  { x: 17, y: 10, w: 3, h: 1 },
+];
+
+const FARM_VILLAGE_SCENERY_RECTS = [
+  { x: 0, y: 0, w: 32, h: 1 },
+  { x: 0, y: 21, w: 32, h: 1 },
+  { x: 0, y: 0, w: 1, h: 22 },
+  { x: 31, y: 0, w: 1, h: 22 },
+  { x: 1, y: 2, w: 3, h: 5 },
+  { x: 23, y: 1, w: 3, h: 6 },
+  { x: 27, y: 1, w: 4, h: 6 },
+  { x: 1, y: 11, w: 4, h: 6 },
+  { x: 28, y: 13, w: 4, h: 6 },
 ];
 
 export const REGION_COLLISION_RECTS: Record<RegionId, Array<{ x: number; y: number; w: number; h: number }>> = {
@@ -282,6 +304,14 @@ export function fastTravelTo(state: OpenWorldState, region: RegionId): OpenWorld
 
 export function isRegionBlocked(region: RegionId, x: number, y: number) {
   return REGION_COLLISION_RECTS[region].some((rect) => (
+    x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
+  ));
+}
+
+export function isFarmVillageTillableTerrain(x: number, y: number) {
+  if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
+  if (isRegionBlocked('farm-village', x, y)) return false;
+  return ![...FARM_VILLAGE_PATH_RECTS, ...FARM_VILLAGE_SCENERY_RECTS].some((rect) => (
     x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
   ));
 }

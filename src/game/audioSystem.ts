@@ -8,6 +8,12 @@ export const AUDIO_STORAGE_KEY = 'portfolio-audio-v1';
 export const AUDIO_CROSSFADE_MS = 1000;
 export const AUDIO_INTERIOR_GAIN = 0.55;
 
+export function parseAudioVolumePercent(value: unknown) {
+  const percent = Number(value);
+  if (!Number.isFinite(percent)) return 0;
+  return Math.max(0, Math.min(100, percent)) / 100;
+}
+
 const TRACK_BY_REGION: Record<RegionId, AudioTrackId> = {
   'farm-village': 'village-day',
   'whisper-forest': 'forest-day',

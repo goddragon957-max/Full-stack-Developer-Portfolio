@@ -9,14 +9,20 @@ export type FishRarity = 'common' | 'rare' | 'moon';
 export type FishHabitat = 'pond' | 'river' | 'coast';
 
 export type FishingSpot = {
-  id: 'pond-west' | 'pond-south' | 'river-north' | 'river-south' | 'coast-shore' | 'coast-pier';
+  id: string;
   region: 'farm-village' | 'river-coast';
   habitat: FishHabitat;
   standX: number;
   standY: number;
   bobberX: number;
   bobberY: number;
-  facing: 'up' | 'right' | 'down';
+  facing: 'up' | 'right' | 'down' | 'left';
+};
+
+type FishingPlayer = {
+  x: number;
+  y: number;
+  facing: FishingSpot['facing'];
 };
 
 export type FishingState = {
@@ -73,15 +79,6 @@ export const FISH_INFO: Record<FishId, {
   'ember-carp': { label: '단풍잉어', shortLabel: 'EMBER', description: '가을 연못의 낙엽 사이를 헤엄치는 붉은 잉어.', rarity: 'rare', habitat: 'pond', nightOnly: false, season: 'autumn', dayWeight: 14, nightWeight: 18, asset: '/assets/seasons-v1/fish/ember-carp.png' },
   frostfin: { label: '서리비늘', shortLabel: 'FROST', description: '겨울 강의 찬 물살에서 푸르게 빛나는 희귀 물고기.', rarity: 'moon', habitat: 'river', nightOnly: false, season: 'winter', dayWeight: 10, nightWeight: 18, asset: '/assets/seasons-v1/fish/frostfin.png' },
 };
-
-export const FISHING_SPOTS: FishingSpot[] = [
-  { id: 'pond-west', region: 'farm-village', habitat: 'pond', standX: 23, standY: 15, bobberX: 24, bobberY: 15, facing: 'right' },
-  { id: 'pond-south', region: 'farm-village', habitat: 'pond', standX: 26, standY: 18, bobberX: 26, bobberY: 17, facing: 'up' },
-  { id: 'river-north', region: 'river-coast', habitat: 'river', standX: 18, standY: 6, bobberX: 20, bobberY: 6, facing: 'right' },
-  { id: 'river-south', region: 'river-coast', habitat: 'river', standX: 18, standY: 15, bobberX: 20, bobberY: 15, facing: 'right' },
-  { id: 'coast-shore', region: 'river-coast', habitat: 'coast', standX: 22, standY: 11, bobberX: 24, bobberY: 11, facing: 'right' },
-  { id: 'coast-pier', region: 'river-coast', habitat: 'coast', standX: 26, standY: 7, bobberX: 26, bobberY: 9, facing: 'down' },
-];
 
 export const FISHING_POND_CELLS = [
   { x: 25, y: 14 }, { x: 26, y: 14 }, { x: 27, y: 14 },
@@ -158,12 +155,45 @@ export function isFishingWaterCell(x: number, y: number, region: RegionId = 'far
   return inRiver || inSea;
 }
 
-export function getNearestFishingSpot(player: { x: number; y: number }, region: RegionId = 'farm-village', maxDistance = 1.15) {
-  return FISHING_SPOTS
-    .filter((spot) => spot.region === region)
-    .map((spot) => ({ spot, distance: Math.hypot(player.x - spot.standX, player.y - spot.standY) }))
-    .filter(({ distance }) => distance <= maxDistance)
-    .sort((a, b) => a.distance - b.distance)[0]?.spot ?? null;
+export function getFishingHabitatAtCell(x: number, y: number, region: RegionId): FishHabitat | null {
+  if (!isFishingWaterCell(x, y, region)) return null;
+  if (region === 'farm-village') return 'pond';
+  return x >= 24 && y >= 8 ? 'coast' : 'river';
+}
+
+export function getFishingCastTarget(player: FishingPlayer, region: RegionId = 'farm-village', maxDistance = 3): FishingSpot | null {
+  if (region !== 'farm-village' && region !== 'river-coast') return null;
+  const delta = {
+    up: { x: 0, y: -1 },
+    right: { x: 1, y: 0 },
+    down: { x: 0, y: 1 },
+    left: { x: -1, y: 0 },
+  }[player.facing];
+  const standX = Math.round(player.x);
+  const standY = Math.round(player.y);
+  let target: FishingSpot | null = null;
+
+  for (let distance = 1; distance <= Math.max(1, Math.floor(maxDistance)); distance += 1) {
+    const bobberX = standX + delta.x * distance;
+    const bobberY = standY + delta.y * distance;
+    const habitat = getFishingHabitatAtCell(bobberX, bobberY, region);
+    if (!habitat) {
+      if (target) break;
+      continue;
+    }
+    target = {
+      id: `${region}-${habitat}-${bobberX}-${bobberY}`,
+      region,
+      habitat,
+      standX,
+      standY,
+      bobberX,
+      bobberY,
+      facing: player.facing,
+    };
+  }
+
+  return target;
 }
 
 export function isNightFishingPhase(phase: DayPhase) {

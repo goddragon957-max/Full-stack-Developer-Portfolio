@@ -3,13 +3,13 @@ import type { RegionId } from './openWorld';
 import { FORAGE_SPRITES, NPC_WALK_SPRITES, ORE_SPRITES } from './animationCatalog';
 
 export type ForageItemId = 'mushroom' | 'herb' | 'wild-berry' | 'fern' | 'moon-bloom' | 'stone' | 'copper-ore' | 'iron-ore' | 'star-crystal';
-export type ForageNodeId = 'forest-mushroom' | 'forest-herb' | 'forest-berry' | 'forest-fern' | 'forest-moon-bloom' | 'mine-stone-a' | 'mine-stone-b' | 'mine-copper' | 'mine-iron' | 'mine-crystal';
+export type ForageNodeId = 'forest-mushroom' | 'forest-herb' | 'forest-berry' | 'forest-fern' | 'forest-moon-bloom' | 'coast-berry' | 'mine-stone-a' | 'mine-stone-b' | 'mine-copper' | 'mine-iron' | 'mine-crystal';
 export type OpenWorldNpcId = 'forest-guide' | 'mine-keeper';
 export type ExplorationQuestStatus = 'available' | 'active' | 'ready' | 'complete';
 
 export type ForageNode = {
   id: ForageNodeId;
-  region: 'whisper-forest' | 'mine-foothill';
+  region: 'whisper-forest' | 'river-coast' | 'mine-foothill';
   x: number;
   y: number;
   item: ForageItemId;
@@ -73,10 +73,11 @@ export const FORAGE_NODES: ForageNode[] = [
   { id: 'forest-berry', region: 'whisper-forest', x: 27, y: 12, item: 'wild-berry', tool: 'hand' },
   { id: 'forest-fern', region: 'whisper-forest', x: 12, y: 17, item: 'fern', tool: 'hand' },
   { id: 'forest-moon-bloom', region: 'whisper-forest', x: 27, y: 18, item: 'moon-bloom', tool: 'hand' },
+  { id: 'coast-berry', region: 'river-coast', x: 17, y: 14, item: 'wild-berry', tool: 'hand' },
   { id: 'mine-stone-a', region: 'mine-foothill', x: 10, y: 9, item: 'stone', tool: 'pickaxe' },
   { id: 'mine-stone-b', region: 'mine-foothill', x: 22, y: 8, item: 'stone', tool: 'pickaxe' },
   { id: 'mine-copper', region: 'mine-foothill', x: 16, y: 9, item: 'copper-ore', tool: 'pickaxe' },
-  { id: 'mine-iron', region: 'mine-foothill', x: 18, y: 14, item: 'iron-ore', tool: 'pickaxe' },
+  { id: 'mine-iron', region: 'mine-foothill', x: 20, y: 10, item: 'iron-ore', tool: 'pickaxe' },
   { id: 'mine-crystal', region: 'mine-foothill', x: 27, y: 7, item: 'star-crystal', tool: 'pickaxe' },
 ];
 

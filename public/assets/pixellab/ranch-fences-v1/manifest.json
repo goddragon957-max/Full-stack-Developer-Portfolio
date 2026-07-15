@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "generator": "PixelLab MCP create_map_object",
+  "generated_at": "2026-07-15",
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "style": "compact cozy farming RPG pixel art, low top-down view, selective warm-brown outline, transparent background, no cast shadow",
+  "objects": [
+    {
+      "path": "fence-horizontal.png",
+      "object_id": "6b504679-ae45-4219-9b79-b9e5af964bec",
+      "sha256": "e601192de6339b625e3979df37452860f6fbcaa099ed456fa5748db6c7cd95a7",
+      "description": "one compact horizontal wooden farm fence segment spanning one map tile"
+    },
+    {
+      "path": "fence-vertical.png",
+      "object_id": "b3586c06-bbd0-4ec8-96ce-7196b84ea045",
+      "sha256": "cdf943983385f7d4696088db8b9551a5cf5788bbf969e08ff21fe163ab946cbd",
+      "description": "one straight north-south wooden farm fence segment fitting one map tile"
+    },
+    {
+      "path": "ranch-gate.png",
+      "object_id": "49dd4a41-4467-413f-8958-07527c0bcbe0",
+      "sha256": "bc9c988cd4becd00b9d5c9af0375b257e989be8d8874d36f52f9b801e7d5b26d",
+      "description": "one compact square wooden ranch gate with diagonal planks and small hinges"
+    }
+  ]
+}

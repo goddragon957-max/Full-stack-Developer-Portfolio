@@ -19,7 +19,7 @@ const compiled = ts.transpileModule(source, {
 }).outputText;
 const farm = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 
-assert(farm.FARM_SAVE_VERSION === 3, 'Pure-game crop IDs require farm save version 3');
+assert(farm.FARM_SAVE_VERSION === 4, 'Expandable plots require farm save version 4');
 assert(
   JSON.stringify(farm.FARM_CROPS) === JSON.stringify(['potato', 'strawberry', 'carrot', 'tomato', 'corn', 'pumpkin']),
   'Canonical crop IDs must contain six in-world crops only',
@@ -45,7 +45,7 @@ const legacy = {
 };
 
 const migrated = farm.normalizeFarmState(legacy);
-assert(migrated.version === 3, 'Migrated farm state must use version 3');
+assert(migrated.version === 4, 'Migrated farm state must use the latest version');
 assert(migrated.selectedSeed === 'strawberry', 'Legacy backend selection must become strawberry');
 assert(migrated.plots[0].crop === 'potato' && migrated.plots[0].stage === 'ready', 'Legacy frontend plot must preserve stage as potato');
 assert(migrated.plots[1].crop === 'strawberry', 'Legacy backend plot must become strawberry');

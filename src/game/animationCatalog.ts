@@ -66,6 +66,13 @@ export const TOOL_SPRITES = {
   'watering-can': `${ROOT}/items/tools/watering-can.png`,
   'fishing-rod': `${ROOT}/items/tools/fishing-rod.png`,
   pickaxe: `${ROOT}/items/tools/pickaxe.png`,
+  'fence-hammer': '/assets/pixellab/ranch-fences-v1/ranch-gate.png',
+} as const;
+
+export const RANCH_FENCE_SPRITES = {
+  horizontal: '/assets/pixellab/ranch-fences-v1/fence-horizontal.png',
+  vertical: '/assets/pixellab/ranch-fences-v1/fence-vertical.png',
+  gate: '/assets/pixellab/ranch-fences-v1/ranch-gate.png',
 } as const;
 
 export const SOIL_SPRITES = {

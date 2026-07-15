@@ -8,6 +8,15 @@ export type AnimalSpecies = 'chicken' | 'cow';
 export type AnimalStatus = 'idle' | 'hungry' | 'fed' | 'happy' | 'product-ready' | 'sleeping';
 export type RanchProduct = 'egg' | 'milk' | 'golden-egg';
 export type DailyQuestStatus = 'available' | 'active' | 'ready' | 'complete';
+export type RanchFencePieceKind = 'fence' | 'gate';
+export type RanchFenceOrientation = 'horizontal' | 'vertical' | 'gate';
+
+export type RanchFencePiece = {
+  id: string;
+  x: number;
+  y: number;
+  kind: RanchFencePieceKind;
+};
 
 export type AnimalRecord = {
   id: AnimalId;
@@ -27,7 +36,7 @@ export type DailyQuest = {
 };
 
 export type VillageLifeState = {
-  version: 1;
+  version: 2;
   day: number;
   animals: Record<AnimalId, AnimalRecord>;
   products: Record<RanchProduct, number>;
@@ -38,6 +47,13 @@ export type VillageLifeState = {
   farmerQuest: DailyQuest;
   rancherQuest: DailyQuest;
   completedNpcQuests: number;
+  fencePieces: RanchFencePiece[];
+};
+
+export type RanchFenceEditResult = {
+  state: VillageLifeState;
+  changed: boolean;
+  message: string;
 };
 
 export type AnimalInteractionResult = {
@@ -57,17 +73,28 @@ export type NpcInteractionResult = {
 };
 
 export const VILLAGE_LIFE_STORAGE_KEY = 'portfolio-village-life-v2';
-export const VILLAGE_LIFE_SAVE_VERSION = 1;
+export const VILLAGE_LIFE_SAVE_VERSION = 2;
 export const LIFE_NPC_IDS: LifeNpcId[] = ['farmer-hana', 'rancher-jun'];
 export const ANIMAL_IDS: AnimalId[] = ['chicken-1', 'chicken-2', 'chicken-3', 'cow-1', 'cow-2'];
 export const RANCH_PRODUCTS: RanchProduct[] = ['egg', 'milk', 'golden-egg'];
 export const DAILY_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
-export const RANCH_FENCE_CELLS = [
-  { x: 10, y: 15 }, { x: 11, y: 15 }, { x: 12, y: 15 }, { x: 13, y: 15 }, { x: 14, y: 15 },
-  { x: 10, y: 16 }, { x: 14, y: 16 },
-  { x: 10, y: 17 }, { x: 14, y: 17 },
-  { x: 10, y: 18 }, { x: 11, y: 18 }, { x: 13, y: 18 }, { x: 14, y: 18 },
-] as const;
+export const RANCH_FENCE_PIECE_LIMIT = 64;
+export const RANCH_AREA_BOUNDS = { minX: 10, maxX: 14, minY: 15, maxY: 18 } as const;
+
+function createRanchFencePiece(x: number, y: number, kind: RanchFencePieceKind = 'fence'): RanchFencePiece {
+  return { id: `ranch-fence-${x}-${y}`, x, y, kind };
+}
+
+export const DEFAULT_RANCH_FENCE_PIECES: RanchFencePiece[] = [
+  createRanchFencePiece(10, 15), createRanchFencePiece(11, 15), createRanchFencePiece(12, 15), createRanchFencePiece(13, 15), createRanchFencePiece(14, 15),
+  createRanchFencePiece(10, 16), createRanchFencePiece(14, 16),
+  createRanchFencePiece(10, 17), createRanchFencePiece(14, 17),
+  createRanchFencePiece(10, 18), createRanchFencePiece(11, 18), createRanchFencePiece(12, 18, 'gate'), createRanchFencePiece(13, 18), createRanchFencePiece(14, 18),
+];
+
+function cloneDefaultRanchFencePieces() {
+  return DEFAULT_RANCH_FENCE_PIECES.map((piece) => ({ ...piece }));
+}
 
 export const LIFE_NPC_INFO: Record<LifeNpcId, {
   name: string;
@@ -182,6 +209,7 @@ export function createInitialVillageLifeState(): VillageLifeState {
     farmerQuest: createQuest(1, 'farmer'),
     rancherQuest: createQuest(1, 'rancher'),
     completedNpcQuests: 0,
+    fencePieces: cloneDefaultRanchFencePieces(),
   };
 }
 
@@ -200,11 +228,30 @@ function normalizeQuest(value: unknown, fallback: DailyQuest): DailyQuest {
   };
 }
 
-function normalizeVillageLifeState(value: unknown): VillageLifeState {
+function normalizeRanchFencePieces(value: unknown) {
+  if (!Array.isArray(value)) return cloneDefaultRanchFencePieces();
+  const seen = new Set<string>();
+  const pieces: RanchFencePiece[] = [];
+  for (const entry of value) {
+    if (!entry || typeof entry !== 'object') continue;
+    const candidate = entry as Partial<RanchFencePiece>;
+    const x = Number(candidate.x);
+    const y = Number(candidate.y);
+    if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || x > 31 || y < 0 || y > 21) continue;
+    const key = `${x},${y}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    pieces.push(createRanchFencePiece(x, y, candidate.kind === 'gate' ? 'gate' : 'fence'));
+    if (pieces.length >= RANCH_FENCE_PIECE_LIMIT) break;
+  }
+  return pieces;
+}
+
+export function normalizeVillageLifeState(value: unknown): VillageLifeState {
   const initial = createInitialVillageLifeState();
   if (!value || typeof value !== 'object') return initial;
-  const candidate = value as Partial<VillageLifeState>;
-  if (candidate.version !== VILLAGE_LIFE_SAVE_VERSION) return initial;
+  const candidate = value as Partial<Omit<VillageLifeState, 'version'>> & { version?: number };
+  if (candidate.version !== 1 && candidate.version !== VILLAGE_LIFE_SAVE_VERSION) return initial;
   const day = Math.max(1, Math.floor(Number(candidate.day) || 1));
   const candidateAnimals = candidate.animals && typeof candidate.animals === 'object'
     ? candidate.animals as Partial<Record<AnimalId, Partial<AnimalRecord>>>
@@ -248,6 +295,9 @@ function normalizeVillageLifeState(value: unknown): VillageLifeState {
     farmerQuest: normalizeQuest(candidate.farmerQuest, createQuest(day, 'farmer')),
     rancherQuest: normalizeQuest(candidate.rancherQuest, createQuest(day, 'rancher')),
     completedNpcQuests: Math.max(0, Math.floor(Number(candidate.completedNpcQuests) || 0)),
+    fencePieces: candidate.version === VILLAGE_LIFE_SAVE_VERSION
+      ? normalizeRanchFencePieces(candidate.fencePieces)
+      : cloneDefaultRanchFencePieces(),
   };
 }
 
@@ -281,6 +331,7 @@ export function clearRanchState(state: VillageLifeState): VillageLifeState {
     perfectCareStreak: 0,
     perfectCareAwardedDay: null,
     rancherQuest: createQuest(state.day, 'rancher'),
+    fencePieces: cloneDefaultRanchFencePieces(),
   };
 }
 
@@ -308,8 +359,63 @@ export function getNearestAnimal(player: { x: number; y: number }, phase: DayPha
     .sort((a, b) => a.distance - b.distance)[0] ?? null;
 }
 
-export function isRanchFenceCell(x: number, y: number) {
-  return RANCH_FENCE_CELLS.some((cell) => cell.x === x && cell.y === y);
+export function isRanchFenceCell(pieces: RanchFencePiece[], x: number, y: number) {
+  return pieces.some((piece) => piece.x === x && piece.y === y);
+}
+
+export function isSolidRanchFenceCell(pieces: RanchFencePiece[], x: number, y: number) {
+  return pieces.some((piece) => piece.x === x && piece.y === y && piece.kind === 'fence');
+}
+
+export function getRanchFenceOrientation(pieces: RanchFencePiece[], x: number, y: number): RanchFenceOrientation {
+  const piece = pieces.find((candidate) => candidate.x === x && candidate.y === y);
+  if (!piece) return 'horizontal';
+  if (piece.kind === 'gate') return 'gate';
+  const horizontalNeighbor = isRanchFenceCell(pieces, x - 1, y) || isRanchFenceCell(pieces, x + 1, y);
+  const verticalNeighbor = isRanchFenceCell(pieces, x, y - 1) || isRanchFenceCell(pieces, x, y + 1);
+  return verticalNeighbor && !horizontalNeighbor ? 'vertical' : 'horizontal';
+}
+
+export function placeRanchFencePiece(
+  state: VillageLifeState,
+  x: number,
+  y: number,
+  kind: RanchFencePieceKind,
+  canPlace: (x: number, y: number) => boolean,
+): RanchFenceEditResult {
+  if (state.fencePieces.length >= RANCH_FENCE_PIECE_LIMIT) {
+    return { state, changed: false, message: `울타리는 최대 ${RANCH_FENCE_PIECE_LIMIT}개까지 설치할 수 있습니다.` };
+  }
+  if (!Number.isInteger(x) || !Number.isInteger(y) || isRanchFenceCell(state.fencePieces, x, y)) {
+    return { state, changed: false, message: '이미 울타리가 있는 자리입니다.' };
+  }
+  if (!canPlace(x, y)) {
+    return { state, changed: false, message: '집, 물, 밭, 동물 또는 다른 물건이 없는 땅에만 설치할 수 있습니다.' };
+  }
+  const piece = createRanchFencePiece(x, y, kind);
+  return {
+    state: { ...state, fencePieces: [...state.fencePieces, piece] },
+    changed: true,
+    message: kind === 'gate' ? '작은 목장 문을 설치했습니다.' : '작은 나무 울타리를 설치했습니다.',
+  };
+}
+
+export function removeRanchFencePiece(state: VillageLifeState, x: number, y: number): RanchFenceEditResult {
+  if (!isRanchFenceCell(state.fencePieces, x, y)) {
+    return { state, changed: false, message: '철거할 울타리가 없습니다.' };
+  }
+  return {
+    state: { ...state, fencePieces: state.fencePieces.filter((piece) => piece.x !== x || piece.y !== y) },
+    changed: true,
+    message: '울타리 조각을 철거했습니다.',
+  };
+}
+
+export function isRanchAreaCell(x: number, y: number) {
+  return x >= RANCH_AREA_BOUNDS.minX
+    && x <= RANCH_AREA_BOUNDS.maxX
+    && y >= RANCH_AREA_BOUNDS.minY
+    && y <= RANCH_AREA_BOUNDS.maxY;
 }
 
 export function getAnimalStatus(animal: AnimalRecord, phase: DayPhase): AnimalStatus {

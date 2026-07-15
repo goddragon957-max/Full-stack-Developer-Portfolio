@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 
 const app = readFileSync('src/App.tsx', 'utf8');
 const game = readFileSync('src/components/MossbellFarmGame.tsx', 'utf8');
+const seasonCalendarPanel = readFileSync('src/components/game/SeasonCalendarPanel.tsx', 'utf8');
 const farmLoop = readFileSync('src/game/farmLoop.ts', 'utf8');
 const villagePulse = readFileSync('src/game/villagePulse.ts', 'utf8');
 const villageLife = existsSync('src/game/villageLife.ts') ? readFileSync('src/game/villageLife.ts', 'utf8') : '';
@@ -22,8 +23,8 @@ const readme = readFileSync('README.md', 'utf8');
 const verify = readFileSync('VERIFY.md', 'utf8');
 const referenceBoard = readFileSync('docs/design/reference-board.md', 'utf8');
 
-const joined = `${app}\n${game}\n${farmLoop}\n${villagePulse}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}\n${audioSystem}\n${economySystem}\n${shippingLoop}\n${toolProgression}\n${seasonSystem}\n${weatherSystem}\n${festivalSystem}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
-const publicJoined = `${app}\n${game}\n${css}`;
+const joined = `${app}\n${game}\n${seasonCalendarPanel}\n${farmLoop}\n${villagePulse}\n${villageLife}\n${openWorld}\n${foragingLoop}\n${animationCatalog}\n${audioSystem}\n${economySystem}\n${shippingLoop}\n${toolProgression}\n${seasonSystem}\n${weatherSystem}\n${festivalSystem}\n${css}\n${design}\n${readme}\n${verify}\n${referenceBoard}`;
+const publicJoined = `${app}\n${game}\n${seasonCalendarPanel}\n${css}`;
 
 const required = [
   'data-ui-pass="mossbell-farm-game"',
@@ -46,12 +47,12 @@ const required = [
   'data-sprite-normalization="bottom-centered-transparent-canvas"',
   'data-walk-cycle="coherent-generated-frames"',
   'data-world-scale-mode="pixel-locked-cover"',
-  'const DESKTOP_PROMPT_BAR_HEIGHT = 72;',
   'const DESKTOP_DIALOGUE_BAR_HEIGHT = 144;',
   'const SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT = 140;',
   'const MOBILE_DIALOGUE_BAR_HEIGHT = 160;',
+  'data-dialogue-height-mode="fixed"',
   'data-mobile-fit-mode="camera-fullscreen-safe-area"',
-  'data-camera-mode="player-centered-fullscreen"',
+  "'fixed-overview' : 'player-follow'",
   'data-map-grid="32x22"',
   'data-collision-mode="entity-and-water-bounds"',
   'data-depth-sorting="y-axis-feet"',
@@ -84,6 +85,12 @@ const required = [
   'knownInventoryIdsRef',
   'data-farm-loop="v1"',
   'data-farm-plot-count',
+  'data-farm-build-mode="freeform"',
+  'data-farm-plot-capacity="world-bounds"',
+  'data-farm-mode',
+  'data-farm-build-target',
+  'farm-build-target',
+  'FARM MODE',
   'data-farm-stage',
   'data-farm-crop',
   'data-selected-farm-tool',
@@ -112,13 +119,14 @@ const required = [
   'QUEST COMPLETE',
   'data-fishing-loop="v1"',
   'data-fishing-state',
-  'data-fishing-spot-count',
-  'data-fishing-water="pond"',
+  'data-fishing-mode="shoreline-casting"',
+  'data-fishing-water=',
+  'data-fishing-cast-ready',
   'data-selected-game-tool',
   'data-fishing-catch-total',
   'data-fishing-discovered',
   'data-fishing-pool',
-  'data-fishing-spot-id',
+  'data-fishing-cast-target',
   'data-fishing-feedback',
   'data-reset-fishing="fishing-state-only"',
   'fishing-rod',
@@ -162,13 +170,13 @@ const required = [
   'data-foraging-loop="v1"',
   'data-foraging-storage="localStorage"',
   'data-foraging-storage-key',
-  'data-forage-node-count="10"',
+  'data-forage-node-count="11"',
   'data-forage-inventory-total',
   'data-forage-quest',
   'data-mine-quest',
   'data-inventory-tab-control="bag-farm-ranch-forage"',
   'data-open-world-storage-key',
-  'data-fishing-spot-total="6"',
+  'getFishingCastTarget(player, currentRegion)',
   'data-open-world-npc-count="2"',
   'data-art-remaster="v1"',
   'data-visual-source="gpt-image"',
@@ -245,15 +253,17 @@ const required = [
   'data-settings-toggle="gear"',
   'data-settings-window="game-menu"',
   'data-map-panel="mossbell-world-map"',
+  'data-calendar-panel="season-planner"',
   'data-journal-panel="mossbell-journal"',
   'data-audio-panel="game-audio"',
+  'data-setup-panel="display-and-time"',
   'data-reset-panel="isolated-game-resets"',
   'gear-button',
   'settings-window',
   'mini-map',
   'map-player',
-  'Object labels',
-  'Press-E hints',
+  '오브젝트 이름 표시',
+  '상호작용 힌트 표시',
   'data-player-x',
   'data-player-y',
   'data-nearby-object',
@@ -370,6 +380,10 @@ const requiredFiles = [
   'public/assets/pixellab/terrain/grass-path-flat/metadata.json',
   'public/assets/pixellab/terrain/grass-soil-flat-v2/tileset.png',
   'public/assets/pixellab/terrain/grass-soil-flat-v2/metadata.json',
+  'public/assets/pixellab/ranch-fences-v1/manifest.json',
+  'public/assets/pixellab/ranch-fences-v1/fence-horizontal.png',
+  'public/assets/pixellab/ranch-fences-v1/fence-vertical.png',
+  'public/assets/pixellab/ranch-fences-v1/ranch-gate.png',
   'public/assets/sprite-matte-cleanup.json',
   'public/assets/game-sprites/manifest.json',
   'public/assets/game-sprites/sprite-18.png',
@@ -779,7 +793,9 @@ const legacyRuntimeVisualRoots = [
   '/assets/game-sprites/',
   '/assets/pixellab/',
 ];
-const legacyRuntimeVisuals = legacyRuntimeVisualRoots.filter((root) => runtimeVisualCode.includes(root));
+const approvedPixelLabRuntimeRoot = '/assets/pixellab/ranch-fences-v1/';
+const legacyRuntimeVisualCode = runtimeVisualCode.replaceAll(approvedPixelLabRuntimeRoot, '');
+const legacyRuntimeVisuals = legacyRuntimeVisualRoots.filter((root) => legacyRuntimeVisualCode.includes(root));
 if (legacyRuntimeVisuals.length) {
   console.error(`Legacy or code-generated runtime art references remain: ${legacyRuntimeVisuals.join(', ')}`);
   process.exit(1);

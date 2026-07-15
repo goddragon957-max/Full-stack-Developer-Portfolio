@@ -91,8 +91,8 @@
       "source": "source/maps/farm-village-spring-gpt.png",
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
-      "sha256": "d08b18de7fdd19e583d4b935f87a61a2129603dcb5fefaa7aa7b0a9451d18f0d"
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
+      "sha256": "006d18ecf6891fd76fa428d4debd1262d6ea2b248860632d5539ddca75683c1a"
     },
     {
       "region": "farm-village",
@@ -101,8 +101,8 @@
       "source": "source/maps/farm-village-summer-gpt.png",
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
-      "sha256": "7336e984a51306cfe27b4278bd569c4912293cfca7898bf7b14dac8ab5dab917"
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
+      "sha256": "5442f8f24e6fb9665e23e5a3fbba3cd1463beb2787dac4e2a0336e8c3557f0b5"
     },
     {
       "region": "farm-village",
@@ -111,8 +111,8 @@
       "source": "source/maps/farm-village-autumn-gpt.png",
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
-      "sha256": "466aef97aec54973dcb7dccbc0c520bfce3b6477376f3abde58df7f845079af7"
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
+      "sha256": "f2a58dc8ef9c57f9dbc6cf1b1dd8e6698a4ea88185cb710ea7ec576e01bb6178"
     },
     {
       "region": "farm-village",
@@ -121,8 +121,8 @@
       "source": "source/maps/farm-village-winter-gpt.png",
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and extends the original GPT ranch side-fence pixels to the front gate",
-      "sha256": "30f8f31bde5ee44a3005a8d66e7ddece03952daad891e5ba594a54b1efed1fb2"
+      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
+      "sha256": "75ecd109f343a226292083c1863dcde42e954a7de935fcd6fd0f6d36eb044ef4"
     },
     {
       "region": "whisper-forest",
@@ -453,6 +453,6 @@
     "transparent_corners": true,
     "color_under_zero_alpha": false,
     "map_geometry_policy": "same four regions and runtime collision coordinates",
-    "ranch_enclosure": "front fence and center gate connect to both side fences in every season"
+    "ranch_enclosure": "baked enclosure removed in all seasons; editable 32px PixelLab fence sprites render at runtime"
   }
 }
