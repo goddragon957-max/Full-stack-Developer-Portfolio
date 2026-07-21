@@ -145,12 +145,12 @@ export const FARM_CROP_INFO: Record<CropType, {
 };
 
 const FARM_PLOT_LAYOUT = [
-  { id: 'plot-1', x: 15, y: 13 },
-  { id: 'plot-2', x: 16, y: 13 },
-  { id: 'plot-3', x: 17, y: 13 },
-  { id: 'plot-4', x: 15, y: 14 },
-  { id: 'plot-5', x: 16, y: 14 },
-  { id: 'plot-6', x: 17, y: 14 },
+  { id: 'plot-1', x: 22, y: 11 },
+  { id: 'plot-2', x: 23, y: 11 },
+  { id: 'plot-3', x: 24, y: 11 },
+  { id: 'plot-4', x: 22, y: 12 },
+  { id: 'plot-5', x: 23, y: 12 },
+  { id: 'plot-6', x: 24, y: 12 },
 ] as const;
 
 const stageSet = new Set<string>(FARM_PLOT_STAGES);

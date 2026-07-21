@@ -17,13 +17,13 @@ assert.match(
 );
 assert.match(
   source,
-  /const fishingHasPriority = fishingRodSelected \|\| fishingSession\.status !== 'idle';/,
-  'fishing should only preempt nearby gathering when the rod is selected or a cast is active',
+  /const fishingHasPriority = fishingSession\.status !== 'idle' \|\| Boolean\(fishingCastTarget\);/,
+  'fishing should only preempt nearby interactions for an active cast or a valid shoreline target',
 );
 assert.match(
   source,
   /fishingHasPriority && interactWithFishing\(\)[\s\S]*interactWithNearbyForage\(\)[\s\S]*const target = nearby/,
-  'the selected fishing rod should own E while ordinary gathering remains reachable without it',
+  'a valid fishing target should own E while dock and gathering interactions remain reachable away from water',
 );
 assert.match(source, /data-forage-action-hint=/, 'nearby forage should render a readable world action label');
 assert.match(source, /data-interaction-focus=\{interactionFocus\}/, 'the HUD should expose the same interaction priority used by E');

@@ -20,27 +20,20 @@ def assert_same_pixels(actual: Image.Image, expected: Image.Image, message: str)
         raise AssertionError(message)
 
 
-if not hasattr(PROCESSOR, "remove_baked_ranch_enclosure"):
-    raise AssertionError("Season processor must remove the baked ranch enclosure before runtime fence rendering")
+if not hasattr(PROCESSOR, "WORLD_MASTER_SOURCES") or not hasattr(PROCESSOR, "WORLD_REGION_QUADRANTS"):
+    raise AssertionError("Season processor must split the fence-free canonical world masters")
+if hasattr(PROCESSOR, "remove_baked_ranch_enclosure"):
+    raise AssertionError("Fence-free GPT masters must not require hard-coded ranch pixel replacement")
 if hasattr(PROCESSOR, "install_rectangular_ranch_gate"):
     raise AssertionError("Season processor must not reinstall a fixed ranch gate")
 
 for season in ("spring", "summer", "autumn", "winter"):
-    source_path = PROCESSOR.SOURCE_ROOT / "maps" / f"farm-village-{season}-gpt.png"
+    source_path = PROCESSOR.SOURCE_ROOT / "world-composition" / f"mossbell-world-{season}-gpt.png"
     output_path = PROCESSOR.ASSET_ROOT / "maps" / f"farm-village-{season}.png"
-    normalized = PROCESSOR.fit_map(Image.open(source_path))
-    expected = PROCESSOR.remove_baked_ranch_enclosure(normalized.copy())
+    normalized = PROCESSOR.fit_world_master(Image.open(source_path))
+    expected = normalized.crop(PROCESSOR.WORLD_REGION_QUADRANTS["farm-village"])
     output = Image.open(output_path)
-    assert_same_pixels(output, expected, f"{season} ranch map must use the clean-ground transform")
-
-    changed_pixels = 0
-    for box in PROCESSOR.RANCH_CLEANUP_BOXES:
-        original = normalized.crop(box)
-        cleaned = output.crop(box)
-        difference = ImageChops.difference(original.convert("RGB"), cleaned.convert("RGB"))
-        changed_pixels += sum(1 for pixel in difference.get_flattened_data() if pixel != (0, 0, 0))
-    if changed_pixels < 1200:
-        raise AssertionError(f"{season} baked enclosure cleanup changed too few pixels: {changed_pixels}")
+    assert_same_pixels(output, expected, f"{season} ranch map must be the canonical fence-free farm quadrant")
 
 for asset_name in ("fence-horizontal.png", "fence-vertical.png", "ranch-gate.png"):
     path = ROOT / "public" / "assets" / "pixellab" / "ranch-fences-v1" / asset_name

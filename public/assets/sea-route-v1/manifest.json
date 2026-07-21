@@ -1,0 +1,17 @@
+{
+  "id": "mossbell-sea-route-v1",
+  "source": "GPT Image generated originals processed by scripts/process-gpt-sea-route-assets.py",
+  "runtime": {
+    "map": "/assets/sea-route-v1/maps/mossbell-sea.png",
+    "mapSize": [512, 352],
+    "logicalGrid": [32, 22],
+    "boatSprites": {
+      "up": "/assets/sea-route-v1/sprites/boat-up.png",
+      "down": "/assets/sea-route-v1/sprites/boat-down.png",
+      "left": "/assets/sea-route-v1/sprites/boat-left.png",
+      "right": "/assets/sea-route-v1/sprites/boat-right.png"
+    }
+  },
+  "style": "original cozy high-detail top-down pixel art",
+  "background": "map opaque, boat sprites transparent"
+}

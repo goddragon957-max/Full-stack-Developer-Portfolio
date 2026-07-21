@@ -1,4 +1,5 @@
 import type { RegionId } from './openWorld';
+import { getWorldWaterCells, isWorldWaterCell } from './worldTerrain';
 import type { DayPhase } from './villagePulse';
 import type { Season } from './seasonSystem';
 import { FISH_SPRITES } from './animationCatalog';
@@ -80,12 +81,7 @@ export const FISH_INFO: Record<FishId, {
   frostfin: { label: '서리비늘', shortLabel: 'FROST', description: '겨울 강의 찬 물살에서 푸르게 빛나는 희귀 물고기.', rarity: 'moon', habitat: 'river', nightOnly: false, season: 'winter', dayWeight: 10, nightWeight: 18, asset: '/assets/seasons-v1/fish/frostfin.png' },
 };
 
-export const FISHING_POND_CELLS = [
-  { x: 25, y: 14 }, { x: 26, y: 14 }, { x: 27, y: 14 },
-  { x: 24, y: 15 }, { x: 25, y: 15 }, { x: 26, y: 15 }, { x: 27, y: 15 }, { x: 28, y: 15 },
-  { x: 24, y: 16 }, { x: 25, y: 16 }, { x: 26, y: 16 }, { x: 27, y: 16 }, { x: 28, y: 16 },
-  { x: 25, y: 17 }, { x: 26, y: 17 }, { x: 27, y: 17 },
-] as const;
+export const FISHING_POND_CELLS = getWorldWaterCells('farm-village');
 
 export function createInitialFishingState(): FishingState {
   return {
@@ -148,17 +144,15 @@ export function clearFishingState(): FishingState {
 }
 
 export function isFishingWaterCell(x: number, y: number, region: RegionId = 'farm-village') {
-  if (region === 'farm-village') return FISHING_POND_CELLS.some((cell) => cell.x === x && cell.y === y);
-  if (region !== 'river-coast') return false;
-  const inRiver = x >= 19 && x <= 22 && !((y >= 4 && y <= 6) || (y >= 10 && y <= 12));
-  const inSea = x >= 24 && y >= 8;
-  return inRiver || inSea;
+  if (region === 'mossbell-sea') return false;
+  return isWorldWaterCell(region, x, y);
 }
 
 export function getFishingHabitatAtCell(x: number, y: number, region: RegionId): FishHabitat | null {
   if (!isFishingWaterCell(x, y, region)) return null;
   if (region === 'farm-village') return 'pond';
-  return x >= 24 && y >= 8 ? 'coast' : 'river';
+  if (region !== 'river-coast') return null;
+  return y <= 14 && x <= 9 ? 'coast' : 'river';
 }
 
 export function getFishingCastTarget(player: FishingPlayer, region: RegionId = 'farm-village', maxDistance = 3): FishingSpot | null {

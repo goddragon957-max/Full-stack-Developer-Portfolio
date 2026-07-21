@@ -19,6 +19,7 @@ const TRACK_BY_REGION: Record<RegionId, AudioTrackId> = {
   'whisper-forest': 'forest-day',
   'river-coast': 'coast-day',
   'mine-foothill': 'mine-day',
+  'mossbell-sea': 'coast-day',
 };
 
 export const AUDIO_TRACKS: Record<AudioTrackId, { path: string; available: boolean }> = {

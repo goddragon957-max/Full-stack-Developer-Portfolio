@@ -18,30 +18,18 @@ GENERATED_ROOT = Path(os.environ.get(
     r"C:\Users\eum0742\.codex\generated_images\019f4542-fb15-73e2-b95d-93f25d8065bb",
 ))
 MAP_SIZE = (512, 352)
-RANCH_CLEANUP_BOXES = ((145, 228, 260, 332),)
-RANCH_GROUND_SOURCE_BOX = (168, 0, 280, 104)
-RANCH_GROUND_POSITION = (148, 228)
-RANCH_INTERIOR_DIRT_BOX = (177, 256, 224, 282)
-RANCH_ROAD_SOURCE_BOX = (136, 228, 139, 332)
-RANCH_ROAD_POSITION = (145, 228)
-
-MAP_SOURCES = {
-    ("farm-village", "spring"): "exec-280e8516-afd3-4039-a6d5-5e6e2fa86f0a.png",
-    ("farm-village", "summer"): "exec-b1929e25-ba9b-4790-af85-9bdde41ccad1.png",
-    ("farm-village", "autumn"): "exec-63d26879-bb2f-4dd3-8a9d-696457520d74.png",
-    ("farm-village", "winter"): "exec-1dcaa3e8-90bb-40db-bcc8-578958c55112.png",
-    ("whisper-forest", "spring"): "exec-fa0e5049-c2d6-4f30-b019-9466374a61ff.png",
-    ("whisper-forest", "summer"): "exec-3bc0e37d-86b4-42d4-88bc-a04245f8b6c5.png",
-    ("whisper-forest", "autumn"): "exec-b3564f28-b4f0-44b7-86c9-aee540e2bf3f.png",
-    ("whisper-forest", "winter"): "exec-02be49c8-6e9e-4325-ab17-14d41c3b88ad.png",
-    ("river-coast", "spring"): "exec-34658243-5060-4d60-bd61-bb62d7014b65.png",
-    ("river-coast", "summer"): "exec-316b76ad-52e8-48d7-bdb5-7b43670b83ba.png",
-    ("river-coast", "autumn"): "exec-e6864114-ede0-484c-b741-22fd13e987c8.png",
-    ("river-coast", "winter"): "exec-6f2121a1-5eef-42aa-b9ec-256c58b6220b.png",
-    ("mine-foothill", "spring"): "exec-c1787d90-ea0f-47a5-9a0c-0de74da17755.png",
-    ("mine-foothill", "summer"): "exec-e2c53e38-ce43-49c0-a408-557e937f01b6.png",
-    ("mine-foothill", "autumn"): "exec-e7010014-f41f-42f2-a935-d215cc90e22c.png",
-    ("mine-foothill", "winter"): "exec-fbad0734-920c-42dc-ac74-de590069f973.png",
+WORLD_MASTER_SIZE = (MAP_SIZE[0] * 2, MAP_SIZE[1] * 2)
+WORLD_MASTER_SOURCES = {
+    "spring": "exec-b615227a-e96f-4144-8830-a53ad169acb5.png",
+    "summer": "exec-7e31a6dd-26a8-40f5-b476-f8228b7bb9b3.png",
+    "autumn": "exec-fc3a09a6-7679-493f-bd10-042d5b82d749.png",
+    "winter": "exec-50b89655-74a8-400b-9312-be2e06520e5a.png",
+}
+WORLD_REGION_QUADRANTS = {
+    "river-coast": (0, 0, MAP_SIZE[0], MAP_SIZE[1]),
+    "mine-foothill": (MAP_SIZE[0], 0, WORLD_MASTER_SIZE[0], MAP_SIZE[1]),
+    "whisper-forest": (0, MAP_SIZE[1], MAP_SIZE[0], WORLD_MASTER_SIZE[1]),
+    "farm-village": (MAP_SIZE[0], MAP_SIZE[1], WORLD_MASTER_SIZE[0], WORLD_MASTER_SIZE[1]),
 }
 
 SHEET_SOURCES = {
@@ -76,33 +64,21 @@ def ensure_source(relative_path: Path, generated_name: str) -> Path:
     return destination
 
 
-def fit_map(source: Image.Image) -> Image.Image:
+def fit_world_master(source: Image.Image) -> Image.Image:
     source = source.convert("RGB")
-    target_ratio = MAP_SIZE[0] / MAP_SIZE[1]
+    target_ratio = WORLD_MASTER_SIZE[0] / WORLD_MASTER_SIZE[1]
     source_ratio = source.width / source.height
     if source_ratio > target_ratio:
-        crop_width = round(source.height * target_ratio)
+        crop_width = int(source.height * target_ratio)
+        crop_width -= crop_width % 2
         left = (source.width - crop_width) // 2
         source = source.crop((left, 0, left + crop_width, source.height))
     elif source_ratio < target_ratio:
-        crop_height = round(source.width / target_ratio)
+        crop_height = int(source.width / target_ratio)
+        crop_height -= crop_height % 2
         top = (source.height - crop_height) // 2
         source = source.crop((0, top, source.width, top + crop_height))
-    return source.resize(MAP_SIZE, Image.Resampling.NEAREST)
-
-
-def remove_baked_ranch_enclosure(source: Image.Image) -> Image.Image:
-    output = source.convert("RGB")
-    interior_dirt = output.crop(RANCH_INTERIOR_DIRT_BOX)
-    ground = output.crop(RANCH_GROUND_SOURCE_BOX)
-
-    # The source patch contains one decorative rock. Replace it with nearby
-    # source-map ground before assembling the clean ranch lawn.
-    ground.paste(ground.crop((16, 48, 36, 72)), (48, 48))
-    output.paste(ground, RANCH_GROUND_POSITION)
-    output.paste(output.crop(RANCH_ROAD_SOURCE_BOX), RANCH_ROAD_POSITION)
-    output.paste(interior_dirt, RANCH_INTERIOR_DIRT_BOX[:2])
-    return output
+    return source.resize(WORLD_MASTER_SIZE, Image.Resampling.NEAREST)
 
 
 def color_distance_squared(first: tuple[int, int, int], second: tuple[int, int, int]) -> int:
@@ -289,32 +265,29 @@ def save_asset(image: Image.Image, relative_path: str, source: str, cell: tuple[
 
 def process_maps(sources: list[dict]) -> list[dict]:
     maps: list[dict] = []
-    for (region, season), generated_name in MAP_SOURCES.items():
-        relative_source = Path("maps") / f"{region}-{season}-gpt.png"
+    for season, generated_name in WORLD_MASTER_SOURCES.items():
+        relative_source = Path("world-composition") / f"mossbell-world-{season}-gpt.png"
         source = ensure_source(relative_source, generated_name)
-        output = ASSET_ROOT / "maps" / f"{region}-{season}.png"
-        output.parent.mkdir(parents=True, exist_ok=True)
-        normalized = fit_map(Image.open(source))
-        if region == "farm-village":
-            normalized = remove_baked_ranch_enclosure(normalized)
-        normalized.save(output, optimize=True)
+        master = fit_world_master(Image.open(source))
         sources.append({"path": f"source/{relative_source.as_posix()}", "sha256": sha256(source)})
-        maps.append({
-            "region": region,
-            "season": season,
-            "path": f"maps/{region}-{season}.png",
-            "source": f"source/{relative_source.as_posix()}",
-            "width": MAP_SIZE[0],
-            "height": MAP_SIZE[1],
-            "source_policy": (
-                "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, "
-                "and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable "
-                "PixelLab fence sprites can render at runtime"
-                if region == "farm-village"
-                else "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes"
-            ),
-            "sha256": sha256(output),
-        })
+        for region, crop_box in WORLD_REGION_QUADRANTS.items():
+            output = ASSET_ROOT / "maps" / f"{region}-{season}.png"
+            output.parent.mkdir(parents=True, exist_ok=True)
+            master.crop(crop_box).save(output, optimize=True)
+            maps.append({
+                "region": region,
+                "season": season,
+                "path": f"maps/{region}-{season}.png",
+                "source": f"source/{relative_source.as_posix()}",
+                "crop": {"left": crop_box[0], "top": crop_box[1], "right": crop_box[2], "bottom": crop_box[3]},
+                "width": MAP_SIZE[0],
+                "height": MAP_SIZE[1],
+                "source_policy": (
+                    "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, "
+                    "then crops the canonical region quadrant so reciprocal road seams share one source geometry"
+                ),
+                "sha256": sha256(output),
+            })
     return maps
 
 
@@ -384,8 +357,8 @@ def main() -> None:
             "binary_alpha": True,
             "transparent_corners": True,
             "color_under_zero_alpha": False,
-            "map_geometry_policy": "same four regions and runtime collision coordinates",
-            "ranch_enclosure": "baked enclosure removed in all seasons; editable 32px PixelLab fence sprites render at runtime",
+            "map_geometry_policy": "canonical continuous 2x2 master split into four 32x22 runtime regions",
+            "ranch_enclosure": "no baked enclosure in any world master; editable fence sprites render at runtime",
         },
     }
     manifest_path = ASSET_ROOT / "manifest.json"

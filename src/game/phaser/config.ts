@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
-import { FarmVillageScene } from './scenes/FarmVillageScene';
+import { WorldScene } from './scenes/WorldScene';
 import type { PhaserBridge } from './bridge';
 
 export function createPhaserGame(parent: HTMLElement, bridge: PhaserBridge) {
@@ -22,7 +22,7 @@ export function createPhaserGame(parent: HTMLElement, bridge: PhaserBridge) {
       height: '100%',
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [new BootScene(bridge), new FarmVillageScene(bridge)],
+    scene: [new BootScene(bridge), new WorldScene(bridge)],
   };
 
   return new Phaser.Game(config);

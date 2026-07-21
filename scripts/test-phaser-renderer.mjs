@@ -19,8 +19,10 @@ const styles = readFileSync('src/styles.css', 'utf8');
 const config = readRequired('src/game/phaser/config.ts');
 const bridge = readRequired('src/game/phaser/bridge.ts');
 const bootScene = readRequired('src/game/phaser/scenes/BootScene.ts');
-const villageScene = readRequired('src/game/phaser/scenes/FarmVillageScene.ts');
+const villageScene = readRequired('src/game/phaser/scenes/WorldScene.ts');
+const cameraController = readRequired('src/game/phaser/cameraController.ts');
 const host = readRequired('src/components/game/PhaserGameHost.tsx');
+const { getCoverCameraZoom, updateDeadZoneCamera } = await import('../src/game/phaser/cameraController.ts');
 
 assert(typeof dependencies.phaser === 'string', 'Phaser must be the only new rendering dependency');
 for (const dependency of ['three', '@types/three', '@react-three/fiber', '@babylonjs/core', 'babylonjs', 'pixi.js', '@pixi/core']) {
@@ -56,13 +58,66 @@ assert(villageScene.includes('updateSpriteMotion'), 'FarmVillageScene must inter
 assert(villageScene.includes('Phaser.Scale.Events.RESIZE'), 'FarmVillageScene must respond when the RESIZE scale mode changes the canvas');
 assert(villageScene.includes('syncCameraViewport'), 'FarmVillageScene must synchronize its camera viewport with the resized canvas');
 assert(villageScene.includes('setViewport(0, 0, canvasWidth, canvasHeight)'), 'Phaser camera viewport must fill the complete canvas without dark gutters');
-assert(villageScene.includes('camera.setOrigin(0, 0)'), 'Phaser camera zoom must stay anchored to the map top-left instead of opening right and bottom gutters');
+assert(villageScene.includes('camera.setOrigin(0.5, 0.5)'), 'Phaser camera must use its centered projection origin so bounded cover zoom does not offset the world inside the canvas');
+assert(villageScene.includes('getCoverCameraZoom'), 'FarmVillageScene must derive cover zoom from the canvas and world dimensions');
+assert(villageScene.includes('updateDeadZoneCamera'), 'FarmVillageScene must move only when the player exits the dead zone');
+assert(villageScene.includes('camera.setBounds(0, 0, snapshot.worldWidth, snapshot.worldHeight)'), 'Camera scroll must stay inside world bounds');
+assert(!villageScene.includes('snapshot.camera.zoom'), 'React snapshots must not dictate Phaser zoom');
+assert(!villageScene.includes('snapshot.camera.left'), 'React snapshots must not dictate Phaser horizontal scroll');
+assert(!villageScene.includes('snapshot.camera.top'), 'React snapshots must not dictate Phaser vertical scroll');
 assert(villageScene.includes('phaserCameraWidth'), 'Phaser canvas must expose camera dimensions for browser regression checks');
 assert(villageScene.includes('phaserCameraScrollX'), 'Phaser canvas must expose horizontal camera scroll for letterbox diagnostics');
 assert(villageScene.includes('phaserCameraScrollY'), 'Phaser canvas must expose vertical camera scroll for letterbox diagnostics');
-assert(villageScene.includes('phaserSnapshotLeft'), 'Phaser canvas must expose the requested camera offset beside actual scroll');
 assert(villageScene.includes('phaserMapDisplayWidth'), 'Phaser canvas must expose rendered terrain dimensions for browser regression checks');
 assert(villageScene.includes('phaserWorldWidth'), 'Phaser canvas must expose requested world dimensions beside the rendered terrain size');
+assert(villageScene.includes('phaserCameraDeadZoneWidth'), 'Browser diagnostics must expose the camera dead-zone width');
+assert(villageScene.includes('phaserCameraMoved'), 'Browser diagnostics must report whether the latest player step moved the camera');
+assert(villageScene.includes('if (cameraViewChanged)'), 'Camera telemetry must emit only when zoom or scroll actually changes');
+assert(villageScene.includes('private cameraScrollX = 0'), 'FarmVillageScene must own stable camera scroll instead of reading Phaser frame corrections back into domain state');
+assert(/export function getCoverCameraZoom/.test(cameraController), 'Camera controller must expose deterministic cover zoom');
+assert(/export function updateDeadZoneCamera/.test(cameraController), 'Camera controller must expose deterministic dead-zone updates');
+assert(cameraController.includes('Math.round(value * zoom) / zoom'), 'Camera scroll must align to physical pixels');
+assert(cameraController.includes('moved: false'), 'Camera controller must preserve a perfectly stable scroll inside the dead zone');
+const cameraBase = updateDeadZoneCamera({
+  canvasWidth: 1120,
+  canvasHeight: 900,
+  worldWidth: 1024,
+  worldHeight: 704,
+  targetX: 512,
+  targetY: 352,
+  previousScrollX: 0,
+  previousScrollY: 0,
+  initialized: false,
+});
+const cameraInsideDeadZone = updateDeadZoneCamera({
+  canvasWidth: 1120,
+  canvasHeight: 900,
+  worldWidth: 1024,
+  worldHeight: 704,
+  targetX: 528,
+  targetY: 352,
+  previousScrollX: cameraBase.scrollX,
+  previousScrollY: cameraBase.scrollY,
+  initialized: true,
+});
+const cameraOutsideDeadZone = updateDeadZoneCamera({
+  canvasWidth: 1120,
+  canvasHeight: 900,
+  worldWidth: 1024,
+  worldHeight: 704,
+  targetX: 900,
+  targetY: 352,
+  previousScrollX: cameraBase.scrollX,
+  previousScrollY: cameraBase.scrollY,
+  initialized: true,
+});
+assert(Math.abs(cameraBase.zoom - getCoverCameraZoom(1120, 900, 1024, 704)) < 1e-9, 'Camera controller must use cover zoom');
+assert(!cameraInsideDeadZone.moved, 'Player movement inside the dead zone must keep the camera perfectly still');
+assert(cameraInsideDeadZone.scrollX === cameraBase.scrollX && cameraInsideDeadZone.scrollY === cameraBase.scrollY, 'Dead-zone stability must preserve exact camera coordinates');
+assert(cameraOutsideDeadZone.moved && cameraOutsideDeadZone.scrollX > cameraBase.scrollX, 'Camera must move only after the player exits the dead zone');
+assert(cameraOutsideDeadZone.scrollX <= 1024 - cameraOutsideDeadZone.visibleWidth, 'Camera must stay inside the horizontal world bound');
+assert(Math.abs(cameraOutsideDeadZone.scrollX * cameraOutsideDeadZone.zoom - Math.round(cameraOutsideDeadZone.scrollX * cameraOutsideDeadZone.zoom)) < 1e-9, 'Camera scroll must align to a physical pixel');
+assert(!bridge.includes('PhaserCameraSnapshot'), 'Camera ownership must stay inside Phaser instead of the React bridge');
 assert(villageScene.includes("this.scale.off(Phaser.Scale.Events.RESIZE"), 'FarmVillageScene must remove its scale resize listener during disposal');
 assert(!villageScene.includes('mapBackdrop'), 'The seasonal gutter backdrop must stay outside WebGL to avoid duplicate texture sampling');
 assert(!villageScene.includes('add.tileSprite'), 'The backdrop must avoid non-power-of-two WebGL texture wrapping');
@@ -77,7 +132,7 @@ assert(host.includes('.renderer.resize(width, height)'), 'React host must repair
 assert(/activeGame\.scale\.resize\(width, height\);\s*activeGame\.renderer\.resize\(width, height\);/.test(host), 'React host must refresh the GPU viewport even when Phaser already reports the target dimensions');
 assert(host.includes('phaserRendererWidth'), 'React host must expose renderer dimensions for browser regression checks');
 assert(host.includes('resizeObserver?.disconnect()'), 'React host must disconnect its resize observer during cleanup');
-assert(host.includes('data-phaser-host="farm-village"'), 'React host must expose a browser-testable marker');
+assert(host.includes('data-phaser-host="outdoor-world"'), 'React host must expose a browser-testable outdoor-world marker');
 assert(host.includes('webglcontextlost'), 'React host must leave Phaser when the WebGL context is lost');
 assert(host.includes('errorRef.current'), 'React host must report initialization and runtime failures to the game shell');
 assert(!host.includes('backgroundImage'), 'React host must not paste a duplicate seasonal map behind the canvas');
@@ -92,8 +147,12 @@ assert(component.includes('<PhaserGameHost'), 'Farm Village must mount the Phase
 assert(component.includes('data-map-renderer="single-generated-map-image"'), 'The original DOM renderer must remain available for regression comparison');
 assert(component.includes('handleGameInputIntent'), 'Keyboard and touch controls must converge on one typed input handler');
 assert(component.includes("if (intent.type === 'move') movePlayerRef.current(intent.direction)"), 'Phaser movement must reuse the existing React movement and collision path');
+assert(component.includes('const handleTouchMove = useCallback'), 'One-shot mobile movement must have an explicit lifecycle');
+assert(component.includes("handleGameInputIntent({ type: 'stop-moving' })"), 'Mobile movement must return the player to an idle frame after each step');
+assert(component.includes("onClick={() => handleTouchMove('right')}"), 'Mobile direction buttons must use the one-shot movement lifecycle');
 assert(component.includes('isBlockedByEntity(nextX, nextY'), 'The existing entity and terrain collision guard must remain authoritative');
-assert(component.includes("getSeasonalMapAsset('farm-village', seasonState.season)"), 'Farm Village Phaser snapshots must select the active seasonal map');
+assert(component.includes('getPhaserWorldRegion(currentRegion, seasonState.season)'), 'Outdoor Phaser snapshots must select the active region and seasonal map');
+assert(!component.includes('camera: {'), 'MossbellFarmGame must not calculate Phaser camera state');
 for (const storageMarker of [
   'data-farm-storage-key',
   'data-fishing-storage-key',

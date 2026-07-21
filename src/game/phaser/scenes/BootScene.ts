@@ -9,7 +9,7 @@ export class BootScene extends Phaser.Scene {
   preload() {
     const snapshot = this.bridge.getSnapshot();
     if (!snapshot) {
-      this.bridge.emitRuntimeState({ status: 'error', message: 'Farm Village render snapshot was unavailable.' });
+      this.bridge.emitRuntimeState({ status: 'error', message: 'Outdoor world render snapshot was unavailable.' });
       return;
     }
 
@@ -31,6 +31,6 @@ export class BootScene extends Phaser.Scene {
       const texture = this.textures.get(getPhaserTextureKey(asset));
       texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
     }
-    this.scene.start('FarmVillageScene');
+    this.scene.start('WorldScene');
   }
 }

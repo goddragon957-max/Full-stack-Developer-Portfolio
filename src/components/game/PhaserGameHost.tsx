@@ -2,19 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import type Phaser from 'phaser';
 import {
   PhaserBridge,
+  type PhaserCameraViewState,
   type PhaserInputIntent,
   type PhaserRuntimeState,
   type PhaserWorldSnapshot,
 } from '../../game/phaser/bridge';
+
+let activePhaserRuntimeCount = 0;
+let nextPhaserRuntimeId = 1;
 
 type PhaserGameHostProps = {
   snapshot: PhaserWorldSnapshot;
   onInputIntent: (intent: PhaserInputIntent) => void;
   onReady: (renderer: 'webgl' | 'canvas') => void;
   onError: (message: string) => void;
+  onCameraChange: (camera: PhaserCameraViewState) => void;
 };
 
-export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError }: PhaserGameHostProps) {
+export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError, onCameraChange }: PhaserGameHostProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const bridgeRef = useRef<PhaserBridge | null>(null);
@@ -22,17 +27,24 @@ export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError }: Ph
   const inputRef = useRef(onInputIntent);
   const readyRef = useRef(onReady);
   const errorRef = useRef(onError);
+  const cameraRef = useRef(onCameraChange);
   const [runtimeState, setRuntimeState] = useState<PhaserRuntimeState | null>(null);
 
   snapshotRef.current = snapshot;
   inputRef.current = onInputIntent;
   readyRef.current = onReady;
   errorRef.current = onError;
+  cameraRef.current = onCameraChange;
 
   useEffect(() => {
     const parent = hostRef.current;
     if (!parent || gameRef.current) return;
 
+    const runtimeId = nextPhaserRuntimeId;
+    nextPhaserRuntimeId += 1;
+    activePhaserRuntimeCount += 1;
+    parent.dataset.phaserInstanceId = String(runtimeId);
+    parent.dataset.phaserInstanceCount = String(activePhaserRuntimeCount);
     let cancelled = false;
     let game: Phaser.Game | null = null;
     let canvas: HTMLCanvasElement | null = null;
@@ -45,13 +57,14 @@ export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError }: Ph
       setRuntimeState(state);
       if (state.status === 'ready') {
         const activeCanvas = parent.querySelector('canvas');
-        activeCanvas?.setAttribute('data-phaser-canvas', 'farm-village');
-        activeCanvas?.setAttribute('aria-label', 'Playable Farm Village Phaser game canvas');
+        activeCanvas?.setAttribute('data-phaser-canvas', 'outdoor-world');
+        activeCanvas?.setAttribute('aria-label', 'Playable Mossbell outdoor world Phaser game canvas');
         readyRef.current(state.renderer);
       } else {
         errorRef.current(state.message);
       }
     });
+    const unsubscribeCamera = bridge.subscribeCameraState((camera) => cameraRef.current(camera));
     const onContextLost = (event: Event) => {
       event.preventDefault();
       errorRef.current('The WebGL context was lost. Switched to the DOM renderer.');
@@ -93,10 +106,13 @@ export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError }: Ph
       canvas?.removeEventListener('webglcontextlost', onContextLost);
       unsubscribeInput();
       unsubscribeRuntime();
+      unsubscribeCamera();
       bridgeRef.current = null;
       gameRef.current = null;
       if (game) game.destroy(true);
       bridge.dispose();
+      activePhaserRuntimeCount = Math.max(0, activePhaserRuntimeCount - 1);
+      parent.dataset.phaserInstanceCount = String(activePhaserRuntimeCount);
     };
   }, []);
 
@@ -108,7 +124,8 @@ export function PhaserGameHost({ snapshot, onInputIntent, onReady, onError }: Ph
     <div
       ref={hostRef}
       className="phaser-game-host"
-      data-phaser-host="farm-village"
+      data-phaser-host="outdoor-world"
+      data-phaser-region={snapshot.region}
       data-phaser-status={runtimeState?.status ?? 'booting'}
       data-phaser-runtime={runtimeState?.status === 'ready' ? runtimeState.renderer : 'pending'}
       aria-busy={runtimeState?.status !== 'ready'}

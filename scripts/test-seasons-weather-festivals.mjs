@@ -14,7 +14,11 @@ async function loadTypeScript(path, transform = (source) => source) {
   return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 }
 
-const season = await loadTypeScript('src/game/seasonSystem.ts');
+const seaRoute = await loadTypeScript('src/game/seaRoute.ts');
+const season = await loadTypeScript('src/game/seasonSystem.ts', (source) => source.replace(
+  /import \{ SEA_ROUTE_MAP_ASSET, SEA_ROUTE_REGION_ID \} from '\.\/seaRoute';/,
+  `const SEA_ROUTE_MAP_ASSET = ${JSON.stringify(seaRoute.SEA_ROUTE_MAP_ASSET)};\nconst SEA_ROUTE_REGION_ID = ${JSON.stringify(seaRoute.SEA_ROUTE_REGION_ID)};`,
+));
 const weather = await loadTypeScript('src/game/weatherSystem.ts');
 const festival = await loadTypeScript('src/game/festivalSystem.ts');
 
@@ -71,11 +75,21 @@ const rainedFarm = farm.waterAllPlantedPlots(plantedFarm, 1_000);
 assert(rainedFarm.changed && rainedFarm.state.plots[0].stage === 'watered', 'Rain must water newly planted crops');
 assert(rainedFarm.state.plots[1].wateredAt === 10, 'Rain must not reset an already growing crop timer');
 
+const terrain = await loadTypeScript('src/game/worldTerrain.ts', (raw) =>
+  raw.replace(/^import type .*;\r?\n/gm, ''),
+);
 const fishing = await loadTypeScript('src/game/fishingLoop.ts', (raw) => {
   const withoutImports = raw
     .replace(/import type \{ RegionId \} from '\.\/openWorld';/, '')
     .replace(/import type \{ DayPhase \} from '\.\/villagePulse';/, '')
-    .replace(/import \{ FISH_SPRITES \} from '\.\/animationCatalog';/, '');
+    .replace(/import type \{ Season \} from '\.\/seasonSystem';/, '')
+    .replace(/import \{ FISH_SPRITES \} from '\.\/animationCatalog';/, '')
+    .replace(
+      /import \{ getWorldWaterCells, isWorldWaterCell \} from '\.\/worldTerrain';/,
+      `const WORLD_WATER_ROWS = ${JSON.stringify(terrain.WORLD_WATER_ROWS)};
+const isWorldWaterCell = (region, x, y) => WORLD_WATER_ROWS[region]?.find((row) => row.y === y)?.ranges.some(([from, to]) => x >= from && x <= to) ?? false;
+const getWorldWaterCells = (region) => (WORLD_WATER_ROWS[region] ?? []).flatMap((row) => row.ranges.flatMap(([from, to]) => Array.from({ length: to - from + 1 }, (_, index) => ({ x: from + index, y: row.y }))));`,
+    );
   return `const FISH_SPRITES = new Proxy({}, { get: (_, key) => String(key) });\n${withoutImports}`;
 });
 const seasonalFish = ['blossom-dace', 'sunscale-bass', 'ember-carp', 'frostfin'];

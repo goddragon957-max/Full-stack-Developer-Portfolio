@@ -50,7 +50,7 @@ assert(migrated.selectedSeed === 'strawberry', 'Legacy backend selection must be
 assert(migrated.plots[0].crop === 'potato' && migrated.plots[0].stage === 'ready', 'Legacy frontend plot must preserve stage as potato');
 assert(migrated.plots[1].crop === 'strawberry', 'Legacy backend plot must become strawberry');
 assert(migrated.plots[2].crop === 'carrot', 'Legacy BIM plot must become carrot');
-assert(migrated.plots[0].x === 15 && migrated.plots[0].y === 13, 'Saved plot coordinates must not override canonical layout');
+assert(migrated.plots[0].x === 22 && migrated.plots[0].y === 11, 'Saved plot coordinates must not override canonical layout');
 assert(migrated.inventory.potato === 7 && migrated.inventory.strawberry === 5 && migrated.inventory.carrot === 3, 'Legacy crop quantities must survive migration');
 assert(migrated.qualityInventory.potato.gold === 2, 'Potato quality counts must survive migration');
 assert(migrated.qualityInventory.strawberry.gold === 3, 'Strawberry quality counts must survive migration');

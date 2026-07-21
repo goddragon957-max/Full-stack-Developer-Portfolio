@@ -27,7 +27,7 @@ assert(typeof farm.isFarmCoordinateWithinWorld === 'function', 'Freeform farms n
 const allowOpenGround = (x, y) => x === 5 && y === 4;
 const target = farm.getFarmBuildTarget({ x: 4, y: 4, facing: 'right' }, initial.plots, allowOpenGround);
 assert(target?.x === 5 && target?.y === 4, 'Facing valid open ground outside the old field must expose a build target');
-assert(farm.getFarmBuildTarget({ x: 15, y: 12, facing: 'down' }, initial.plots) === null, 'An occupied plot must not be offered as a build target');
+assert(farm.getFarmBuildTarget({ x: 22, y: 10, facing: 'down' }, initial.plots) === null, 'An occupied plot must not be offered as a build target');
 assert(
   farm.getFarmBuildTarget({ x: 4, y: 4, facing: 'right' }, initial.plots, () => false) === null,
   'A map terrain policy must be able to protect houses, objects, paths, and water',

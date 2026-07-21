@@ -1,5 +1,24 @@
-export type RegionId = 'farm-village' | 'whisper-forest' | 'river-coast' | 'mine-foothill';
-export type WorldDirection = 'up' | 'down' | 'left' | 'right';
+import { FARM_VILLAGE_BUILDING_RECTS, FARM_VILLAGE_PATH_RECTS } from './villageLayout';
+import {
+  SEA_ROUTE_COLLISION_RECTS,
+  SEA_ROUTE_MAP_ASSET,
+  SEA_ROUTE_REGION_ID,
+  isRiverCoastDockWalkable,
+  isSeaRouteBlocked,
+} from './seaRoute';
+import { isWorldWaterCell } from './worldTerrain';
+import {
+  WORLD_EXIT_BLUEPRINTS,
+  WORLD_MAP_REGION_ORDER,
+  WORLD_REGION_COORDINATES,
+  WORLD_REGION_IDS,
+  type WorldEdge,
+  type WorldRegionId,
+} from './worldComposition';
+
+export type RegionId = WorldRegionId | typeof SEA_ROUTE_REGION_ID;
+export type WorldDirection = WorldEdge;
+export { WORLD_MAP_REGION_ORDER, WORLD_REGION_COORDINATES };
 
 export type WorldPosition = {
   x: number;
@@ -12,7 +31,7 @@ export type RegionInfo = {
   shortLabel: string;
   description: string;
   mapAsset: string;
-  tone: 'farm' | 'forest' | 'coast' | 'mine';
+  tone: 'farm' | 'forest' | 'coast' | 'mine' | 'sea';
 };
 
 export type RegionExit = {
@@ -45,7 +64,8 @@ export const WORLD_WIDTH = 32;
 export const WORLD_HEIGHT = 22;
 export const REGION_TRANSITION_SWAP_MS = 360;
 
-export const REGION_IDS: RegionId[] = ['farm-village', 'whisper-forest', 'river-coast', 'mine-foothill'];
+export const LAND_REGION_IDS: WorldRegionId[] = [...WORLD_REGION_IDS];
+export const REGION_IDS: RegionId[] = [...LAND_REGION_IDS, SEA_ROUTE_REGION_ID];
 
 export const REGION_INFO: Record<RegionId, RegionInfo> = {
   'farm-village': {
@@ -76,14 +96,26 @@ export const REGION_INFO: Record<RegionId, RegionInfo> = {
     mapAsset: '/assets/art-remaster-v1/maps/mine-foothill.png',
     tone: 'mine',
   },
+  'mossbell-sea': {
+    label: 'Mossbell Sea',
+    shortLabel: 'SEA ROUTE',
+    description: '강변 선착장에서 작은 배를 타고 암초와 등대섬 사이를 누비는 항로.',
+    mapAsset: SEA_ROUTE_MAP_ASSET,
+    tone: 'sea',
+  },
 };
 
-export const WORLD_GRAPH: Record<RegionId, RegionId[]> = {
-  'farm-village': ['whisper-forest', 'mine-foothill'],
-  'whisper-forest': ['farm-village', 'river-coast'],
-  'river-coast': ['whisper-forest', 'mine-foothill'],
-  'mine-foothill': ['river-coast', 'farm-village'],
-};
+export const WORLD_GRAPH: Record<RegionId, RegionId[]> = Object.fromEntries(
+  REGION_IDS.map((region) => [
+    region,
+    region === SEA_ROUTE_REGION_ID
+      ? ['river-coast']
+      : [
+        ...WORLD_EXIT_BLUEPRINTS.filter((exit) => exit.region === region).map((exit) => exit.to),
+        ...(region === 'river-coast' ? [SEA_ROUTE_REGION_ID] : []),
+      ],
+  ]),
+) as Record<RegionId, RegionId[]>;
 
 const cells = (axis: 'x' | 'y', fixed: number, from: number, to: number) => (
   Array.from({ length: to - from + 1 }, (_, index) => axis === 'x'
@@ -91,79 +123,65 @@ const cells = (axis: 'x' | 'y', fixed: number, from: number, to: number) => (
     : { x: from + index, y: fixed })
 );
 
-export const REGION_EXITS: RegionExit[] = [
-  { id: 'village-east', from: 'farm-village', to: 'whisper-forest', edge: 'right', cells: cells('x', 31, 7, 9), arrival: { x: 2, y: 11, facing: 'right' } },
-  { id: 'forest-west', from: 'whisper-forest', to: 'farm-village', edge: 'left', cells: cells('x', 0, 9, 12), arrival: { x: 29, y: 8, facing: 'left' } },
-  { id: 'forest-north', from: 'whisper-forest', to: 'river-coast', edge: 'up', cells: cells('y', 0, 16, 18), arrival: { x: 18, y: 19, facing: 'up' } },
-  { id: 'coast-south', from: 'river-coast', to: 'whisper-forest', edge: 'down', cells: cells('y', 21, 17, 19), arrival: { x: 17, y: 2, facing: 'down' } },
-  { id: 'coast-east', from: 'river-coast', to: 'mine-foothill', edge: 'right', cells: cells('x', 31, 3, 6), arrival: { x: 2, y: 5, facing: 'right' } },
-  { id: 'mine-west', from: 'mine-foothill', to: 'river-coast', edge: 'left', cells: cells('x', 0, 4, 7), arrival: { x: 29, y: 5, facing: 'left' } },
-  { id: 'mine-south', from: 'mine-foothill', to: 'farm-village', edge: 'down', cells: cells('y', 21, 15, 17), arrival: { x: 8, y: 2, facing: 'down' } },
-  { id: 'village-north', from: 'farm-village', to: 'mine-foothill', edge: 'up', cells: cells('y', 0, 7, 9), arrival: { x: 16, y: 19, facing: 'up' } },
-];
+export const REGION_EXITS: RegionExit[] = WORLD_EXIT_BLUEPRINTS.map((exit) => ({
+  id: exit.id,
+  from: exit.region,
+  to: exit.to,
+  edge: exit.edge,
+  cells: exit.edge === 'left' || exit.edge === 'right'
+    ? cells('x', exit.edge === 'left' ? 0 : WORLD_WIDTH - 1, exit.span.from, exit.span.to)
+    : cells('y', exit.edge === 'up' ? 0 : WORLD_HEIGHT - 1, exit.span.from, exit.span.to),
+  arrival: { ...exit.arrival },
+}));
 
-export const FAST_TRAVEL_POSTS: Record<RegionId, { x: number; y: number }> = {
-  'farm-village': { x: 29, y: 13 },
-  'whisper-forest': { x: 3, y: 11 },
-  'river-coast': { x: 16, y: 18 },
-  'mine-foothill': { x: 4, y: 5 },
+export const FAST_TRAVEL_POSTS: Partial<Record<RegionId, { x: number; y: number }>> = {
+  'farm-village': { x: 16, y: 8 },
+  'whisper-forest': { x: 8, y: 8 },
+  'river-coast': { x: 15, y: 13 },
+  'mine-foothill': { x: 15, y: 14 },
 };
 
-export const FAST_TRAVEL_ARRIVALS: Record<RegionId, WorldPosition> = Object.fromEntries(
-  REGION_IDS.map((region) => [region, { x: Math.max(1, FAST_TRAVEL_POSTS[region].x - 1), y: FAST_TRAVEL_POSTS[region].y, facing: 'right' as const }]),
-) as Record<RegionId, WorldPosition>;
+export const FAST_TRAVEL_ARRIVALS: Record<WorldRegionId, WorldPosition> = Object.fromEntries(
+  LAND_REGION_IDS.map((region) => {
+    const post = FAST_TRAVEL_POSTS[region]!;
+    return [region, { x: Math.max(1, post.x - 1), y: post.y, facing: 'right' as const }];
+  }),
+) as Record<WorldRegionId, WorldPosition>;
 
 const FOREST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 16, h: 1 }, { x: 19, y: 0, w: 13, h: 1 },
-  { x: 0, y: 21, w: 32, h: 1 }, { x: 0, y: 1, w: 1, h: 8 }, { x: 0, y: 13, w: 1, h: 8 },
-  { x: 31, y: 1, w: 1, h: 20 }, { x: 20, y: 1, w: 3, h: 9 }, { x: 20, y: 12, w: 3, h: 9 },
-  { x: 4, y: 3, w: 4, h: 3 }, { x: 25, y: 4, w: 4, h: 4 }, { x: 4, y: 15, w: 5, h: 4 },
+  { x: 0, y: 0, w: 12, h: 7 }, { x: 15, y: 0, w: 17, h: 7 },
+  { x: 0, y: 21, w: 32, h: 1 }, { x: 0, y: 7, w: 1, h: 14 },
+  { x: 31, y: 0, w: 1, h: 7 }, { x: 31, y: 10, w: 1, h: 11 },
+  { x: 6, y: 10, w: 7, h: 5 }, { x: 16, y: 9, w: 8, h: 5 },
+  { x: 15, y: 14, w: 17, h: 8 }, { x: 5, y: 17, w: 10, h: 5 },
 ];
 
 const COAST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 32, h: 1 }, { x: 0, y: 21, w: 17, h: 1 }, { x: 20, y: 21, w: 12, h: 1 },
-  { x: 0, y: 1, w: 1, h: 20 }, { x: 31, y: 1, w: 1, h: 2 }, { x: 31, y: 7, w: 1, h: 14 },
-  { x: 19, y: 1, w: 4, h: 3 }, { x: 19, y: 7, w: 4, h: 3 }, { x: 19, y: 13, w: 4, h: 8 },
-  { x: 23, y: 8, w: 9, h: 13 }, { x: 5, y: 4, w: 4, h: 3 },
+  { x: 0, y: 0, w: 32, h: 1 }, { x: 0, y: 21, w: 12, h: 1 }, { x: 15, y: 21, w: 17, h: 1 },
+  { x: 0, y: 1, w: 1, h: 20 }, { x: 31, y: 1, w: 1, h: 12 }, { x: 31, y: 16, w: 1, h: 5 },
+  { x: 23, y: 0, w: 9, h: 11 },
 ];
 
 const MINE_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 32, h: 2 }, { x: 0, y: 21, w: 14, h: 1 }, { x: 18, y: 21, w: 14, h: 1 },
-  { x: 0, y: 2, w: 1, h: 2 }, { x: 0, y: 8, w: 1, h: 13 }, { x: 31, y: 2, w: 1, h: 19 },
-  { x: 11, y: 2, w: 10, h: 5 }, { x: 25, y: 2, w: 4, h: 4 }, { x: 24, y: 9, w: 5, h: 3 },
-  { x: 1, y: 7, w: 9, h: 7 },
-  { x: 1, y: 12, w: 13, h: 9 },
-  { x: 18, y: 12, w: 13, h: 9 },
-];
-
-const FARM_BLOCKED_RECTS = [
-  { x: 3, y: 2, w: 4, h: 4 },
-  { x: 12, y: 2, w: 5, h: 4 },
-  { x: 20, y: 2, w: 4, h: 4 },
-  { x: 24, y: 8, w: 4, h: 4 },
-  { x: 4, y: 17, w: 4, h: 4 },
-  { x: 27, y: 17, w: 4, h: 4 },
-  { x: 23, y: 14, w: 7, h: 6 },
-];
-
-const FARM_VILLAGE_PATH_RECTS = [
-  { x: 7, y: 0, w: 3, h: 22 },
-  { x: 0, y: 7, w: 32, h: 3 },
-  { x: 5, y: 10, w: 5, h: 8 },
-  { x: 10, y: 11, w: 10, h: 2 },
-  { x: 17, y: 10, w: 3, h: 1 },
+  { x: 0, y: 0, w: 32, h: 2 }, { x: 0, y: 21, w: 11, h: 1 }, { x: 14, y: 21, w: 18, h: 1 },
+  { x: 0, y: 2, w: 1, h: 11 }, { x: 0, y: 16, w: 1, h: 5 }, { x: 31, y: 2, w: 1, h: 19 },
+  { x: 1, y: 2, w: 13, h: 10 }, { x: 24, y: 2, w: 7, h: 8 },
+  { x: 19, y: 8, w: 12, h: 5 },
+  { x: 1, y: 16, w: 10, h: 5 }, { x: 14, y: 16, w: 17, h: 5 },
 ];
 
 const FARM_VILLAGE_SCENERY_RECTS = [
-  { x: 0, y: 0, w: 32, h: 1 },
+  { x: 0, y: 0, w: 11, h: 1 },
+  { x: 14, y: 0, w: 18, h: 1 },
   { x: 0, y: 21, w: 32, h: 1 },
-  { x: 0, y: 0, w: 1, h: 22 },
+  { x: 0, y: 0, w: 1, h: 7 },
+  { x: 0, y: 10, w: 1, h: 12 },
   { x: 31, y: 0, w: 1, h: 22 },
-  { x: 1, y: 2, w: 3, h: 5 },
-  { x: 23, y: 1, w: 3, h: 6 },
-  { x: 27, y: 1, w: 4, h: 6 },
-  { x: 1, y: 11, w: 4, h: 6 },
-  { x: 28, y: 13, w: 4, h: 6 },
+];
+
+const FARM_BLOCKED_RECTS = [
+  ...FARM_VILLAGE_SCENERY_RECTS,
+  ...FARM_VILLAGE_BUILDING_RECTS,
 ];
 
 export const REGION_COLLISION_RECTS: Record<RegionId, Array<{ x: number; y: number; w: number; h: number }>> = {
@@ -171,6 +189,7 @@ export const REGION_COLLISION_RECTS: Record<RegionId, Array<{ x: number; y: numb
   'whisper-forest': FOREST_BLOCKED_RECTS,
   'river-coast': COAST_BLOCKED_RECTS,
   'mine-foothill': MINE_BLOCKED_RECTS,
+  'mossbell-sea': [...SEA_ROUTE_COLLISION_RECTS],
 };
 
 export function createInitialOpenWorldState(): OpenWorldState {
@@ -180,10 +199,11 @@ export function createInitialOpenWorldState(): OpenWorldState {
     discovered: ['farm-village'],
     fastTravelUnlocked: ['farm-village'],
     positions: {
-      'farm-village': { x: 9, y: 7, facing: 'left' },
-      'whisper-forest': { x: 2, y: 11, facing: 'right' },
-      'river-coast': { x: 18, y: 19, facing: 'up' },
-      'mine-foothill': { x: 2, y: 5, facing: 'right' },
+      'farm-village': { x: 12, y: 3, facing: 'down' },
+      'whisper-forest': { x: 29, y: 8, facing: 'left' },
+      'river-coast': { x: 13, y: 19, facing: 'up' },
+      'mine-foothill': { x: 2, y: 14, facing: 'right' },
+      'mossbell-sea': { x: 7, y: 17, facing: 'right' },
     },
     transitionCount: 0,
   };
@@ -283,7 +303,20 @@ export function enterRegion(state: OpenWorldState, exit: RegionExit): RegionEntr
     positions: { ...state.positions, [exit.to]: getSafeRegionPosition(exit.to, exit.arrival) },
     transitionCount: state.transitionCount + 1,
   };
-  return { state: nextState, firstVisit, worldExplorer: firstVisit && discovered.length === REGION_IDS.length };
+  return { state: nextState, firstVisit, worldExplorer: firstVisit && LAND_REGION_IDS.every((region) => discovered.includes(region)) };
+}
+
+export function enterSpecialRegion(state: OpenWorldState, region: RegionId, arrival: WorldPosition): RegionEntryResult {
+  const firstVisit = !state.discovered.includes(region);
+  const discovered = firstVisit ? [...state.discovered, region] : state.discovered;
+  const nextState: OpenWorldState = {
+    ...state,
+    currentRegion: region,
+    discovered,
+    positions: { ...state.positions, [region]: getSafeRegionPosition(region, arrival) },
+    transitionCount: state.transitionCount + 1,
+  };
+  return { state: nextState, firstVisit, worldExplorer: false };
 }
 
 export function rememberRegionPosition(state: OpenWorldState, position: WorldPosition): OpenWorldState {
@@ -293,7 +326,7 @@ export function rememberRegionPosition(state: OpenWorldState, position: WorldPos
 }
 
 export function fastTravelTo(state: OpenWorldState, region: RegionId): OpenWorldState {
-  if (!state.fastTravelUnlocked.includes(region)) return state;
+  if (!state.fastTravelUnlocked.includes(region) || region === SEA_ROUTE_REGION_ID) return state;
   return {
     ...state,
     currentRegion: region,
@@ -303,7 +336,9 @@ export function fastTravelTo(state: OpenWorldState, region: RegionId): OpenWorld
 }
 
 export function isRegionBlocked(region: RegionId, x: number, y: number) {
-  return REGION_COLLISION_RECTS[region].some((rect) => (
+  if (region === SEA_ROUTE_REGION_ID) return isSeaRouteBlocked(x, y);
+  if (region === 'river-coast' && isRiverCoastDockWalkable(x, y)) return false;
+  return isWorldWaterCell(region, x, y) || REGION_COLLISION_RECTS[region].some((rect) => (
     x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
   ));
 }
@@ -341,5 +376,6 @@ export function getSafeRegionPosition(region: RegionId, position: WorldPosition,
 
 export function isNearFastTravelPost(region: RegionId, position: { x: number; y: number }, range = 1.8) {
   const post = FAST_TRAVEL_POSTS[region];
+  if (!post) return false;
   return Math.hypot(position.x - post.x, position.y - post.y) <= range;
 }

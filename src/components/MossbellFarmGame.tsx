@@ -5,10 +5,12 @@ import { MainStoryPanel } from './game/MainStoryPanel';
 import { StoryCutsceneOverlay } from './game/StoryCutsceneOverlay';
 import { PhaserGameHost } from './game/PhaserGameHost';
 import type {
+  PhaserCameraViewState,
   PhaserInputIntent,
   PhaserSpriteSnapshot,
   PhaserWorldSnapshot,
 } from '../game/phaser/bridge';
+import { getPhaserWorldRegion } from '../game/phaser/worldRegions';
 import {
   FARM_CROPS,
   FARM_CROP_INFO,
@@ -88,7 +90,6 @@ import {
   getAnimalPosition,
   getAnimalSprite,
   getAnimalStatus,
-  getLifeNpcPosition,
   getNearestAnimal,
   getNpcQuest,
   getRanchFenceOrientation,
@@ -112,13 +113,15 @@ import {
 } from '../game/villageLife';
 import {
   FAST_TRAVEL_POSTS,
+  LAND_REGION_IDS,
   OPEN_WORLD_STORAGE_KEY,
-  REGION_IDS,
   REGION_INFO,
   REGION_TRANSITION_SWAP_MS,
   WORLD_GRAPH,
+  WORLD_MAP_REGION_ORDER,
   createInitialOpenWorldState,
   enterRegion,
+  enterSpecialRegion,
   fastTravelTo,
   getSafeRegionPosition,
   getRegionExit,
@@ -132,6 +135,14 @@ import {
   type RegionExit,
   type RegionId,
 } from '../game/openWorld';
+import {
+  RIVER_COAST_DOCK_TRIGGER,
+  SEA_ROUTE_BOAT_ASSETS,
+  SEA_ROUTE_ENTRY,
+  SEA_ROUTE_REGION_ID,
+  SEA_ROUTE_RETURN,
+  SEA_ROUTE_RETURN_TRIGGER,
+} from '../game/seaRoute';
 import {
   INTERIOR_IDS,
   INTERIOR_INFO,
@@ -193,6 +204,18 @@ import {
   type PlayerAction,
   type SpriteDirection,
 } from '../game/animationCatalog';
+import {
+  NPC_IDLE_FRAME,
+  NPC_PATROL_CYCLE_TICKS,
+  NPC_PATROL_TICK_MS,
+  createNearbyPatrol,
+  getNpcPatrolPose,
+} from '../game/npcMotion';
+import {
+  VILLAGE_BUILDING_LAYOUT,
+  VILLAGE_NPC_PATROLS,
+  VILLAGE_PROP_LAYOUT,
+} from '../game/villageLayout';
 import {
   AUDIO_TRACKS,
   RegionAudioController,
@@ -324,6 +347,8 @@ type EntityId =
   | 'festivalDisplay'
   | 'oldBell'
   | 'waterMarker'
+  | 'coastBoatDock'
+  | 'seaReturnBuoy'
   | 'villageKeeper'
   | 'farmerHana'
   | 'rancherJun'
@@ -399,6 +424,9 @@ type Entity = {
   journalTitle: string;
   dialogue: string[];
   tags: string[];
+  npcMotion?: 'idle' | 'walking';
+  npcFrame?: number;
+  npcFacing?: Direction;
 };
 
 type RanchFenceTarget = {
@@ -416,20 +444,19 @@ const INTRO_TITLE = 'MOSSBELL FARM';
 const MOVE_INTERVAL_MS = 92;
 const MOBILE_CAMERA_BREAKPOINT = 620;
 const TABLET_CAMERA_BREAKPOINT = 980;
-const MOBILE_DIALOGUE_BAR_HEIGHT = 160;
-const DESKTOP_DIALOGUE_BAR_HEIGHT = 144;
-const SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT = 140;
+const DESKTOP_COLLAPSED_DIALOGUE_HEIGHT = 54;
+const MOBILE_COLLAPSED_DIALOGUE_HEIGHT = 52;
+const OPEN_DIALOGUE_HEIGHT = 128;
+const SHORT_OPEN_DIALOGUE_HEIGHT = 120;
 const DESKTOP_WORLD_ZOOM = 0.74;
 const TABLET_WORLD_ZOOM = 0.78;
 const MOBILE_WORLD_ZOOM = 0.78;
 const DESKTOP_MAX_WORLD_SCALE = 1.45;
 const TABLET_MAX_WORLD_SCALE = 1.24;
 const MOBILE_MAX_WORLD_SCALE = 1.08;
-const DESKTOP_INVENTORY_RAIL_MIN = 280;
+const DESKTOP_INVENTORY_RAIL_MIN = 320;
 const DESKTOP_INVENTORY_CONTENT_WIDTH = 368;
-const DESKTOP_EXPANDED_INVENTORY_RAIL_MIN = DESKTOP_INVENTORY_CONTENT_WIDTH + 220;
-const MOBILE_INVENTORY_RAIL_WIDTH = 104;
-const NARROW_INVENTORY_RAIL_WIDTH = 92;
+const MOBILE_INVENTORY_DRAWER_MAX = 340;
 
 const keyMap: Record<string, Direction | undefined> = {
   ArrowUp: 'up',
@@ -471,29 +498,34 @@ type AmbientSprite = {
 
 const REGION_AMBIENT_SPRITES: Record<RegionId, AmbientSprite[]> = {
   'farm-village': [
-    { id: 'farm-smoke', kind: 'smoke', x: 5.1, y: 1.5 },
-    { id: 'shop-smoke', kind: 'smoke', x: 15.2, y: 1.5 },
-    { id: 'pond-glint-a', kind: 'water', x: 25, y: 15 },
-    { id: 'pond-glint-b', kind: 'water', x: 27, y: 17 },
-    { id: 'farm-window', kind: 'window', x: 4.5, y: 3.2 },
-    { id: 'shop-window', kind: 'window', x: 14.4, y: 3.3 },
+    { id: 'farm-smoke', kind: 'smoke', x: 4.1, y: 1.5 },
+    { id: 'shop-smoke', kind: 'smoke', x: 8.2, y: 1.5 },
+    { id: 'pond-glint-a', kind: 'water', x: 14, y: 15 },
+    { id: 'pond-glint-b', kind: 'water', x: 16, y: 16.5 },
+    { id: 'farm-window', kind: 'window', x: 3.5, y: 3.2 },
+    { id: 'shop-window', kind: 'window', x: 8.4, y: 3.3 },
   ],
   'whisper-forest': [
-    { id: 'forest-water-a', kind: 'water', x: 20.5, y: 4 },
-    { id: 'forest-water-b', kind: 'water', x: 20.5, y: 16 },
-    { id: 'forest-flora-a', kind: 'flora', x: 9, y: 5 },
-    { id: 'forest-flora-b', kind: 'flora', x: 26, y: 14 },
+    { id: 'forest-water-a', kind: 'water', x: 17.5, y: 4 },
+    { id: 'forest-water-b', kind: 'water', x: 3.5, y: 18 },
+    { id: 'forest-flora-a', kind: 'flora', x: 8, y: 8 },
+    { id: 'forest-flora-b', kind: 'flora', x: 18, y: 10 },
   ],
   'river-coast': [
-    { id: 'river-water-a', kind: 'water', x: 20, y: 3 },
-    { id: 'river-water-b', kind: 'water', x: 20, y: 15 },
-    { id: 'coast-water-a', kind: 'water', x: 26, y: 11 },
-    { id: 'coast-water-b', kind: 'water', x: 29, y: 17 },
+    { id: 'river-water-a', kind: 'water', x: 18, y: 4 },
+    { id: 'river-water-b', kind: 'water', x: 8, y: 18 },
+    { id: 'coast-water-a', kind: 'water', x: 4, y: 5 },
+    { id: 'coast-water-b', kind: 'water', x: 7, y: 10 },
   ],
   'mine-foothill': [
     { id: 'mine-crystal-a', kind: 'crystal', x: 26.1, y: 4.8 },
     { id: 'mine-crystal-b', kind: 'crystal', x: 27.2, y: 7.2 },
     { id: 'mine-smoke', kind: 'smoke', x: 13.4, y: 3.2 },
+  ],
+  'mossbell-sea': [
+    { id: 'sea-current-a', kind: 'water', x: 15, y: 7 },
+    { id: 'sea-current-b', kind: 'water', x: 26, y: 15 },
+    { id: 'sea-current-c', kind: 'water', x: 9, y: 11 },
   ],
 };
 
@@ -687,7 +719,7 @@ const openWorldNpcRemasterIds = {
   'mine-keeper': 'doyun',
 } as const;
 
-const travelPostEntityIds: Record<RegionId, EntityId> = {
+const travelPostEntityIds: Partial<Record<RegionId, EntityId>> = {
   'farm-village': 'farmTravelPost',
   'whisper-forest': 'forestTravelPost',
   'river-coast': 'coastTravelPost',
@@ -737,10 +769,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Mossbell Farmhouse',
     kind: 'building',
-    x: 3,
-    y: 2,
-    w: 4,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.farmhouse,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/farmhouse.png',
     label: 'ENTER HOUSE',
@@ -754,10 +783,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Mossbell Seed Shop',
     kind: 'building',
-    x: 12,
-    y: 2,
-    w: 5,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.workshop,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/shop.png',
     label: 'SEED SHOP',
@@ -771,10 +797,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Village Market',
     kind: 'building',
-    x: 24,
-    y: 8,
-    w: 4,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.market,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/market-stall.png',
     label: 'MARKET',
@@ -788,10 +811,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Mossbell Barn',
     kind: 'building',
-    x: 4,
-    y: 17,
-    w: 4,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.barn,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/barn.png',
     label: 'ENTER BARN',
@@ -805,10 +825,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: "Hana's Cottage",
     kind: 'building',
-    x: 20,
-    y: 2,
-    w: 4,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.hanaCottage,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/hana-cottage.png',
     label: "HANA'S HOME",
@@ -822,14 +839,11 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: "Jun's Cottage",
     kind: 'building',
-    x: 27,
-    y: 17,
-    w: 4,
-    h: 4,
+    ...VILLAGE_BUILDING_LAYOUT.junCottage,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/buildings/jun-cottage.png',
     label: "JUN'S HOME",
-    prompt: '목장 옆에 자리한 붉은 지붕 오두막이다.',
+    prompt: '작은 목장과 헛간을 함께 지키는 붉은 지붕 오두막이다.',
     journalTitle: '준의 오두막',
     dialogue: ['문 옆 우유통이 햇빛을 받아 반짝인다.'],
     tags: ['Jun', 'Ranch', 'Cottage'],
@@ -839,10 +853,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Community Board',
     kind: 'prop',
-    x: 21,
-    y: 18,
-    w: 2,
-    h: 2,
+    ...VILLAGE_PROP_LAYOUT.board,
     range: 3,
     sprite: '/assets/art-remaster-v1/props/quest-board.png',
     label: 'QUEST BOARD',
@@ -856,10 +867,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Mailbox',
     kind: 'prop',
-    x: 8,
-    y: 7,
-    w: 1,
-    h: 1,
+    ...VILLAGE_PROP_LAYOUT.mailbox,
     range: 2,
     sprite: '/assets/art-remaster-v1/props/mailbox.png',
     label: 'MAIL',
@@ -873,10 +881,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'The Four Seasons Bell',
     kind: 'prop',
-    x: 19,
-    y: 11,
-    w: 2,
-    h: 2,
+    ...VILLAGE_PROP_LAYOUT.oldBell,
     range: 2.4,
     sprite: STORY_ASSETS.oldBell,
     label: 'OLD BELL',
@@ -890,10 +895,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Mossbell Shipping Box',
     kind: 'prop',
-    x: 8,
-    y: 4,
-    w: 2,
-    h: 2,
+    ...VILLAGE_PROP_LAYOUT.shippingBox,
     range: 2.4,
     sprite: '/assets/art-remaster-v1/props/shipping-box.png',
     label: 'SHIP',
@@ -907,8 +909,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Lumi · Village Keeper',
     kind: 'npc',
-    x: 19,
-    y: 8,
+    ...VILLAGE_NPC_PATROLS.villageKeeper.day.start,
     w: 1,
     h: 2,
     range: 2.3,
@@ -924,10 +925,7 @@ const outsideEntities: Entity[] = [
     scene: 'outside',
     name: 'Community Field',
     kind: 'crop',
-    x: 15,
-    y: 13,
-    w: 4,
-    h: 3,
+    ...VILLAGE_PROP_LAYOUT.cropPatch,
     range: 2,
     label: 'FARM',
     prompt: '괭이를 들고 빈 땅을 바라본 뒤 E를 누르면 새 밭을 만들 수 있습니다.',
@@ -989,7 +987,7 @@ function getInteriorActorEntities(interiorId: InteriorId, phase: 'dawn' | 'day' 
     range: actor.range,
     sprite: actor.spriteKind === 'chicken' || actor.spriteKind === 'cow'
       ? getAnimalRemasterSprite(actor.spriteKind, 'sleeping', frame)
-      : getNpcSprite(actor.spriteKind, actor.facing, frame),
+      : getNpcSprite(actor.spriteKind, actor.facing, NPC_IDLE_FRAME),
     label: actor.label,
     prompt: actor.prompt,
     journalTitle: `${INTERIOR_INFO[interiorId].label}: ${actor.name}`,
@@ -1051,14 +1049,13 @@ function getQuestObjective(stage: QuestStage, harvestCount: number) {
   return objectives[stage];
 }
 
-function getDialogueBarHeight(viewport: ViewportSize) {
-  if (viewport.width <= MOBILE_CAMERA_BREAKPOINT) return MOBILE_DIALOGUE_BAR_HEIGHT;
-  if (viewport.height <= 620) return SHORT_DESKTOP_DIALOGUE_BAR_HEIGHT;
-  return DESKTOP_DIALOGUE_BAR_HEIGHT;
-}
-
-function isFixedOverviewCamera(viewport: ViewportSize) {
-  return viewport.width > TABLET_CAMERA_BREAKPOINT;
+function getDialogueBarHeight(viewport: ViewportSize, dialogueOpen: boolean) {
+  if (!dialogueOpen) {
+    return viewport.width <= MOBILE_CAMERA_BREAKPOINT
+      ? MOBILE_COLLAPSED_DIALOGUE_HEIGHT
+      : DESKTOP_COLLAPSED_DIALOGUE_HEIGHT;
+  }
+  return viewport.height <= 620 ? SHORT_OPEN_DIALOGUE_HEIGHT : OPEN_DIALOGUE_HEIGHT;
 }
 
 function getSceneWorldWidth(scene: SceneId) {
@@ -1079,8 +1076,10 @@ function isBlockedByEntity(
   fencePieces: RanchFencePiece[],
 ) {
   if (scene === 'interior') return interiorId ? isInteriorBlocked(interiorId, x, y) : true;
-  if (scene === 'outside' && region === 'farm-village' && (isFishingWaterCell(x, y, region) || isSolidRanchFenceCell(fencePieces, x, y))) return true;
-  if (scene === 'outside' && region !== 'farm-village' && (isFishingWaterCell(x, y, region) || isRegionBlocked(region, x, y))) return true;
+  if (scene === 'outside' && (
+    isRegionBlocked(region, x, y)
+    || (region === 'farm-village' && isSolidRanchFenceCell(fencePieces, x, y))
+  )) return true;
   return dynamicEntities.some((entity) => {
     if (entity.kind === 'crop' || entity.kind === 'door') return false;
     return x >= entity.x && x < entity.x + entity.w && y >= entity.y && y < entity.y + entity.h;
@@ -1114,47 +1113,26 @@ function getWorldScale(viewport: ViewportSize, availableWidth: number, available
 }
 
 function getInventoryRailWidth(viewportWidth: number) {
-  if (viewportWidth <= 380) return NARROW_INVENTORY_RAIL_WIDTH;
-  if (viewportWidth <= MOBILE_CAMERA_BREAKPOINT) return MOBILE_INVENTORY_RAIL_WIDTH;
-  return clamp(viewportWidth * .27, DESKTOP_INVENTORY_RAIL_MIN, DESKTOP_INVENTORY_CONTENT_WIDTH);
+  if (viewportWidth <= MOBILE_CAMERA_BREAKPOINT) return 0;
+  return clamp(viewportWidth * .2, DESKTOP_INVENTORY_RAIL_MIN, DESKTOP_INVENTORY_CONTENT_WIDTH);
 }
 
-function getGameChromeLayout(viewport: ViewportSize, scene: SceneId) {
-  const baseRailWidth = getInventoryRailWidth(viewport.width);
-  const baseDialogueHeight = getDialogueBarHeight(viewport);
-  if (!isFixedOverviewCamera(viewport)) {
-    return {
-      inventoryRailWidth: baseRailWidth,
-      inventoryContentWidth: baseRailWidth,
-      dialogueBarHeight: baseDialogueHeight,
-    };
-  }
-
-  const worldPixelWidth = getSceneWorldWidth(scene) * TILE;
-  const worldPixelHeight = getSceneWorldHeight(scene) * TILE;
-  const availableWidth = Math.max(220, viewport.width - baseRailWidth);
-  const availableHeight = Math.max(260, viewport.height - baseDialogueHeight);
-  const scale = Math.max(0.01, Math.min(
-    DESKTOP_MAX_WORLD_SCALE,
-    availableWidth / worldPixelWidth,
-    availableHeight / worldPixelHeight,
-  ));
-  const scaledWorldWidth = worldPixelWidth * scale;
-  const scaledWorldHeight = worldPixelHeight * scale;
-
+function getGameChromeLayout(viewport: ViewportSize, dialogueOpen: boolean) {
+  const inventoryRailWidth = getInventoryRailWidth(viewport.width);
   return {
-    inventoryRailWidth: Math.max(baseRailWidth, viewport.width - scaledWorldWidth),
-    inventoryContentWidth: baseRailWidth,
-    dialogueBarHeight: Math.max(baseDialogueHeight, viewport.height - scaledWorldHeight),
+    inventoryRailWidth,
+    inventoryContentWidth: inventoryRailWidth > 0
+      ? inventoryRailWidth
+      : Math.min(MOBILE_INVENTORY_DRAWER_MAX, viewport.width * .88),
+    dialogueBarHeight: getDialogueBarHeight(viewport, dialogueOpen),
   };
 }
 
-function getWorldCameraStyle(
+function getDomWorldCameraStyle(
   player: Player,
   viewport: ViewportSize,
   scene: SceneId,
   inventoryRailWidth: number,
-  dialogueHeight: number,
 ): CSSProperties {
   const worldPixelW = getSceneWorldWidth(scene) * TILE;
   const worldPixelH = getSceneWorldHeight(scene) * TILE;
@@ -1164,11 +1142,8 @@ function getWorldCameraStyle(
   } as CSSProperties & Record<string, string | number>;
 
   const availableWidth = Math.max(220, viewport.width - inventoryRailWidth);
-  const availableHeight = Math.max(260, viewport.height - dialogueHeight);
-  const fixedOverview = isFixedOverviewCamera(viewport);
-  const scale = fixedOverview
-    ? Math.min(DESKTOP_MAX_WORLD_SCALE, availableWidth / worldPixelW, availableHeight / worldPixelH)
-    : getWorldScale(viewport, availableWidth, availableHeight, worldPixelW, worldPixelH);
+  const availableHeight = Math.max(260, viewport.height);
+  const scale = getWorldScale(viewport, availableWidth, availableHeight, worldPixelW, worldPixelH);
   const scaledWorldW = worldPixelW * scale;
   const scaledWorldH = worldPixelH * scale;
   const playerCenterX = (player.x + 0.5) * TILE * scale;
@@ -1176,16 +1151,12 @@ function getWorldCameraStyle(
 
   const desiredLeft = availableWidth / 2 - playerCenterX;
   const desiredTop = availableHeight / 2 - playerCenterY;
-  const left = fixedOverview
+  const left = scaledWorldW <= availableWidth
     ? (availableWidth - scaledWorldW) / 2
-    : scaledWorldW <= availableWidth
-      ? (availableWidth - scaledWorldW) / 2
-      : clamp(desiredLeft, availableWidth - scaledWorldW, 0);
-  const top = fixedOverview
+    : clamp(desiredLeft, availableWidth - scaledWorldW, 0);
+  const top = scaledWorldH <= availableHeight
     ? (availableHeight - scaledWorldH) / 2
-    : scaledWorldH <= availableHeight
-      ? (availableHeight - scaledWorldH) / 2
-      : clamp(desiredTop, viewport.height - dialogueHeight - scaledWorldH, 0);
+    : clamp(desiredTop, availableHeight - scaledWorldH, 0);
 
   style['--world-scale'] = String(scale);
   style['--camera-left'] = `${left.toFixed(2)}px`;
@@ -1199,12 +1170,6 @@ function parseGameRenderer(): GameRenderer {
   if (typeof window === 'undefined') return 'phaser';
   const searchParams = new URLSearchParams(window.location.search);
   return searchParams.get('renderer') === 'dom' ? 'dom' : 'phaser';
-}
-
-function getCameraStyleNumber(style: CSSProperties, property: '--world-scale' | '--camera-left' | '--camera-top', fallback = 0) {
-  const rawValue = (style as CSSProperties & Record<string, string | number>)[property];
-  const parsed = Number.parseFloat(String(rawValue ?? fallback));
-  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 export function MossbellFarmGame() {
@@ -1270,6 +1235,7 @@ export function MossbellFarmGame() {
   const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [earningsFeedback, setEarningsFeedback] = useState<EarningsFeedback | null>(null);
   const [lifeFrame, setLifeFrame] = useState(0);
+  const [npcMotionTick, setNpcMotionTick] = useState(0);
   const [lifeFeedback, setLifeFeedback] = useState<LifeFeedback | null>(null);
   const [fishingState, setFishingState] = useState<FishingState>(() => loadFishingState());
   const [fishingRodSelected, setFishingRodSelected] = useState(false);
@@ -1285,7 +1251,6 @@ export function MossbellFarmGame() {
   const [fastTravelReady, setFastTravelReady] = useState(false);
   const [timeMode, setTimeMode] = useState<TimeMode>(() => loadTimeMode());
   const [villageElapsedMs, setVillageElapsedMs] = useState(0);
-  const [villageKeeperFrame, setVillageKeeperFrame] = useState(0);
   const [celebration, setCelebration] = useState<CelebrationState | null>(null);
   const [harvestFeedback, setHarvestFeedback] = useState<HarvestFeedback | null>(null);
   const [audioSettings, setAudioSettings] = useState<AudioSettings>(() => loadAudioSettings());
@@ -1296,6 +1261,8 @@ export function MossbellFarmGame() {
   const [phaserReady, setPhaserReady] = useState(false);
   const [phaserRenderer, setPhaserRenderer] = useState<'webgl' | 'canvas' | 'none'>('none');
   const [phaserFallback, setPhaserFallback] = useState<string | null>(null);
+  const [phaserCameraView, setPhaserCameraView] = useState<PhaserCameraViewState | null>(null);
+  const [mobileInventoryOpen, setMobileInventoryOpen] = useState(false);
 
   const pressedDirectionsRef = useRef<Direction[]>([]);
   const moveFrameRef = useRef<number | null>(null);
@@ -1306,6 +1273,7 @@ export function MossbellFarmGame() {
   const movePlayerRef = useRef<(direction: Direction) => void>(() => undefined);
   const interactRef = useRef<() => void>(() => undefined);
   const stopWalkingRef = useRef<() => void>(() => undefined);
+  const touchStopTimerRef = useRef<number | null>(null);
   const villageClockStartedAtRef = useRef(Date.now());
   const celebrationTimerRef = useRef<number | null>(null);
   const harvestFeedbackTimerRef = useRef<number | null>(null);
@@ -1350,12 +1318,12 @@ export function MossbellFarmGame() {
 
   const villageTime = getVillageTime(timeMode, villageElapsedMs);
   const currentRegion = openWorldState.currentRegion;
-  const phaserFarmVillageRequested = requestedRenderer === 'phaser'
+  const discoveredLandCount = LAND_REGION_IDS.filter((region) => openWorldState.discovered.includes(region)).length;
+  const phaserOutdoorRequested = requestedRenderer === 'phaser'
     && gameStarted
-    && scene === 'outside'
-    && currentRegion === 'farm-village';
-  const usePhaserFarmVillage = phaserFarmVillageRequested && !phaserFallback;
-  const effectiveRenderer: GameRenderer = usePhaserFarmVillage ? 'phaser' : 'dom';
+    && scene === 'outside';
+  const usePhaserOutdoor = phaserOutdoorRequested && !phaserFallback;
+  const effectiveRenderer: GameRenderer = usePhaserOutdoor ? 'phaser' : 'dom';
   const currentInteriorInfo = activeInterior ? INTERIOR_INFO[activeInterior] : null;
   const activeFestival = getActiveFestival(seasonState);
   const todayDemandItems = getDailyDemandItems(seasonState);
@@ -1365,20 +1333,17 @@ export function MossbellFarmGame() {
   const storyCalendarMarkers = getStoryCalendarMarkers();
   const seasonWeatherLine = `${SEASON_INFO[seasonState.season].label} ${seasonState.day} · ${WEATHER_INFO[weatherState.weather].label}`;
   desiredAudioTrackRef.current = activeFestival && currentRegion === 'farm-village' ? 'night' : getAudioTrack(currentRegion, villageTime.isNight);
+  const villageKeeperPose = useMemo(() => activeFestival && currentRegion === 'farm-village'
+    ? { ...FESTIVAL_NPC_POSITIONS[0], facing: 'down' as const, frame: NPC_IDLE_FRAME, moving: false }
+    : getNpcPatrolPose(VILLAGE_NPC_PATROLS.villageKeeper[villageTime.phase], npcMotionTick),
+  [activeFestival, currentRegion, npcMotionTick, villageTime.phase]);
   const lifeNpcEntities = useMemo<Entity[]>(() => LIFE_NPC_IDS.map((id) => {
     const info = LIFE_NPC_INFO[id];
-    const scheduled = getLifeNpcPosition(id, villageTime.phase);
     const festivalIndex = id === 'farmer-hana' ? 1 : 2;
     const festivalPosition = FESTIVAL_NPC_POSITIONS[festivalIndex];
-    const weatherNudge = weatherState.weather === 'rain'
-      ? (id === 'farmer-hana' ? -0.28 : 0.28)
-      : weatherState.weather === 'windy'
-        ? (id === 'farmer-hana' ? 0.18 : -0.18)
-        : 0;
-    const seasonNudge = seasonState.season === 'summer' ? 0.12 : seasonState.season === 'winter' ? -0.12 : 0;
     const position = activeFestival && currentRegion === 'farm-village'
-      ? { ...festivalPosition, facing: 'down' as const }
-      : { ...scheduled, x: scheduled.x + weatherNudge, y: scheduled.y + seasonNudge };
+      ? { ...festivalPosition, facing: 'down' as const, frame: NPC_IDLE_FRAME, moving: false }
+      : getNpcPatrolPose(VILLAGE_NPC_PATROLS[id][villageTime.phase], npcMotionTick);
     return {
       id: lifeNpcEntityIds[id],
       scene: 'outside',
@@ -1389,19 +1354,28 @@ export function MossbellFarmGame() {
       w: 1,
       h: 2,
       range: 1.8,
-      sprite: getNpcSprite(lifeNpcRemasterIds[id], position.facing, lifeFrame),
+      sprite: getNpcSprite(lifeNpcRemasterIds[id], position.facing, position.frame),
       label: info.role,
       prompt: `${info.name}에게 오늘의 생활 이야기를 듣는다.`,
       journalTitle: info.journalTitle,
       dialogue: [],
-      tags: ['Village Life', info.role, villageTime.phase],
+      tags: ['Village Life', info.role, villageTime.phase, position.moving ? 'Walking' : 'Idle'],
+      npcMotion: position.moving ? 'walking' : 'idle',
+      npcFrame: position.frame,
+      npcFacing: position.facing,
     };
-  }), [activeFestival, currentRegion, lifeFrame, seasonState.season, villageTime.phase, weatherState.weather]);
+  }), [activeFestival, currentRegion, npcMotionTick, villageTime.phase]);
   const openWorldNpcEntities = useMemo<Entity[]>(() => (Object.keys(OPEN_WORLD_NPC_INFO) as OpenWorldNpcId[])
     .filter((id) => OPEN_WORLD_NPC_INFO[id].region === currentRegion)
     .map((id) => {
       const info = OPEN_WORLD_NPC_INFO[id];
-      const position = getOpenWorldNpcPosition(id, villageTime.phase);
+      const scheduled = getOpenWorldNpcPosition(id, villageTime.phase);
+      const position = getNpcPatrolPose(createNearbyPatrol(
+        scheduled,
+        NPC_PHASE_FACING[villageTime.phase],
+        id === 'mine-keeper' ? 8 : 0,
+        id === 'mine-keeper' ? 'vertical' : 'horizontal',
+      ), npcMotionTick);
       return {
         id: openWorldNpcEntityIds[id],
         scene: 'outside',
@@ -1412,18 +1386,23 @@ export function MossbellFarmGame() {
         w: 1,
         h: 2,
         range: 1.8,
-        sprite: getNpcSprite(openWorldNpcRemasterIds[id], NPC_PHASE_FACING[villageTime.phase], lifeFrame),
+        sprite: getNpcSprite(openWorldNpcRemasterIds[id], position.facing, position.frame),
         label: info.name,
         prompt: `${info.name}에게 지역 이야기를 듣는다.`,
         journalTitle: `${info.role} ${info.name}`,
         dialogue: [],
-        tags: ['Open World NPC', info.role, villageTime.phase],
+        tags: ['Open World NPC', info.role, villageTime.phase, position.moving ? 'Walking' : 'Idle'],
+        npcMotion: position.moving ? 'walking' : 'idle',
+        npcFrame: position.frame,
+        npcFacing: position.facing,
       };
-    }), [currentRegion, lifeFrame, villageTime.phase]);
-  const travelPostEntity = useMemo<Entity>(() => {
+    }), [currentRegion, npcMotionTick, villageTime.phase]);
+  const travelPostEntity = useMemo<Entity | null>(() => {
     const position = FAST_TRAVEL_POSTS[currentRegion];
+    const entityId = travelPostEntityIds[currentRegion];
+    if (!position || !entityId) return null;
     return {
-      id: travelPostEntityIds[currentRegion],
+      id: entityId,
       scene: 'outside',
       name: `${REGION_INFO[currentRegion].label} Signpost`,
       kind: 'prop',
@@ -1439,6 +1418,38 @@ export function MossbellFarmGame() {
       dialogue: [],
       tags: ['Fast travel', currentRegion],
     };
+  }, [currentRegion]);
+  const seaRouteEntity = useMemo<Entity | null>(() => {
+    if (currentRegion === 'river-coast') {
+      return {
+        id: 'coastBoatDock',
+        scene: 'outside',
+        name: 'Mossbell Ferry',
+        kind: 'prop',
+        ...RIVER_COAST_DOCK_TRIGGER,
+        sprite: SEA_ROUTE_BOAT_ASSETS.up,
+        label: 'BOARD',
+        prompt: '작은 배를 타고 모스벨 앞바다로 나간다.',
+        journalTitle: 'River Coast의 작은 선착장',
+        dialogue: [],
+        tags: ['Sea Route', 'Boat', 'River Coast'],
+      };
+    }
+    if (currentRegion === SEA_ROUTE_REGION_ID) {
+      return {
+        id: 'seaReturnBuoy',
+        scene: 'outside',
+        name: 'Harbor Return Buoy',
+        kind: 'prop',
+        ...SEA_ROUTE_RETURN_TRIGGER,
+        label: 'DOCK',
+        prompt: '붉은 부표를 따라 River Coast 선착장으로 돌아간다.',
+        journalTitle: 'Mossbell Sea 귀환 부표',
+        dialogue: [],
+        tags: ['Sea Route', 'Return', 'Harbor'],
+      };
+    }
+    return null;
   }, [currentRegion]);
   const festivalEntity = useMemo<Entity | null>(() => activeFestival && currentRegion === 'farm-village' ? {
     id: 'festivalDisplay',
@@ -1488,17 +1499,27 @@ export function MossbellFarmGame() {
     () => {
       if (scene === 'interior') return currentInteriorEntities;
       if (currentRegion === 'farm-village') {
-        const villageEntities = [...outsideEntities, ...lifeNpcEntities, travelPostEntity]
-          .map((entity) => activeFestival && entity.id === 'villageKeeper'
-            ? { ...entity, ...FESTIVAL_NPC_POSITIONS[0] }
+        const villageEntities = [...outsideEntities, ...lifeNpcEntities, ...(travelPostEntity ? [travelPostEntity] : [])]
+          .map((entity) => entity.id === 'villageKeeper'
+            ? {
+              ...entity,
+              x: villageKeeperPose.x,
+              y: villageKeeperPose.y,
+              npcMotion: villageKeeperPose.moving ? 'walking' as const : 'idle' as const,
+              npcFrame: villageKeeperPose.frame,
+              npcFacing: villageKeeperPose.facing,
+            }
             : entity);
         return festivalEntity ? [...villageEntities, festivalEntity] : villageEntities;
       }
-      return waterMarkerEntity
-        ? [...openWorldNpcEntities, travelPostEntity, waterMarkerEntity]
-        : [...openWorldNpcEntities, travelPostEntity];
+      return [
+        ...openWorldNpcEntities,
+        ...(travelPostEntity ? [travelPostEntity] : []),
+        ...(waterMarkerEntity ? [waterMarkerEntity] : []),
+        ...(seaRouteEntity ? [seaRouteEntity] : []),
+      ];
     },
-    [activeFestival, currentInteriorEntities, currentRegion, festivalEntity, lifeNpcEntities, openWorldNpcEntities, scene, travelPostEntity, waterMarkerEntity],
+    [currentInteriorEntities, currentRegion, festivalEntity, lifeNpcEntities, openWorldNpcEntities, scene, seaRouteEntity, travelPostEntity, villageKeeperPose, waterMarkerEntity],
   );
   const canTillFarmCell = useCallback((x: number, y: number) => {
     if (scene !== 'outside' || currentRegion !== 'farm-village') return false;
@@ -1520,7 +1541,7 @@ export function MossbellFarmGame() {
     if (scene !== 'outside' || currentRegion !== 'farm-village') return false;
     if (x <= 0 || x >= OUTSIDE_WORLD_W - 1 || y <= 0 || y >= OUTSIDE_WORLD_H - 1) return false;
     if (x === player.x && y === player.y) return false;
-    if (isFishingWaterCell(x, y, currentRegion)) return false;
+    if (isFishingWaterCell(x, y, currentRegion) || isRegionBlocked(currentRegion, x, y)) return false;
     if (currentEntities.some((entity) => (
       x >= entity.x && x < entity.x + entity.w && y >= entity.y && y < entity.y + entity.h
     ))) return false;
@@ -1585,7 +1606,10 @@ export function MossbellFarmGame() {
   const playerFrames = PLAYER_WALK_SPRITES[player.facing];
   const playerFrameIndex = player.walking ? player.step % playerFrames.length : 0;
   const playerSprite = playerAction ? PLAYER_ACTION_SPRITES[playerAction.kind][playerAction.frame] : playerFrames[playerFrameIndex];
+  const isSailing = scene === 'outside' && currentRegion === SEA_ROUTE_REGION_ID;
+  const worldPlayerSprite = isSailing ? SEA_ROUTE_BOAT_ASSETS[player.facing] : playerSprite;
   const dialogueOpen = dialogue !== null;
+  const isMobileInventory = viewport.width <= MOBILE_CAMERA_BREAKPOINT;
   const dialoguePortraitNpc = dialogue ? entityPortraitNpcIds[dialogue.id] : undefined;
   const dialoguePortrait = dialogue && dialoguePortraitNpc
     ? NPC_PORTRAITS[dialoguePortraitNpc][getDialoguePortraitExpression(dialogue)]
@@ -1594,8 +1618,7 @@ export function MossbellFarmGame() {
     dialogueBarHeight,
     inventoryRailWidth,
     inventoryContentWidth,
-  } = getGameChromeLayout(viewport, scene);
-  const isExpandedInventoryRail = inventoryRailWidth >= DESKTOP_EXPANDED_INVENTORY_RAIL_MIN;
+  } = getGameChromeLayout(viewport, dialogueOpen);
   const questObjective = getQuestObjective(questStage, harvestCount);
   const mapEntities = currentEntities;
   const menuTabs: MenuTab[] = ['map', 'calendar', 'journal', 'audio', 'setup', 'reset'];
@@ -1797,7 +1820,7 @@ export function MossbellFarmGame() {
         id: 'forage-journal',
         name: '탐험 채집 일지',
         category: 'FORAGE',
-        description: `발견 지역 ${openWorldState.discovered.length}/${REGION_IDS.length} · 채집 도감 ${foragingState.discovered.length}/${FORAGE_ITEM_IDS.length} · 탐험 의뢰 ${foragingState.completedNpcQuests}회 완료`,
+        description: `육지 발견 ${discoveredLandCount}/${LAND_REGION_IDS.length} · 채집 도감 ${foragingState.discovered.length}/${FORAGE_ITEM_IDS.length} · 탐험 의뢰 ${foragingState.completedNpcQuests}회 완료`,
         tone: 'forage',
         tab: 'forage',
         icon: Compass,
@@ -1829,27 +1852,44 @@ export function MossbellFarmGame() {
   const selectedInventoryItem = activeInventoryItems.find((item) => item.id === selectedInventoryId) ?? activeInventoryItems[0] ?? inventoryItems[0];
   const acquiredItem = acquiredItemId ? inventoryItems.find((item) => item.id === acquiredItemId) ?? null : null;
   const VillageTimeIcon = villageTime.isNight ? Moon : Sun;
-  const villageKeeperSprite = getNpcSprite('lumi', NPC_PHASE_FACING[villageTime.phase], villageKeeperFrame);
+  const villageKeeperSprite = getNpcSprite('lumi', villageKeeperPose.facing, villageKeeperPose.frame);
   const celebrationCopy = celebration ? CELEBRATION_COPY[celebration.kind] : null;
   const visibleFishingTarget = activeFishingSpot ?? fishingCastTarget;
-  const currentAmbientSprites = REGION_AMBIENT_SPRITES[currentRegion].filter((sprite) => (
-    sprite.kind !== 'water' && (sprite.kind !== 'window' || villageTime.isNight)
-  ));
+  const currentAmbientSprites = useMemo(
+    () => REGION_AMBIENT_SPRITES[currentRegion].filter((sprite) => (
+      sprite.kind !== 'water' && (sprite.kind !== 'window' || villageTime.isNight)
+    )),
+    [currentRegion, villageTime.isNight],
+  );
   const selectedGameTool = fenceHammerSelected ? 'fence-hammer' : pickaxeSelected ? 'pickaxe' : fishingRodSelected ? 'fishing-rod' : farmState.selectedTool;
   const sceneWorldWidth = getSceneWorldWidth(scene);
   const sceneWorldHeight = getSceneWorldHeight(scene);
-  const worldCameraStyle = useMemo(
-    () => getWorldCameraStyle(player, viewport, scene, inventoryRailWidth, dialogueBarHeight),
-    [dialogueBarHeight, inventoryRailWidth, player, viewport, scene],
+  const domWorldCameraStyle = useMemo(
+    () => getDomWorldCameraStyle(player, viewport, scene, inventoryRailWidth),
+    [inventoryRailWidth, player, viewport, scene],
   );
+  const phaserWorldCameraStyle = useMemo(() => {
+    const zoom = phaserCameraView?.zoom ?? 1;
+    const scrollX = phaserCameraView?.scrollX ?? 0;
+    const scrollY = phaserCameraView?.scrollY ?? 0;
+    return {
+      width: sceneWorldWidth * TILE,
+      height: sceneWorldHeight * TILE,
+      '--world-scale': String(zoom),
+      '--camera-left': `${(-scrollX * zoom).toFixed(2)}px`,
+      '--camera-top': `${(-scrollY * zoom).toFixed(2)}px`,
+    } as CSSProperties;
+  }, [phaserCameraView, sceneWorldHeight, sceneWorldWidth]);
+  const activeWorldCameraStyle = usePhaserOutdoor ? phaserWorldCameraStyle : domWorldCameraStyle;
   const phaserSnapshot = useMemo<PhaserWorldSnapshot>(() => {
-    const mapAsset = getSeasonalMapAsset('farm-village', seasonState.season);
+    const phaserRegion = getPhaserWorldRegion(currentRegion, seasonState.season);
+    const mapAsset = phaserRegion.mapAsset;
     const entitySprites = currentEntities.flatMap<PhaserSpriteSnapshot>((entity) => {
       const asset = entity.id === 'villageKeeper' ? villageKeeperSprite : entity.sprite;
       if (!asset) return [];
       const isLifeNpc = Boolean(entityLifeNpcIds[entity.id] || entityOpenWorldNpcIds[entity.id]);
       if (entity.id === 'villageKeeper') {
-        return [{ id: `entity-${entity.id}`, asset, x: entity.x * TILE - 8, y: entity.y * TILE - 4, width: 48, height: 64, depth: getEntityDepth(entity) }];
+        return [{ id: `entity-${entity.id}`, asset, x: entity.x * TILE - 8, y: entity.y * TILE, width: 48, height: 64, depth: getEntityDepth(entity) }];
       }
       if (isLifeNpc) {
         return [{ id: `entity-${entity.id}`, asset, x: entity.x * TILE - 8, y: entity.y * TILE, width: 48, height: 64, depth: getEntityDepth(entity) }];
@@ -1864,8 +1904,9 @@ export function MossbellFarmGame() {
         depth: getEntityDepth(entity),
       }];
     });
-    const fenceSprites = villageLifeState.fencePieces.map<PhaserSpriteSnapshot>((piece) => {
-      const orientation = getRanchFenceOrientation(villageLifeState.fencePieces, piece.x, piece.y);
+    const visibleFencePieces = currentRegion === 'farm-village' ? villageLifeState.fencePieces : [];
+    const fenceSprites = visibleFencePieces.map<PhaserSpriteSnapshot>((piece) => {
+      const orientation = getRanchFenceOrientation(visibleFencePieces, piece.x, piece.y);
       const scale = orientation === 'horizontal' ? 1.24 : orientation === 'vertical' ? 1.18 : 1.12;
       const size = TILE * scale;
       return {
@@ -1878,7 +1919,8 @@ export function MossbellFarmGame() {
         depth: 14 + (piece.y + 1) * 10,
       };
     });
-    const plots = farmState.plots.map((plot, index) => {
+    const visibleFarmPlots = currentRegion === 'farm-village' ? farmState.plots : [];
+    const plots = visibleFarmPlots.map((plot, index) => {
       const ground: PhaserSpriteSnapshot = {
         id: `plot-${plot.id}-ground`,
         asset: getFarmGroundAsset(plot.stage),
@@ -1895,7 +1937,7 @@ export function MossbellFarmGame() {
         crop: cropAsset ? { ...ground, id: `plot-${plot.id}-crop`, asset: cropAsset, depth: ground.depth + 1 } : undefined,
       };
     });
-    const animals = villageTime.isNight ? [] : ANIMAL_IDS.map((animalId) => {
+    const animals = currentRegion !== 'farm-village' || villageTime.isNight ? [] : ANIMAL_IDS.map((animalId) => {
       const animal = villageLifeState.animals[animalId];
       const info = ANIMAL_INFO[animalId];
       const position = getAnimalPosition(animalId, villageTime.phase, lifeFrame);
@@ -1977,7 +2019,7 @@ export function MossbellFarmGame() {
         });
       }
     }
-    getVisibleForageNodes(foragingState, 'farm-village').forEach((node) => {
+    getVisibleForageNodes(foragingState, currentRegion).forEach((node) => {
       effects.push({
         id: `forage-${node.id}`,
         asset: FORAGE_ITEM_INFO[node.item].asset,
@@ -2034,13 +2076,13 @@ export function MossbellFarmGame() {
         label: showHints ? 'E' : undefined,
       });
     }
-
-    const playerWidth = playerAction ? 64 : 48;
+    const playerWidth = isSailing ? 80 : playerAction ? 64 : 48;
+    const playerHeight = isSailing ? 80 : 64;
     return {
-      revision: `${seasonState.year}-${seasonState.season}-${seasonState.day}-${villageTime.phase}-${lifeFrame}-${player.x}-${player.y}-${player.step}-${farmState.plots.length}-${villageLifeState.fencePieces.length}`,
-      region: 'farm-village',
-      worldWidth: OUTSIDE_WORLD_W * TILE,
-      worldHeight: OUTSIDE_WORLD_H * TILE,
+      revision: `${currentRegion}-${seasonState.year}-${seasonState.season}-${seasonState.day}-${villageTime.phase}-${lifeFrame}-${npcMotionTick}-${player.x}-${player.y}-${player.step}-${visibleFarmPlots.length}-${visibleFencePieces.length}-${getVisibleForageNodes(foragingState, currentRegion).length}-${regionTransition?.id ?? 0}-${regionTransition?.phase ?? 'idle'}`,
+      region: currentRegion,
+      worldWidth: phaserRegion.worldWidth,
+      worldHeight: phaserRegion.worldHeight,
       mapAsset,
       environment: {
         time: {
@@ -2055,13 +2097,8 @@ export function MossbellFarmGame() {
         },
         weather: weatherState.weather,
       },
-      camera: {
-        mode: isFixedOverviewCamera(viewport) ? 'fixed-overview' : 'player-follow',
-        zoom: getCameraStyleNumber(worldCameraStyle, '--world-scale', 1),
-        left: getCameraStyleNumber(worldCameraStyle, '--camera-left'),
-        top: getCameraStyleNumber(worldCameraStyle, '--camera-top'),
-      },
-      inputEnabled: gameStarted && !menuOpen && !commerceView && !storyCutscene && !regionTransition,
+      inputEnabled: gameStarted && !menuOpen && !commerceView && !storyCutscene && !regionTransition && !mobileInventoryOpen,
+      transition: regionTransition,
       entities: entitySprites,
       fences: fenceSprites,
       plots,
@@ -2069,11 +2106,11 @@ export function MossbellFarmGame() {
       effects,
       player: {
         id: 'player',
-        asset: playerSprite,
-        x: player.x * TILE - (playerAction ? 16 : 8),
-        y: player.y * TILE - 40,
+        asset: worldPlayerSprite,
+        x: player.x * TILE - (isSailing ? 24 : playerAction ? 16 : 8),
+        y: player.y * TILE - (isSailing ? 24 : 40),
         width: playerWidth,
-        height: 64,
+        height: playerHeight,
         depth: getPlayerDepth(player),
       },
       hints,
@@ -2083,16 +2120,21 @@ export function MossbellFarmGame() {
     commerceView,
     currentAmbientSprites,
     currentEntities,
+    currentRegion,
     farmBuildTarget,
     farmState.plots,
+    fishingCastTarget,
     fishingRippleFrame,
     fishingSession.status,
     foragingState,
     gameStarted,
+    isSailing,
     lifeFrame,
+    npcMotionTick,
     menuOpen,
     nearby,
     nearbyAnimal,
+    nearbyForageNode,
     nearbyFarmPlot,
     phaserReady,
     player,
@@ -2112,10 +2154,10 @@ export function MossbellFarmGame() {
     villageTime.isNight,
     villageTime.clock,
     villageTime.phase,
-    viewport,
+    mobileInventoryOpen,
     visibleFishingTarget,
     weatherState.weather,
-    worldCameraStyle,
+    worldPlayerSprite,
   ]);
   const handleGameInputIntent = useCallback((intent: PhaserInputIntent) => {
     if (intent.type === 'move') movePlayerRef.current(intent.direction);
@@ -2126,6 +2168,14 @@ export function MossbellFarmGame() {
     else if (intent.tool === 'fence-hammer') selectFenceHammerRef.current();
     else selectFarmToolRef.current(intent.tool);
   }, []);
+  const handleTouchMove = useCallback((direction: Direction) => {
+    handleGameInputIntent({ type: 'move', direction });
+    if (touchStopTimerRef.current !== null) window.clearTimeout(touchStopTimerRef.current);
+    touchStopTimerRef.current = window.setTimeout(() => {
+      handleGameInputIntent({ type: 'stop-moving' });
+      touchStopTimerRef.current = null;
+    }, MOVE_INTERVAL_MS);
+  }, [handleGameInputIntent]);
   const handlePhaserReady = useCallback((renderer: 'webgl' | 'canvas') => {
     setPhaserReady(true);
     setPhaserRenderer(renderer);
@@ -2482,7 +2532,7 @@ export function MossbellFarmGame() {
       type: 'fish-caught',
       actionId: nextStoryActionId('fish-caught'),
       fish,
-      region: currentRegion,
+      region: currentRegion === SEA_ROUTE_REGION_ID ? 'river-coast' : currentRegion,
       season: seasonStateRef.current.season,
     });
     setSelectedInventoryId('fish-basket');
@@ -2739,6 +2789,7 @@ export function MossbellFarmGame() {
   }, []);
 
   const enterBuilding = useCallback((interiorId: InteriorId) => {
+    if (currentRegion === SEA_ROUTE_REGION_ID) return;
     cancelFishingRef.current('scene');
     cancelPlayerAction();
     pressedDirectionsRef.current = [];
@@ -3050,7 +3101,7 @@ export function MossbellFarmGame() {
     return true;
   }, [dispatchStoryEvent, harvestCount, nearbyFarmPlot, nextStoryActionId, playPlayerAction, questStage, showEconomyMessage, showHarvestFeedback, triggerCelebration]);
 
-  const fishingHasPriority = fishingRodSelected || fishingSession.status !== 'idle';
+  const fishingHasPriority = fishingSession.status !== 'idle' || Boolean(fishingCastTarget);
 
   const interact = useCallback(() => {
     if (commerceViewRef.current) return;
@@ -3085,6 +3136,20 @@ export function MossbellFarmGame() {
     const interiorId = scene === 'outside' ? getInteriorIdForBuilding(target.id) : null;
     if (interiorId) {
       enterBuilding(interiorId);
+      return;
+    }
+
+    if (target.id === 'coastBoatDock' && scene === 'outside') {
+      const result = enterSpecialRegion(openWorldStateRef.current, SEA_ROUTE_ENTRY.region, SEA_ROUTE_ENTRY.position);
+      setJournal((current) => addUnique(current, target.journalTitle));
+      applyRegionChange(result.state, currentRegion, SEA_ROUTE_ENTRY.region, result.firstVisit, result.worldExplorer);
+      return;
+    }
+
+    if (target.id === 'seaReturnBuoy' && scene === 'outside') {
+      const result = enterSpecialRegion(openWorldStateRef.current, SEA_ROUTE_RETURN.region, SEA_ROUTE_RETURN.position);
+      setJournal((current) => addUnique(current, target.journalTitle));
+      applyRegionChange(result.state, currentRegion, SEA_ROUTE_RETURN.region, result.firstVisit, result.worldExplorer);
       return;
     }
 
@@ -3288,7 +3353,7 @@ export function MossbellFarmGame() {
     }
 
     unlock(target);
-  }, [activeFestival, advanceLifeToNextDay, currentEntities, currentRegion, dispatchStoryEvent, enterBuilding, fenceHammerSelected, fishingHasPriority, interactWithFarmBuildTarget, interactWithFishing, interactWithNearbyAnimal, interactWithNearbyFarmPlot, interactWithNearbyForage, interactWithRanchFenceTarget, leaveBuilding, nearby, nextStoryActionId, openCommerce, questObjective, questStage, scene, seasonWeatherLine, triggerCelebration, unlock, villageLifeState, villageTime.phase, weatherState.weather]);
+  }, [activeFestival, advanceLifeToNextDay, applyRegionChange, currentEntities, currentRegion, dispatchStoryEvent, enterBuilding, fenceHammerSelected, fishingHasPriority, interactWithFarmBuildTarget, interactWithFishing, interactWithNearbyAnimal, interactWithNearbyFarmPlot, interactWithNearbyForage, interactWithRanchFenceTarget, leaveBuilding, nearby, nextStoryActionId, openCommerce, questObjective, questStage, scene, seasonWeatherLine, triggerCelebration, unlock, villageLifeState, villageTime.phase, weatherState.weather]);
 
   useEffect(() => {
     if (typedNameLength >= INTRO_TITLE.length) return undefined;
@@ -3382,7 +3447,7 @@ export function MossbellFarmGame() {
   }, [currentRegion, player, scene]);
 
   useEffect(() => {
-    if (scene !== 'outside') return;
+    if (scene !== 'outside' || currentRegion === SEA_ROUTE_REGION_ID) return;
     lastOutdoorRef.current = {
       region: currentRegion,
       position: getSafeRegionPosition(currentRegion, { x: player.x, y: player.y, facing: player.facing }),
@@ -3459,8 +3524,8 @@ export function MossbellFarmGame() {
   useEffect(() => {
     if (!gameStarted || scene !== 'outside') return undefined;
     const timer = window.setInterval(() => {
-      setVillageKeeperFrame((current) => (current + 1) % 3);
-    }, 420);
+      setNpcMotionTick((current) => (current + 1) % NPC_PATROL_CYCLE_TICKS);
+    }, NPC_PATROL_TICK_MS);
     return () => window.clearInterval(timer);
   }, [gameStarted, scene]);
 
@@ -3566,6 +3631,14 @@ export function MossbellFarmGame() {
   }, []);
 
   useEffect(() => {
+    if (!isMobileInventory) setMobileInventoryOpen(false);
+  }, [isMobileInventory]);
+
+  useEffect(() => () => {
+    if (touchStopTimerRef.current !== null) window.clearTimeout(touchStopTimerRef.current);
+  }, []);
+
+  useEffect(() => {
     movePlayerRef.current = movePlayer;
   }, [movePlayer]);
 
@@ -3656,6 +3729,7 @@ export function MossbellFarmGame() {
         event.preventDefault();
         clearDirections();
         setMenuOpen(false);
+        setMobileInventoryOpen(false);
         setDialogue(null);
         commerceViewRef.current = null;
         setCommerceView(null);
@@ -3663,7 +3737,7 @@ export function MossbellFarmGame() {
       }
 
       if (commerceViewRef.current) return;
-      if (usePhaserFarmVillage) return;
+      if (usePhaserOutdoor) return;
 
       const farmTool = farmToolKeyMap[event.code];
       if (farmTool) {
@@ -3706,7 +3780,7 @@ export function MossbellFarmGame() {
     };
 
     const onKeyUp = (event: KeyboardEvent) => {
-      if (usePhaserFarmVillage) return;
+      if (usePhaserOutdoor) return;
       const direction = keyMap[event.code];
       if (!direction) return;
       pressedDirectionsRef.current = pressedDirectionsRef.current.filter((pressed) => pressed !== direction);
@@ -3727,7 +3801,7 @@ export function MossbellFarmGame() {
       window.removeEventListener('pagehide', clearDirections);
       stopMoveLoop();
     };
-  }, [canContinue, closeStoryCutscene, continueGame, newGame, storyCutscene, usePhaserFarmVillage]);
+  }, [canContinue, closeStoryCutscene, continueGame, newGame, storyCutscene, usePhaserOutdoor]);
 
   const farmBuildPrompt = farmBuildTarget
     ? `FARM MODE · 빈 땅 (${farmBuildTarget.x}, ${farmBuildTarget.y}) · E로 밭 만들기`
@@ -3810,8 +3884,8 @@ export function MossbellFarmGame() {
       data-phaser-ready={phaserReady ? 'true' : 'false'}
       data-phaser-runtime={phaserRenderer}
       data-phaser-fallback={phaserFallback ?? 'none'}
-      data-phaser-edge-fit="camera-origin-aligned"
-      data-input-owner={usePhaserFarmVillage ? 'phaser-bridge' : 'react-dom'}
+      data-phaser-edge-fit="cover-dead-zone"
+      data-input-owner={usePhaserOutdoor ? 'phaser-bridge' : 'react-dom'}
       data-economy-system="v1"
       data-season-system="v1"
       data-weather-system="v1"
@@ -3835,14 +3909,16 @@ export function MossbellFarmGame() {
       data-scroll-policy="viewport-contained"
       data-inventory-rail-width={inventoryRailWidth}
       data-inventory-content-width={inventoryContentWidth}
-      data-inventory-layout={isExpandedInventoryRail ? 'expanded' : 'compact'}
+      data-inventory-layout="single-column"
+      data-inventory-mode={isMobileInventory ? 'overlay-drawer' : 'fixed-rail'}
+      data-mobile-inventory-open={mobileInventoryOpen ? 'true' : 'false'}
       data-dialogue-bar-height={dialogueBarHeight}
       data-layout-mode="full-screen-map-with-right-inventory-bar"
       data-topbar-visible="false"
       data-sidebar-visible="true"
       data-overlay-layer="dialogue-and-menu"
       data-dialogue-mode="bottom-bar"
-      data-dialogue-height-mode="fixed"
+      data-dialogue-height-mode="overlay-dynamic"
       data-game-phase={gameStarted ? 'playing' : 'intro'}
       data-art-remaster="v1"
       data-visual-source="gpt-image"
@@ -3868,13 +3944,13 @@ export function MossbellFarmGame() {
       data-world-scale-mode="pixel-locked-cover"
       data-map-grid="32x22"
       data-mobile-fit-mode="camera-fullscreen-safe-area"
-      data-camera-mode={isFixedOverviewCamera(viewport) ? 'fixed-overview' : 'player-follow'}
+      data-camera-mode="dead-zone-cover"
       data-collision-mode="entity-and-water-bounds"
       data-depth-sorting="y-axis-feet"
-      data-right-inventory-bar="persistent"
+      data-right-inventory-bar={isMobileInventory ? 'overlay-drawer' : 'persistent'}
       data-settings-open={menuOpen ? 'true' : 'false'}
       data-settings-tab={activeMenuTab}
-      data-inventory-open="true"
+      data-inventory-open={!isMobileInventory || mobileInventoryOpen ? 'true' : 'false'}
       data-inventory-count={inventoryItems.length}
       data-inventory-tab={activeInventoryTab}
       data-inventory-tab-control="bag-farm-ranch-forage"
@@ -3936,6 +4012,9 @@ export function MossbellFarmGame() {
       data-open-world="v1"
       data-current-region={currentRegion}
       data-world-region-count="4"
+      data-sea-route="v1"
+      data-sea-route-region={SEA_ROUTE_REGION_ID}
+      data-sailing={isSailing ? 'true' : 'false'}
       data-world-graph="explicit"
       data-world-neighbors={WORLD_GRAPH[currentRegion].join(',')}
       data-open-world-storage-key={OPEN_WORLD_STORAGE_KEY}
@@ -3971,19 +4050,20 @@ export function MossbellFarmGame() {
     >
       <div className="game-shell">
         <main className="game-viewport" aria-label="Playable cozy farming RPG map" data-game-surface="full-screen-map">
-          {usePhaserFarmVillage ? (
+          {usePhaserOutdoor ? (
             <>
               <PhaserGameHost
                 snapshot={phaserSnapshot}
                 onInputIntent={handleGameInputIntent}
                 onReady={handlePhaserReady}
                 onError={handlePhaserError}
+                onCameraChange={setPhaserCameraView}
               />
-              <div className="world-hint-layer phaser-world-ui" style={worldCameraStyle} aria-hidden="true">
-                <div className="region-nameplate" data-region-nameplate={currentRegion}>
-                  <span>{REGION_INFO[currentRegion].shortLabel}</span>
-                  <strong>{REGION_INFO[currentRegion].label}</strong>
-                </div>
+              <div className="region-nameplate phaser-region-nameplate" data-region-nameplate={currentRegion}>
+                <span>{REGION_INFO[currentRegion].shortLabel}</span>
+                <strong>{REGION_INFO[currentRegion].label}</strong>
+              </div>
+              <div className="world-hint-layer phaser-world-ui" style={phaserWorldCameraStyle} aria-hidden="true">
                 {forageFeedback && (
                   <div className="forage-feedback" style={{ left: forageFeedback.x * TILE, top: forageFeedback.y * TILE - 52, zIndex: 916 }} data-forage-feedback={forageFeedback.item}>
                     <img src={FORAGE_ITEM_INFO[forageFeedback.item].asset} alt="" />
@@ -4015,7 +4095,7 @@ export function MossbellFarmGame() {
               </div>
             </>
           ) : scene === 'outside' ? (
-            <div className={`tile-world outside-world region-${currentRegion}`} style={worldCameraStyle} data-map-renderer="single-generated-map-image" data-world-region={currentRegion}>
+            <div className={`tile-world outside-world region-${currentRegion}`} style={domWorldCameraStyle} data-map-renderer="single-generated-map-image" data-world-region={currentRegion}>
               <img className="world-map-image" src={getSeasonalMapAsset(currentRegion, seasonState.season)} alt={`${REGION_INFO[currentRegion].label} ${SEASON_INFO[seasonState.season].label} pixel map`} aria-hidden="true" data-world-map-image={`${currentRegion}-${seasonState.season}`} />
               <div className="ambient-world-layer" data-ambient-layer="gpt-pixel-effects" aria-hidden="true">
                 {currentAmbientSprites.map((sprite) => {
@@ -4055,8 +4135,8 @@ export function MossbellFarmGame() {
                 const lifeNpcId = entityLifeNpcIds[entity.id];
                 const openWorldNpcId = entityOpenWorldNpcIds[entity.id];
                 return (
-                  <div key={entity.id} className={`game-entity entity-${entity.id} ${lifeNpcId || openWorldNpcId ? 'entity-life-npc' : ''} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE, zIndex: getEntityDepth(entity) }} data-entity-id={entity.id} data-npc-id={entity.id === 'villageKeeper' ? 'village-keeper' : undefined} data-life-npc-id={lifeNpcId} data-open-world-npc-id={openWorldNpcId} data-life-npc-schedule={lifeNpcId || openWorldNpcId ? villageTime.phase : undefined}>
-                    {entitySprite && <img className="sprite generated-sprite" src={entitySprite} alt="" aria-hidden="true" data-npc-frame={entity.id === 'villageKeeper' ? villageKeeperFrame : lifeNpcId ? lifeFrame : undefined} />}
+                  <div key={entity.id} className={`game-entity entity-${entity.id} ${lifeNpcId || openWorldNpcId ? 'entity-life-npc' : ''} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE, zIndex: getEntityDepth(entity) }} data-entity-id={entity.id} data-npc-id={entity.id === 'villageKeeper' ? 'village-keeper' : undefined} data-life-npc-id={lifeNpcId} data-open-world-npc-id={openWorldNpcId} data-life-npc-schedule={lifeNpcId || openWorldNpcId ? villageTime.phase : undefined} data-npc-motion={entity.npcMotion} data-npc-facing={entity.npcFacing}>
+                    {entitySprite && <img className="sprite generated-sprite" src={entitySprite} alt="" aria-hidden="true" data-npc-frame={entity.npcFrame} />}
                     <b>{entity.label}</b>
                   </div>
                 );
@@ -4167,7 +4247,7 @@ export function MossbellFarmGame() {
                   </div>
                 );
               })}
-              <img className={`player-sprite facing-${player.facing} ${playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={playerSprite} style={{ left: player.x * TILE, top: player.y * TILE, zIndex: getPlayerDepth(player) }} alt="움직일 수 있는 픽셀 농부" data-player-sprite={playerSprite} data-player-action={playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
+              <img className={`player-sprite facing-${player.facing} ${isSailing ? 'is-sea-vessel' : playerAction ? 'is-action' : player.walking ? 'is-walking' : 'is-idle'}`} src={worldPlayerSprite} style={{ left: player.x * TILE, top: player.y * TILE, zIndex: getPlayerDepth(player) }} alt={isSailing ? '조종 중인 모스벨 작은 배' : '움직일 수 있는 픽셀 농부'} data-player-sprite={worldPlayerSprite} data-player-action={isSailing ? 'sailing' : playerAction?.kind ?? 'idle'} data-player-action-frame={playerAction?.frame ?? 0} data-sprite-normalization="bottom-centered-transparent-canvas" />
               {forageFeedback && (
                 <div className="forage-feedback" style={{ left: forageFeedback.x * TILE, top: forageFeedback.y * TILE - 52, zIndex: 916 }} role="status" data-forage-feedback={forageFeedback.item}>
                   <img src={FORAGE_ITEM_INFO[forageFeedback.item].asset} alt="" aria-hidden="true" />
@@ -4217,7 +4297,7 @@ export function MossbellFarmGame() {
               )}
             </div>
           ) : (
-            <div className="tile-world interior-world" style={worldCameraStyle}>
+            <div className="tile-world interior-world" style={domWorldCameraStyle}>
               {currentInteriorInfo && <img className="interior-room-bg" src={currentInteriorInfo.mapAsset} alt={`${currentInteriorInfo.label} pixel interior`} />}
               {currentInteriorEntities.map((entity) => (
                 <div key={entity.id} className={`game-entity interior-hotspot entity-${entity.id} ${entity.sprite ? 'interior-actor' : ''} ${nearby?.id === entity.id ? 'is-nearby' : ''}`} style={{ left: entity.x * TILE, top: entity.y * TILE, width: entity.w * TILE, height: entity.h * TILE, zIndex: getEntityDepth(entity) }} data-entity-id={entity.id}>
@@ -4242,7 +4322,7 @@ export function MossbellFarmGame() {
             </div>
           )}
           {scene === 'outside' && showHints && interactionFocus === 'forage' && nearbyForageNode && (
-            <div className="world-hint-layer" style={worldCameraStyle} aria-hidden="true">
+            <div className="world-hint-layer" style={activeWorldCameraStyle} aria-hidden="true">
               <div
                 className="forage-action-hint"
                 style={{ left: (nearbyForageNode.x + 0.5) * TILE, top: nearbyForageNode.y * TILE }}
@@ -4255,7 +4335,7 @@ export function MossbellFarmGame() {
             </div>
           )}
           {scene === 'outside' && showHints && fishingCastTarget && fishingSession.status === 'idle' && (
-            <div className="world-hint-layer" style={worldCameraStyle} aria-hidden="true">
+            <div className="world-hint-layer" style={activeWorldCameraStyle} aria-hidden="true">
               <div
                 className={`forage-action-hint fishing-action-hint ${fishingCastTarget.standY <= 3 ? 'is-below-player' : ''}`}
                 style={{
@@ -4458,8 +4538,9 @@ export function MossbellFarmGame() {
                     <b>X {player.x} · Y {player.y}</b>
                   </div>
                   {scene === 'outside' && (
+                    <>
                     <div className="open-world-map" data-world-map="four-connected-regions" data-fast-travel={fastTravelReady ? 'ready' : 'locked'}>
-                      {REGION_IDS.map((region) => {
+                      {WORLD_MAP_REGION_ORDER.map((region) => {
                         const discovered = openWorldState.discovered.includes(region);
                         const RegionIcon = region === 'farm-village' ? MapPin : region === 'whisper-forest' ? TreePine : region === 'river-coast' ? Waves : Mountain;
                         return (
@@ -4483,11 +4564,21 @@ export function MossbellFarmGame() {
                           </button>
                         );
                       })}
-                      <i className="world-link link-farm-forest" aria-hidden="true" />
-                      <i className="world-link link-forest-coast" aria-hidden="true" />
                       <i className="world-link link-coast-mine" aria-hidden="true" />
-                      <i className="world-link link-mine-farm" aria-hidden="true" />
+                      <i className="world-link link-mine-village" aria-hidden="true" />
+                      <i className="world-link link-forest-village" aria-hidden="true" />
+                      <i className="world-link link-coast-forest" aria-hidden="true" />
                     </div>
+                    <div
+                      className={`sea-route-map-card ${openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? 'is-discovered' : 'is-hidden'} ${currentRegion === SEA_ROUTE_REGION_ID ? 'is-current' : ''}`}
+                      data-sea-route={openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? 'discovered' : 'hidden'}
+                    >
+                      {openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) && <img src={getSeasonalMapAsset(SEA_ROUTE_REGION_ID, seasonState.season)} alt="" aria-hidden="true" />}
+                      <i aria-hidden="true"><Waves /></i>
+                      <span><small>{openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? 'SEA ROUTE' : 'UNKNOWN ROUTE'}</small><strong>{openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? 'Mossbell Sea' : '???'}</strong></span>
+                      <em>{currentRegion === SEA_ROUTE_REGION_ID ? 'YOU ARE SAILING' : openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? 'RIVER COAST DOCK' : 'FOG'}</em>
+                    </div>
+                    </>
                   )}
                   <div className="map-local-heading">
                     <span>LOCAL MAP</span>
@@ -4531,7 +4622,7 @@ export function MossbellFarmGame() {
                   </ul>
                   <dl>
                     <div><dt>현재 위치</dt><dd>{scene === 'outside' ? REGION_INFO[currentRegion].label : currentInteriorInfo?.label ?? '실내'}</dd></div>
-                    <div><dt>월드 탐험</dt><dd>{openWorldState.discovered.length}/{REGION_IDS.length} 지역</dd></div>
+                    <div><dt>월드 탐험</dt><dd>{discoveredLandCount}/{LAND_REGION_IDS.length} 육지 · {openWorldState.discovered.includes(SEA_ROUTE_REGION_ID) ? '항로 발견' : '항로 미발견'}</dd></div>
                     <div><dt>발견 기록</dt><dd>{totalJournalCount}/{totalJournalEntries}</dd></div>
                     <div><dt>의뢰 수확</dt><dd>{harvestCount}/3</dd></div>
                     <div><dt>총 수확</dt><dd>{totalFarmHarvest}</dd></div>
@@ -4752,19 +4843,44 @@ export function MossbellFarmGame() {
             </div>
           )}
 
+          <button
+            type="button"
+            className="mobile-inventory-toggle"
+            aria-label={mobileInventoryOpen ? '인벤토리 닫기' : '인벤토리 열기'}
+            aria-controls="mossbell-inventory"
+            aria-expanded={mobileInventoryOpen}
+            onClick={() => setMobileInventoryOpen((open) => !open)}
+          >
+            <Backpack aria-hidden="true" />
+            <span>BAG</span>
+          </button>
+
+          {mobileInventoryOpen && (
+            <button
+              type="button"
+              className="mobile-inventory-scrim"
+              aria-label="인벤토리 닫기"
+              onClick={() => setMobileInventoryOpen(false)}
+            />
+          )}
+
           <aside
-            className="inventory-rail"
+            id="mossbell-inventory"
+            className={`inventory-rail ${mobileInventoryOpen ? 'is-mobile-open' : ''}`}
             aria-label="Persistent inventory bar"
+            aria-hidden={isMobileInventory && !mobileInventoryOpen ? true : undefined}
             data-inventory-panel="right-game-bar"
           >
             <div className="inventory-rail-inner">
-              <div className="inventory-rail-status-column">
               <header className="inventory-header">
                 <Backpack className="inventory-header-icon" aria-hidden="true" strokeWidth={2.5} />
                 <div>
                   <span>FARM BAG</span>
                   <strong>INVENTORY</strong>
                 </div>
+                <button type="button" className="mobile-inventory-close" aria-label="인벤토리 닫기" onClick={() => setMobileInventoryOpen(false)}>
+                  <X aria-hidden="true" />
+                </button>
               </header>
 
               <div className="inventory-player-status" data-player-status="inventory-rail">
@@ -4899,9 +5015,6 @@ export function MossbellFarmGame() {
                   </>
                 )}
               </section>
-              </div>
-
-              <div className="inventory-rail-items-column">
               <nav className="inventory-tabs" role="tablist" aria-label="Inventory categories" data-inventory-tab-control="bag-farm-ranch-forage">
                 {(['bag', 'farm', 'ranch', 'forage'] as InventoryTab[]).map((tab) => (
                   <button
@@ -5001,7 +5114,7 @@ export function MossbellFarmGame() {
 
               {activeInventoryTab === 'forage' && (
                 <section className="forage-ledger" aria-label="Open world collection ledger" data-forage-ledger={foragingState.discovered.length}>
-                  <header><span>EXPEDITION</span><b>{openWorldState.discovered.length}/{REGION_IDS.length}</b></header>
+                  <header><span>EXPEDITION</span><b>{discoveredLandCount}/{LAND_REGION_IDS.length}</b></header>
                   <p>숲: {foragingState.forageQuest.status} · 광산: {foragingState.mineQuest.status}</p>
                   <strong>{foragingState.discovered.length}/{FORAGE_ITEM_IDS.length} FINDS</strong>
                 </section>
@@ -5022,23 +5135,6 @@ export function MossbellFarmGame() {
                   <p>장소와 가구, 생물을 조사하면 발견 기록이 여기에 쌓입니다.</p>
                 )}
               </section>}
-              </div>
-
-              <div className="inventory-rail-objective" aria-live="polite">
-                <span>MAIN STORY · {storyChapterView.eyebrow}</span>
-                <strong>{storyChapterView.title}</strong>
-                <p>{storyChapterView.objectives.find((item) => !item.complete)?.label ?? '사계절의 종이 다시 울렸습니다.'}</p>
-                <div className="inventory-rail-objective-map">{miniMap}</div>
-                <div className="inventory-rail-objective-context" aria-label="Current world status">
-                  <span><small>AREA</small><b>{scene === 'outside' ? REGION_INFO[currentRegion].shortLabel : 'FARMHOUSE'}</b></span>
-                  <span><small>TIME</small><b>DAY {villageLifeState.day} · {DAY_PHASE_LABELS[villageTime.phase]}</b></span>
-                  <span><small>RECORDS</small><b>{journalEntries.length} FOUND</b></span>
-                </div>
-                <div className="inventory-rail-objective-sidequest">
-                  <span>SIDE QUEST</span>
-                  <b>{questLabels[questStage]}</b>
-                </div>
-              </div>
             </div>
           </aside>
 
@@ -5059,12 +5155,12 @@ export function MossbellFarmGame() {
             <em>{fishingSession.status === 'bite' ? '[E] 지금 당기기!' : interactionFocus === 'fishing' ? '[E] 낚시' : interactionFocus === 'ranch-fence' ? '[E] 설치 / 철거' : interactionFocus === 'animal' ? '[E] 돌보기 / 수집' : interactionFocus === 'farm-build' ? '[E] 새 밭 만들기' : interactionFocus === 'farm' ? '[E] 농사' : interactionFocus === 'forage' ? '[E] 채집 / 채굴' : interactionFocus === 'entity' ? '[E] 조사 / 입장' : dialogue ? '이동하면 대화 닫기' : 'WASD / 방향키로 이동'}</em>
           </div>
 
-          <nav className="touch-pad" aria-label="Mobile game controls" aria-hidden={commerceView || storyCutscene ? 'true' : undefined}>
-            <button type="button" disabled={Boolean(commerceView || storyCutscene)} onClick={() => handleGameInputIntent({ type: 'move', direction: 'up' })}>↑</button>
-            <button type="button" disabled={Boolean(commerceView || storyCutscene)} onClick={() => handleGameInputIntent({ type: 'move', direction: 'left' })}>←</button>
-            <button type="button" disabled={Boolean(commerceView || storyCutscene)} onClick={() => handleGameInputIntent({ type: 'interact' })}>E</button>
-            <button type="button" disabled={Boolean(commerceView || storyCutscene)} onClick={() => handleGameInputIntent({ type: 'move', direction: 'right' })}>→</button>
-            <button type="button" disabled={Boolean(commerceView || storyCutscene)} onClick={() => handleGameInputIntent({ type: 'move', direction: 'down' })}>↓</button>
+          <nav className="touch-pad" aria-label="Mobile game controls" aria-hidden={commerceView || storyCutscene || mobileInventoryOpen ? 'true' : undefined}>
+            <button type="button" disabled={Boolean(commerceView || storyCutscene || mobileInventoryOpen)} onClick={() => handleTouchMove('up')}>↑</button>
+            <button type="button" disabled={Boolean(commerceView || storyCutscene || mobileInventoryOpen)} onClick={() => handleTouchMove('left')}>←</button>
+            <button type="button" disabled={Boolean(commerceView || storyCutscene || mobileInventoryOpen)} onClick={() => handleGameInputIntent({ type: 'interact' })}>E</button>
+            <button type="button" disabled={Boolean(commerceView || storyCutscene || mobileInventoryOpen)} onClick={() => handleTouchMove('right')}>→</button>
+            <button type="button" disabled={Boolean(commerceView || storyCutscene || mobileInventoryOpen)} onClick={() => handleTouchMove('down')}>↓</button>
           </nav>
         </div>
       </div>

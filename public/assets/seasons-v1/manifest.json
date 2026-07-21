@@ -11,68 +11,20 @@
   },
   "sources": [
     {
-      "path": "source/maps/farm-village-spring-gpt.png",
-      "sha256": "8623f9cd73e00d26245ce5543426fe11ff0bcc170fbe7730ae38e15f543dda7a"
+      "path": "source/world-composition/mossbell-world-spring-gpt.png",
+      "sha256": "a86e3eb1f3af20cbe11eb5a33affc4660c1b918f539425ecf0f6b29d07cdd20d"
     },
     {
-      "path": "source/maps/farm-village-summer-gpt.png",
-      "sha256": "00ea9e5cc32a6b3fd8af85920b01fa82d1c12d4080a1d2544df9b063912cd25b"
+      "path": "source/world-composition/mossbell-world-summer-gpt.png",
+      "sha256": "ea1350466806292739a2236592ee43ad8fc267448bd14f675e8e2d5dad7f4a06"
     },
     {
-      "path": "source/maps/farm-village-autumn-gpt.png",
-      "sha256": "7b16ddccdd05b731923da8bc3c0731eafe235c07126939893d621642e2e77fbc"
+      "path": "source/world-composition/mossbell-world-autumn-gpt.png",
+      "sha256": "50caaba81997e52a2d36f077637f01346f4af800186467c07242218c4fda58c3"
     },
     {
-      "path": "source/maps/farm-village-winter-gpt.png",
-      "sha256": "4d42c46cc866afd58df4aa21fc7e0d1b36b7ae7a7f4e79b4effe4c0b1f1d6463"
-    },
-    {
-      "path": "source/maps/whisper-forest-spring-gpt.png",
-      "sha256": "d6c6ec3cb0f6c05c0d20d1fd61477f5843f6ceb82e3aea99abe88e3fa268d726"
-    },
-    {
-      "path": "source/maps/whisper-forest-summer-gpt.png",
-      "sha256": "cac4a462ca96d2e8b9ef38fa7cdce7946b57d4f7f04c80c65154eed66f679c1e"
-    },
-    {
-      "path": "source/maps/whisper-forest-autumn-gpt.png",
-      "sha256": "ce21710db3f6ffc2e46275e24172dace47d8d436c0c74406a923743b12a1cc2f"
-    },
-    {
-      "path": "source/maps/whisper-forest-winter-gpt.png",
-      "sha256": "55410695c1343f3593b83ae1dc9df63e316680247de2013b489ea35d2f459ddc"
-    },
-    {
-      "path": "source/maps/river-coast-spring-gpt.png",
-      "sha256": "b5d4296c82415bd1bd26acb892d5a055110e2f94efd6ba8e3e13be4d150a15a5"
-    },
-    {
-      "path": "source/maps/river-coast-summer-gpt.png",
-      "sha256": "aaf09e80486ce2f7eb9eadfeb5f3f830680d4e7cbe7317bbae8fe54c73acb50e"
-    },
-    {
-      "path": "source/maps/river-coast-autumn-gpt.png",
-      "sha256": "fd0084d124557784c60eb63aca63691b92578ce0d35f45b84009285e1ba96762"
-    },
-    {
-      "path": "source/maps/river-coast-winter-gpt.png",
-      "sha256": "45c7316ae17d1f113286b5bb7bd3d399b910ce33fb9235728a5896490a83b74f"
-    },
-    {
-      "path": "source/maps/mine-foothill-spring-gpt.png",
-      "sha256": "baee05181981b5277daa5649b303e1543c709fd1d9d76dfd25a81f23a06185e0"
-    },
-    {
-      "path": "source/maps/mine-foothill-summer-gpt.png",
-      "sha256": "c4a48e69efe464b1a3a4e4645cb8ffd067a25b9c237f293eeeaf7491d0257015"
-    },
-    {
-      "path": "source/maps/mine-foothill-autumn-gpt.png",
-      "sha256": "d4fe388aa3dfe948c2a316947466592e93c58926e4668369d4b5910bc99771e7"
-    },
-    {
-      "path": "source/maps/mine-foothill-winter-gpt.png",
-      "sha256": "739c2b12068634390ca15ffe9559df619d7ec9c1a49fccf94ea4f24107957996"
+      "path": "source/world-composition/mossbell-world-winter-gpt.png",
+      "sha256": "9caf09b660fef85997361e616d1b68b508d4fb33b88d597cef1993b283e5f11f"
     },
     {
       "path": "source/season-weather-fish-festival-sheet.png",
@@ -85,164 +37,260 @@
   ],
   "maps": [
     {
-      "region": "farm-village",
-      "season": "spring",
-      "path": "maps/farm-village-spring.png",
-      "source": "source/maps/farm-village-spring-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
-      "sha256": "006d18ecf6891fd76fa428d4debd1262d6ea2b248860632d5539ddca75683c1a"
-    },
-    {
-      "region": "farm-village",
-      "season": "summer",
-      "path": "maps/farm-village-summer.png",
-      "source": "source/maps/farm-village-summer-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
-      "sha256": "5442f8f24e6fb9665e23e5a3fbba3cd1463beb2787dac4e2a0336e8c3557f0b5"
-    },
-    {
-      "region": "farm-village",
-      "season": "autumn",
-      "path": "maps/farm-village-autumn.png",
-      "source": "source/maps/farm-village-autumn-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
-      "sha256": "f2a58dc8ef9c57f9dbc6cf1b1dd8e6698a4ea88185cb710ea7ec576e01bb6178"
-    },
-    {
-      "region": "farm-village",
-      "season": "winter",
-      "path": "maps/farm-village-winter.png",
-      "source": "source/maps/farm-village-winter-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code center-crops, nearest-neighbor normalizes, and replaces the baked ranch enclosure with season-matched source-map ground pixels so editable PixelLab fence sprites can render at runtime",
-      "sha256": "75ecd109f343a226292083c1863dcde42e954a7de935fcd6fd0f6d36eb044ef4"
-    },
-    {
-      "region": "whisper-forest",
-      "season": "spring",
-      "path": "maps/whisper-forest-spring.png",
-      "source": "source/maps/whisper-forest-spring-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "a0e2613251a34569c30b5ea008222f86f3e710124f67e6518df99399234064b5"
-    },
-    {
-      "region": "whisper-forest",
-      "season": "summer",
-      "path": "maps/whisper-forest-summer.png",
-      "source": "source/maps/whisper-forest-summer-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "62a221414b00890ff6e443092f4c69c1eb68c79ef9d34fc659adeeef44bc2496"
-    },
-    {
-      "region": "whisper-forest",
-      "season": "autumn",
-      "path": "maps/whisper-forest-autumn.png",
-      "source": "source/maps/whisper-forest-autumn-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "8b4361f567f9f5ca40e157dd3a83ffa1f6253d044611c68e855033dc87dccc56"
-    },
-    {
-      "region": "whisper-forest",
-      "season": "winter",
-      "path": "maps/whisper-forest-winter.png",
-      "source": "source/maps/whisper-forest-winter-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "607edecb72c2f902a35ea69a54b8eb7644a38fd33a39db3c8e41469c163229b4"
-    },
-    {
       "region": "river-coast",
       "season": "spring",
       "path": "maps/river-coast-spring.png",
-      "source": "source/maps/river-coast-spring-gpt.png",
+      "source": "source/world-composition/mossbell-world-spring-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 512,
+        "bottom": 352
+      },
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "8a6aa794e12f9a0e837fd4e3b5b34ac49eefff69c5f82e35ec8c6c8ce1140d89"
-    },
-    {
-      "region": "river-coast",
-      "season": "summer",
-      "path": "maps/river-coast-summer.png",
-      "source": "source/maps/river-coast-summer-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "6f31502b71ee2f161218d8cb35598895c4110c3f4fd698b987c39c7df61c0016"
-    },
-    {
-      "region": "river-coast",
-      "season": "autumn",
-      "path": "maps/river-coast-autumn.png",
-      "source": "source/maps/river-coast-autumn-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "eea8810c6f0effbda60d61f90f60ba5c682ffa761fb88765505a4a01123825c9"
-    },
-    {
-      "region": "river-coast",
-      "season": "winter",
-      "path": "maps/river-coast-winter.png",
-      "source": "source/maps/river-coast-winter-gpt.png",
-      "width": 512,
-      "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "c1182ea7c75f88e9c6df90c2097463df34c1067d93f1f5d286f7e3cb44dcdee4"
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "52b35836e7667c2a69dc2485cea0516835fde643e0dcd755586d70fd152de205"
     },
     {
       "region": "mine-foothill",
       "season": "spring",
       "path": "maps/mine-foothill-spring.png",
-      "source": "source/maps/mine-foothill-spring-gpt.png",
+      "source": "source/world-composition/mossbell-world-spring-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 0,
+        "right": 1024,
+        "bottom": 352
+      },
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "102091ae67911bcfe017cafc643f3220f406e31c48e114f469c270828646144f"
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "0d7213d22e5335ac04802e7af6c695dafd7049df2a8a61a7632ded365b33e9ea"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "spring",
+      "path": "maps/whisper-forest-spring.png",
+      "source": "source/world-composition/mossbell-world-spring-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 352,
+        "right": 512,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "4915578d19fa79a3214f45ab1008f7f4d668cb2cb91363834fd77b4cafcfc080"
+    },
+    {
+      "region": "farm-village",
+      "season": "spring",
+      "path": "maps/farm-village-spring.png",
+      "source": "source/world-composition/mossbell-world-spring-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 352,
+        "right": 1024,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "1aff3ff0fb6c5e497cce3912a3b38899ebdb4b73ff66eb78fa2e0d351a11d6e0"
+    },
+    {
+      "region": "river-coast",
+      "season": "summer",
+      "path": "maps/river-coast-summer.png",
+      "source": "source/world-composition/mossbell-world-summer-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 512,
+        "bottom": 352
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "afdb24f084860f18e09eda2a74eb99d34815a95cb8bdeb7e6221a23db167d511"
     },
     {
       "region": "mine-foothill",
       "season": "summer",
       "path": "maps/mine-foothill-summer.png",
-      "source": "source/maps/mine-foothill-summer-gpt.png",
+      "source": "source/world-composition/mossbell-world-summer-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 0,
+        "right": 1024,
+        "bottom": 352
+      },
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "0f6012de07eac2377b73b80a6873149107c1b42f1d941f00fc066531c59f1602"
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "e06fc12b2e4a8cad408e5a57b3225d39edd09e6b45b0f8774ade93c49ddd7716"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "summer",
+      "path": "maps/whisper-forest-summer.png",
+      "source": "source/world-composition/mossbell-world-summer-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 352,
+        "right": 512,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "e1977eeb7be96a01bc216877eb9fc5eca36d9e6d762b942cddf0f23e79e6d38b"
+    },
+    {
+      "region": "farm-village",
+      "season": "summer",
+      "path": "maps/farm-village-summer.png",
+      "source": "source/world-composition/mossbell-world-summer-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 352,
+        "right": 1024,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "e8efff4337b51514e82419bb67518f7551cf1e603daea0aa912947a49c9aa943"
+    },
+    {
+      "region": "river-coast",
+      "season": "autumn",
+      "path": "maps/river-coast-autumn.png",
+      "source": "source/world-composition/mossbell-world-autumn-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 512,
+        "bottom": 352
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "432a74a2792eb579a7c5af323400ed8696a7a3f849bad1588211c5b27a25f10b"
     },
     {
       "region": "mine-foothill",
       "season": "autumn",
       "path": "maps/mine-foothill-autumn.png",
-      "source": "source/maps/mine-foothill-autumn-gpt.png",
+      "source": "source/world-composition/mossbell-world-autumn-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 0,
+        "right": 1024,
+        "bottom": 352
+      },
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "42aced491dd38af67062c8fe1fdfb9db90ac2d1d088e73362e620de50bdd7040"
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "d4fbf4d69fb4f6df90c086dc6796f68def01427698901bb633b0c4c2c47ccef8"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "autumn",
+      "path": "maps/whisper-forest-autumn.png",
+      "source": "source/world-composition/mossbell-world-autumn-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 352,
+        "right": 512,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "5d2f228fd77e250fbbb3984750f9527985447e38644f464665feaf23b2cc17a8"
+    },
+    {
+      "region": "farm-village",
+      "season": "autumn",
+      "path": "maps/farm-village-autumn.png",
+      "source": "source/world-composition/mossbell-world-autumn-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 352,
+        "right": 1024,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "6ae7d35a70dfe01ca6c4404f71b3f80df917c48492b1adeb20001c09f13043ed"
+    },
+    {
+      "region": "river-coast",
+      "season": "winter",
+      "path": "maps/river-coast-winter.png",
+      "source": "source/world-composition/mossbell-world-winter-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 512,
+        "bottom": 352
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "1c8e0f46bfc840f3acf818066a3ae50315b96d135007bfc2a4aa305ec9bf5357"
     },
     {
       "region": "mine-foothill",
       "season": "winter",
       "path": "maps/mine-foothill-winter.png",
-      "source": "source/maps/mine-foothill-winter-gpt.png",
+      "source": "source/world-composition/mossbell-world-winter-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 0,
+        "right": 1024,
+        "bottom": 352
+      },
       "width": 512,
       "height": 352,
-      "source_policy": "GPT Image edit of the existing runtime map; code only center-crops and nearest-neighbor normalizes",
-      "sha256": "f82b7a33d4fc722bea8ea54f20b3ab2a6fa3c26e582ec4c1a51ecf7ee3b8af1b"
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "bc3409085011ff05b36876e1478b6e8e82c478a07f496f096ee4f501a616880c"
+    },
+    {
+      "region": "whisper-forest",
+      "season": "winter",
+      "path": "maps/whisper-forest-winter.png",
+      "source": "source/world-composition/mossbell-world-winter-gpt.png",
+      "crop": {
+        "left": 0,
+        "top": 352,
+        "right": 512,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "d09a013e00bf945a59160d4f2b62d808a127785350759042ed1d86e8f3b00799"
+    },
+    {
+      "region": "farm-village",
+      "season": "winter",
+      "path": "maps/farm-village-winter.png",
+      "source": "source/world-composition/mossbell-world-winter-gpt.png",
+      "crop": {
+        "left": 512,
+        "top": 352,
+        "right": 1024,
+        "bottom": 704
+      },
+      "width": 512,
+      "height": 352,
+      "source_policy": "GPT Image 2x2 world master; code only center-crops the master, nearest-neighbor normalizes once, then crops the canonical region quadrant so reciprocal road seams share one source geometry",
+      "sha256": "6ed6c54dbc6bc802bfb3a81344dcbe08448fada51f34b7f0622a60b3efb9722a"
     }
   ],
   "assets": [
@@ -452,7 +500,7 @@
     "binary_alpha": true,
     "transparent_corners": true,
     "color_under_zero_alpha": false,
-    "map_geometry_policy": "same four regions and runtime collision coordinates",
-    "ranch_enclosure": "baked enclosure removed in all seasons; editable 32px PixelLab fence sprites render at runtime"
+    "map_geometry_policy": "canonical continuous 2x2 master split into four 32x22 runtime regions",
+    "ranch_enclosure": "no baked enclosure in any world master; editable fence sprites render at runtime"
   }
 }

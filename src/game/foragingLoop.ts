@@ -68,17 +68,17 @@ export const FORAGE_ITEM_INFO: Record<ForageItemId, {
 };
 
 export const FORAGE_NODES: ForageNode[] = [
-  { id: 'forest-mushroom', region: 'whisper-forest', x: 11, y: 6, item: 'mushroom', tool: 'hand' },
-  { id: 'forest-herb', region: 'whisper-forest', x: 18, y: 15, item: 'herb', tool: 'hand' },
-  { id: 'forest-berry', region: 'whisper-forest', x: 27, y: 12, item: 'wild-berry', tool: 'hand' },
-  { id: 'forest-fern', region: 'whisper-forest', x: 12, y: 17, item: 'fern', tool: 'hand' },
-  { id: 'forest-moon-bloom', region: 'whisper-forest', x: 27, y: 18, item: 'moon-bloom', tool: 'hand' },
-  { id: 'coast-berry', region: 'river-coast', x: 17, y: 14, item: 'wild-berry', tool: 'hand' },
-  { id: 'mine-stone-a', region: 'mine-foothill', x: 10, y: 9, item: 'stone', tool: 'pickaxe' },
-  { id: 'mine-stone-b', region: 'mine-foothill', x: 22, y: 8, item: 'stone', tool: 'pickaxe' },
-  { id: 'mine-copper', region: 'mine-foothill', x: 16, y: 9, item: 'copper-ore', tool: 'pickaxe' },
-  { id: 'mine-iron', region: 'mine-foothill', x: 20, y: 10, item: 'iron-ore', tool: 'pickaxe' },
-  { id: 'mine-crystal', region: 'mine-foothill', x: 27, y: 7, item: 'star-crystal', tool: 'pickaxe' },
+  { id: 'forest-mushroom', region: 'whisper-forest', x: 4, y: 12, item: 'mushroom', tool: 'hand' },
+  { id: 'forest-herb', region: 'whisper-forest', x: 9, y: 15, item: 'herb', tool: 'hand' },
+  { id: 'forest-berry', region: 'whisper-forest', x: 2, y: 8, item: 'wild-berry', tool: 'hand' },
+  { id: 'forest-fern', region: 'whisper-forest', x: 14, y: 15, item: 'fern', tool: 'hand' },
+  { id: 'forest-moon-bloom', region: 'whisper-forest', x: 26, y: 12, item: 'moon-bloom', tool: 'hand' },
+  { id: 'coast-berry', region: 'river-coast', x: 16, y: 10, item: 'wild-berry', tool: 'hand' },
+  { id: 'mine-stone-a', region: 'mine-foothill', x: 5, y: 14, item: 'stone', tool: 'pickaxe' },
+  { id: 'mine-stone-b', region: 'mine-foothill', x: 22, y: 14, item: 'stone', tool: 'pickaxe' },
+  { id: 'mine-copper', region: 'mine-foothill', x: 15, y: 13, item: 'copper-ore', tool: 'pickaxe' },
+  { id: 'mine-iron', region: 'mine-foothill', x: 17, y: 7, item: 'iron-ore', tool: 'pickaxe' },
+  { id: 'mine-crystal', region: 'mine-foothill', x: 26, y: 13, item: 'star-crystal', tool: 'pickaxe' },
 ];
 
 export const OPEN_WORLD_NPC_INFO: Record<OpenWorldNpcId, {
@@ -92,8 +92,8 @@ export const OPEN_WORLD_NPC_INFO: Record<OpenWorldNpcId, {
 };
 
 const NPC_SCHEDULES: Record<OpenWorldNpcId, Record<DayPhase, { x: number; y: number }>> = {
-  'forest-guide': { dawn: { x: 7, y: 11 }, day: { x: 15, y: 7 }, sunset: { x: 17, y: 16 }, night: { x: 5, y: 12 } },
-  'mine-keeper': { dawn: { x: 5, y: 5 }, day: { x: 15, y: 12 }, sunset: { x: 23, y: 8 }, night: { x: 5, y: 5 } },
+  'forest-guide': { dawn: { x: 13, y: 4 }, day: { x: 8, y: 8 }, sunset: { x: 14, y: 15 }, night: { x: 4, y: 12 } },
+  'mine-keeper': { dawn: { x: 4, y: 14 }, day: { x: 15, y: 13 }, sunset: { x: 17, y: 7 }, night: { x: 12, y: 19 } },
 };
 
 export function getOpenWorldNpcPosition(id: OpenWorldNpcId, phase: DayPhase) {

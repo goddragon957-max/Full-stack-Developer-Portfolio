@@ -79,16 +79,13 @@ main[data-app="mossbell-farm"] {
   width: auto;
   height: 100%;
   min-height: 0;
-  padding: 0 0 var(--dialogue-bar-height);
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(245, 214, 116, .06), rgba(28, 36, 24, .2)),
-    #1c2418;
+  background: #18130f;
   --world-scale: 1;
 }
 .phaser-game-host {
   position: absolute;
-  inset: 0 0 var(--dialogue-bar-height) 0;
+  inset: 0;
   z-index: 1;
   overflow: hidden;
   background: #18130f;
@@ -240,6 +237,7 @@ main[data-app="mossbell-farm"] {
 .region-nameplate strong { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
 .region-nameplate span { color: #9fe089; font-size: 7px; font-weight: 950; }
 .region-nameplate strong { font-size: 11px; line-height: 1; }
+.phaser-region-nameplate { z-index: 9; }
 .region-river-coast .region-nameplate span { color: #80d8df; }
 .region-mine-foothill .region-nameplate span { color: #ffd770; }
 .entity-villageKeeper {
@@ -882,6 +880,13 @@ main[data-app="mossbell-farm"] {
   translate: -16px -50px;
   transition: none;
 }
+.player-sprite.is-sea-vessel {
+  width: 80px;
+  height: 80px;
+  translate: -24px -24px;
+  object-position: center;
+  transition: left .11s linear, top .11s linear;
+}
 .interior-world .player-sprite {
   width: 48px;
   height: 74px;
@@ -1210,6 +1215,13 @@ main[data-app="mossbell-farm"] {
 .gear-button:hover { transform: translateY(-2px); }
 .gear-button:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(25,15,7,.5); }
 
+.mobile-inventory-toggle,
+.mobile-inventory-scrim,
+.mobile-inventory-close {
+  display: none;
+  pointer-events: auto;
+}
+
 .dialogue-box {
   position: absolute;
   left: 0;
@@ -1354,45 +1366,6 @@ main[data-app="mossbell-farm"] {
   color: #342315;
   background: #f4dfa2;
   box-shadow: -3px 0 0 rgba(243, 197, 109, .5);
-}
-.inventory-rail-status-column,
-.inventory-rail-items-column {
-  display: contents;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-inner {
-  display: grid;
-  grid-template-columns: minmax(280px, 1fr) var(--inventory-content-width);
-  grid-template-rows: auto minmax(0, 1fr);
-  overflow: hidden;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-status-column,
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-items-column {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden auto;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-status-column {
-  grid-column: 1;
-  grid-row: 1;
-  background: #4b301d;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-items-column {
-  grid-column: 2;
-  grid-row: 1 / 3;
-  background: #f4dfa2;
-  border-left: 4px solid #a76d31;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective {
-  grid-column: 1;
-  grid-row: 2;
-  min-height: 0;
-  height: 100%;
-  margin-top: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 .inventory-header {
   display: flex;
@@ -2016,96 +1989,6 @@ main[data-app="mossbell-farm"] {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.inventory-rail-objective {
-  margin-top: auto;
-  padding: 14px;
-  color: #fff3c9;
-  background: #4b301d;
-  border-top: 4px solid #a76d31;
-}
-.inventory-rail-objective > span {
-  display: block;
-  color: #9fe089;
-  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-}
-.inventory-rail-objective > strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 17px;
-  line-height: 1.2;
-}
-.inventory-rail-objective > p {
-  margin: 7px 0 14px;
-  color: #f4ddb0;
-  font-size: 12.5px;
-  font-weight: 720;
-  line-height: 1.45;
-  word-break: keep-all;
-}
-.inventory-rail-objective-sidequest {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 2px solid #7c5634;
-  font: 950 10px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-}
-.inventory-rail-objective-context {
-  display: none;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 2px 0 14px;
-}
-.inventory-rail-objective-context > span {
-  min-width: 0;
-  padding: 9px 8px;
-  background: #3b281a;
-  border: 2px solid #765236;
-}
-.inventory-rail-objective-context small,
-.inventory-rail-objective-context b {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.inventory-rail-objective-context small {
-  color: #9fe089;
-  font: 950 9px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-}
-.inventory-rail-objective-context b {
-  margin-top: 6px;
-  color: #fff3c9;
-  font-size: 12px;
-  line-height: 1.1;
-}
-.inventory-rail-objective-map {
-  display: none;
-  min-height: 0;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-map {
-  height: clamp(104px, 14vh, 148px);
-  display: block;
-  margin: 1px 0 12px;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-map .mini-map {
-  height: 100%;
-  aspect-ratio: auto;
-  border-width: 3px;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective > p {
-  max-width: 46ch;
-  font-size: 14px;
-}
-.farm-game[data-inventory-layout="expanded"] .inventory-rail-objective-context {
-  display: grid;
-  margin-top: auto;
-}
-.inventory-rail-objective b {
-  color: #ffd770;
-  font-size: 13px;
-}
 .item-pickup-toast {
   position: absolute;
   right: calc(var(--inventory-rail-width) + 18px);
@@ -2437,6 +2320,47 @@ main[data-app="mossbell-farm"] {
 .open-world-map button.is-hidden .world-region-icon { color: #6d7569; }
 .open-world-map button:disabled { cursor: default; opacity: .78; }
 .open-world-map[data-fast-travel="ready"] button:not(:disabled) { outline: 3px solid #9fe089; outline-offset: -6px; }
+.sea-route-map-card {
+  position: relative;
+  isolation: isolate;
+  min-height: 58px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin: -2px 0 10px;
+  padding: 8px 10px;
+  color: #fff3c9;
+  background: #284c56;
+  border: 3px solid #1d3032;
+  box-shadow: inset 0 0 0 2px rgba(196, 239, 232, .1);
+}
+.sea-route-map-card > img {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 68%;
+  image-rendering: pixelated;
+}
+.sea-route-map-card::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: rgba(15, 34, 35, .53);
+}
+.sea-route-map-card > i { display: grid; place-items: center; color: #8ce7e0; }
+.sea-route-map-card > i svg { width: 25px; height: 25px; }
+.sea-route-map-card > span { min-width: 0; display: grid; gap: 2px; }
+.sea-route-map-card small { color: #9ee7d8; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
+.sea-route-map-card strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.sea-route-map-card em { color: #ffe59b; font: normal 950 6px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; white-space: nowrap; }
+.sea-route-map-card.is-current { border-color: #ffd770; }
+.sea-route-map-card.is-hidden { color: #879994; background: #263635; }
 .map-local-heading {
   display: flex;
   align-items: center;
@@ -2567,10 +2491,10 @@ main[data-app="mossbell-farm"] {
 .calendar-agenda span { color: #bce59f; font: 950 7px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
 .calendar-agenda strong { margin-top: 4px; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .world-link { position: absolute; z-index: 1; display: block; background: #d8b565; opacity: .7; }
-.link-farm-forest { left: 45%; top: 25%; width: 10%; height: 3px; }
-.link-forest-coast { left: 75%; top: 45%; width: 3px; height: 10%; }
-.link-coast-mine { left: 45%; top: 75%; width: 10%; height: 3px; }
-.link-mine-farm { left: 25%; top: 45%; width: 3px; height: 10%; }
+.link-coast-mine { left: 45%; top: 25%; width: 10%; height: 3px; }
+.link-mine-village { left: 75%; top: 45%; width: 3px; height: 10%; }
+.link-forest-village { left: 45%; top: 75%; width: 10%; height: 3px; }
+.link-coast-forest { left: 25%; top: 45%; width: 3px; height: 10%; }
 .menu-quest-objective {
   display: grid;
   gap: 4px;
@@ -3431,7 +3355,6 @@ main[data-app="mossbell-farm"] {
 }
 @media (max-height: 620px) {
   .game-viewport { --world-scale: 1; }
-  .farm-game { --dialogue-bar-height: 112px; }
 }
 @media (max-width: 980px) {
   .game-viewport { --world-scale: 1; }
@@ -3444,10 +3367,8 @@ main[data-app="mossbell-farm"] {
   .intro-start { width: 100%; }
 }
 @media (max-width: 620px) {
-  .farm-game { --dialogue-bar-height: 136px; }
   .game-viewport {
     display: block;
-    padding: 0 0 var(--dialogue-bar-height);
     --world-scale: 1;
   }
   .dialogue-box {
@@ -3745,22 +3666,6 @@ main[data-app="mossbell-farm"] {
     border-left-width: 2px;
     font-size: 8px;
   }
-  .inventory-rail-objective { padding: 9px 7px; }
-  .inventory-rail-objective > strong { font-size: 10px; }
-  .inventory-rail-objective > p {
-    display: -webkit-box;
-    margin: 6px 0 9px;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    font-size: 9px;
-    line-height: 1.35;
-  }
-  .inventory-rail-objective-sidequest { display: block; }
-  .inventory-rail-objective b {
-    display: block;
-    margin-top: 4px;
-  }
   .item-pickup-toast {
     right: calc(var(--inventory-rail-width) + 8px);
     top: 68px;
@@ -3890,6 +3795,201 @@ main[data-app="mossbell-farm"] {
   .calendar-agenda img { width: 19px; height: 19px; }
   .calendar-agenda strong { font-size: 8px; }
   .journal-panel dl { grid-template-columns: 1fr; }
+
+  .farm-game[data-inventory-mode="overlay-drawer"] .inventory-rail {
+    width: var(--inventory-content-width);
+    min-width: var(--inventory-content-width);
+    max-width: calc(100vw - 44px);
+    z-index: 98;
+    pointer-events: none;
+    transform: translateX(calc(100% + 12px));
+    transition: transform .18s steps(3, end);
+  }
+  .farm-game[data-inventory-mode="overlay-drawer"] .inventory-rail.is-mobile-open {
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .mobile-inventory-toggle {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 96;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    grid-template-rows: 25px 9px;
+    gap: 2px;
+    place-items: center;
+    padding: 4px;
+    color: #fff7d8;
+    background: rgba(58, 38, 23, .94);
+    border: 3px solid #f3c56d;
+    box-shadow: 0 4px 0 rgba(25, 15, 7, .46), inset 0 0 0 2px rgba(255, 255, 255, .08);
+    font: 950 8px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  }
+  .mobile-inventory-toggle svg { width: 24px; height: 24px; }
+  .mobile-inventory-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 97;
+    display: block;
+    padding: 0;
+    background: rgba(20, 15, 10, .52);
+    border: 0;
+  }
+  .mobile-inventory-close {
+    width: 38px;
+    height: 38px;
+    margin-left: auto;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: #fff7d8;
+    background: #6d4526;
+    border: 2px solid #f3c56d;
+  }
+  .mobile-inventory-close svg { width: 22px; height: 22px; }
+  .gear-button {
+    right: 68px;
+    top: 10px;
+  }
+  .settings-window {
+    left: 8px;
+    right: 8px;
+    top: 66px;
+    width: auto;
+    max-height: calc(100dvh - 74px);
+  }
+  .dialogue-box { right: 0; }
+  .inventory-rail-inner { overscroll-behavior: contain; }
+  .inventory-header {
+    min-height: 64px;
+    gap: 9px;
+    padding: 9px 10px;
+  }
+  .inventory-header-icon {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-width: 2px;
+  }
+  .inventory-header span { display: block; font-size: 8px; }
+  .inventory-header strong { margin-top: 4px; font-size: 17px; }
+  .inventory-player-status {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 9px;
+    min-height: 62px;
+    padding: 6px 10px;
+    place-items: initial;
+    align-items: center;
+  }
+  .inventory-player-status > img { width: 44px; height: 48px; border-width: 2px; }
+  .inventory-player-status > div { display: block; }
+  .inventory-player-status span,
+  .inventory-player-status small { font-size: 8px; }
+  .inventory-player-status strong { margin: 4px 0; font-size: 13px; }
+  .inventory-gold {
+    min-height: 34px;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 6px;
+    justify-items: initial;
+    padding: 5px 10px;
+    border-bottom-width: 3px;
+  }
+  .inventory-gold img { width: 22px; height: 22px; }
+  .inventory-gold span { display: block; }
+  .inventory-gold strong { font-size: 12px; }
+  .village-clock {
+    min-height: 32px;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 6px;
+    justify-items: initial;
+    padding: 5px 10px;
+    border-bottom-width: 3px;
+  }
+  .village-clock svg { width: 17px; height: 17px; }
+  .village-clock span,
+  .village-clock strong { display: block; font-size: 9px; }
+  .season-weather-status {
+    min-height: 38px;
+    grid-template-columns: 23px minmax(0, 1fr) 23px auto;
+    gap: 5px;
+    padding: 5px 9px;
+    border-bottom-width: 3px;
+  }
+  .season-weather-status > img { width: 23px; height: 23px; }
+  .season-weather-status span { display: block; font-size: 7px; }
+  .season-weather-status strong { margin-top: 2px; font-size: 9px; text-align: left; }
+  .season-weather-status small { display: block; font-size: 8px; }
+  .farm-toolbelt { padding: 8px 9px 9px; border-bottom-width: 3px; }
+  .farm-toolbelt > header { display: flex; margin-bottom: 6px; font-size: 8px; }
+  .farm-tool-row { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+  .farm-tool-row button { min-height: 43px; aspect-ratio: 1.05; padding: 2px; border-width: 2px; }
+  .farm-tool-row img { width: 29px; height: 29px; }
+  .farm-tool-row kbd { min-width: 13px; height: 13px; font-size: 7px; }
+  .farm-tool-row small { min-width: 18px; height: 11px; font-size: 6px; }
+  .ranch-build-selector { gap: 4px; margin-top: 6px; }
+  .ranch-build-selector button { height: 34px; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: none; gap: 4px; padding: 2px 6px; border-width: 2px; font-size: 9px; }
+  .ranch-build-selector img { width: 27px; height: 27px; }
+  .seed-group-tabs { gap: 4px; margin-top: 6px; }
+  .seed-group-tabs button { height: 22px; padding: 0 3px; border-width: 2px; font-size: 8px; }
+  .farm-seed-selector { gap: 4px; margin-top: 6px; }
+  .farm-seed-selector button { height: 27px; padding: 0 3px; border-width: 2px; font-size: 9px; }
+  .farm-seed-selector button small { min-width: 11px; height: 10px; font-size: 6px; }
+  .inventory-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom-width: 3px; }
+  .inventory-tabs button { height: 36px; padding: 0 2px; border-right-width: 2px; font-size: 10px; }
+  .inventory-tabs button:nth-child(n+3) { border-top: 0; }
+  .inventory-summary { display: flex; padding: 9px 10px; text-align: left; }
+  .inventory-summary strong { display: block; margin-top: 0; font-size: 10px; }
+  .inventory-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 10px; }
+  .inventory-slot { border-width: 2px; }
+  .inventory-slot > .inventory-pixel-icon { width: min(38px, 66%); height: min(38px, 66%); }
+  .inventory-detail { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; padding: 9px 10px; border-top-width: 3px; }
+  .inventory-detail > svg,
+  .inventory-detail > .inventory-pixel-icon { width: 42px; height: 42px; }
+  .inventory-detail span { display: block; font-size: 8px; }
+  .inventory-detail strong { margin: 3px 0; font-size: 12px; }
+  .inventory-detail p { display: block; font-size: 11px; line-height: 1.3; }
+  .fish-catalog { padding: 8px 9px; }
+  .fish-catalog header span { font-size: 8px; }
+  .fish-catalog header span::after { content: none; }
+  .fish-catalog header b { font-size: 8px; }
+  .fish-catalog > div { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; }
+  .fish-catalog > div > span { padding: 3px; border-width: 1px; }
+  .fish-catalog img { width: 30px; height: 30px; }
+  .fish-catalog strong { display: block; font-size: 6px; }
+  .farm-quality-ledger { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 8px 9px; }
+  .farm-quality-ledger strong,
+  .farm-quality-ledger b { font-size: 8px; }
+  .ranch-ledger,
+  .forage-ledger { gap: 5px; padding: 9px; }
+  .ranch-ledger header span,
+  .ranch-ledger header b,
+  .ranch-ledger > strong,
+  .forage-ledger header span,
+  .forage-ledger header b,
+  .forage-ledger > strong { font-size: 8px; }
+  .ranch-ledger p,
+  .forage-ledger p { font-size: 9px; }
+  .inventory-rail-journal { min-height: 90px; padding: 10px; }
+  .inventory-rail-journal header span { font-size: 8px; }
+  .inventory-rail-journal header span::after { content: none; }
+  .inventory-rail-journal > p,
+  .inventory-rail-journal li { font-size: 10px; }
+  .item-pickup-toast {
+    right: 10px;
+    width: min(260px, calc(100vw - 20px));
+  }
+  .festival-day-banner {
+    left: 50%;
+    width: min(260px, calc(100% - 20px));
+  }
+  .commerce-window {
+    left: 8px;
+    right: 8px;
+    max-height: calc(100dvh - 16px);
+  }
+  .earnings-feedback { width: calc(100% - 16px); }
 }
 @media (max-width: 380px) {
   .game-viewport { --world-scale: 1; }

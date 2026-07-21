@@ -1,6 +1,7 @@
 import type { Season } from '../seasonSystem';
 import type { TimeMode, DayPhase } from '../villagePulse';
 import type { Weather } from '../weatherSystem';
+import type { RegionId } from '../openWorld';
 
 export type PhaserDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -12,11 +13,10 @@ export type PhaserInputIntent =
   | { type: 'interact' }
   | { type: 'select-tool'; tool: PhaserToolId };
 
-export type PhaserCameraSnapshot = {
-  mode: 'fixed-overview' | 'player-follow';
+export type PhaserCameraViewState = {
   zoom: number;
-  left: number;
-  top: number;
+  scrollX: number;
+  scrollY: number;
 };
 
 export type PhaserEnvironmentSnapshot = {
@@ -70,15 +70,23 @@ export type PhaserHintSnapshot = {
   label?: string;
 };
 
+export type PhaserRegionTransitionSnapshot = {
+  id: number;
+  from: RegionId;
+  to: RegionId;
+  phase: 'out' | 'in';
+  durationMs?: number;
+};
+
 export type PhaserWorldSnapshot = {
   revision: string;
-  region: 'farm-village';
+  region: RegionId;
   worldWidth: number;
   worldHeight: number;
   mapAsset: string;
   environment: PhaserEnvironmentSnapshot;
-  camera: PhaserCameraSnapshot;
   inputEnabled: boolean;
+  transition: PhaserRegionTransitionSnapshot | null;
   entities: PhaserSpriteSnapshot[];
   fences: PhaserSpriteSnapshot[];
   plots: PhaserPlotSnapshot[];
@@ -95,12 +103,14 @@ export type PhaserRuntimeState =
 type SnapshotListener = (snapshot: PhaserWorldSnapshot) => void;
 type InputListener = (intent: PhaserInputIntent) => void;
 type RuntimeListener = (state: PhaserRuntimeState) => void;
+type CameraListener = (state: PhaserCameraViewState) => void;
 
 export class PhaserBridge {
   private snapshot: PhaserWorldSnapshot | null = null;
   private readonly snapshotListeners = new Set<SnapshotListener>();
   private readonly inputListeners = new Set<InputListener>();
   private readonly runtimeListeners = new Set<RuntimeListener>();
+  private readonly cameraListeners = new Set<CameraListener>();
 
   getSnapshot() {
     return this.snapshot;
@@ -134,11 +144,21 @@ export class PhaserBridge {
     return () => this.runtimeListeners.delete(listener);
   }
 
+  emitCameraState(state: PhaserCameraViewState) {
+    this.cameraListeners.forEach((listener) => listener(state));
+  }
+
+  subscribeCameraState(listener: CameraListener) {
+    this.cameraListeners.add(listener);
+    return () => this.cameraListeners.delete(listener);
+  }
+
   dispose() {
     this.snapshot = null;
     this.snapshotListeners.clear();
     this.inputListeners.clear();
     this.runtimeListeners.clear();
+    this.cameraListeners.clear();
   }
 }
 

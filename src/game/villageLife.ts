@@ -36,7 +36,7 @@ export type DailyQuest = {
 };
 
 export type VillageLifeState = {
-  version: 2;
+  version: 3;
   day: number;
   animals: Record<AnimalId, AnimalRecord>;
   products: Record<RanchProduct, number>;
@@ -73,24 +73,30 @@ export type NpcInteractionResult = {
 };
 
 export const VILLAGE_LIFE_STORAGE_KEY = 'portfolio-village-life-v2';
-export const VILLAGE_LIFE_SAVE_VERSION = 2;
+export const VILLAGE_LIFE_SAVE_VERSION = 3;
 export const LIFE_NPC_IDS: LifeNpcId[] = ['farmer-hana', 'rancher-jun'];
 export const ANIMAL_IDS: AnimalId[] = ['chicken-1', 'chicken-2', 'chicken-3', 'cow-1', 'cow-2'];
 export const RANCH_PRODUCTS: RanchProduct[] = ['egg', 'milk', 'golden-egg'];
 export const DAILY_CROPS: CropType[] = ['tomato', 'corn', 'pumpkin'];
 export const RANCH_FENCE_PIECE_LIMIT = 64;
-export const RANCH_AREA_BOUNDS = { minX: 10, maxX: 14, minY: 15, maxY: 18 } as const;
+export const RANCH_AREA_BOUNDS = { minX: 5, maxX: 9, minY: 14, maxY: 17 } as const;
 
 function createRanchFencePiece(x: number, y: number, kind: RanchFencePieceKind = 'fence'): RanchFencePiece {
   return { id: `ranch-fence-${x}-${y}`, x, y, kind };
 }
 
 export const DEFAULT_RANCH_FENCE_PIECES: RanchFencePiece[] = [
-  createRanchFencePiece(10, 15), createRanchFencePiece(11, 15), createRanchFencePiece(12, 15), createRanchFencePiece(13, 15), createRanchFencePiece(14, 15),
-  createRanchFencePiece(10, 16), createRanchFencePiece(14, 16),
-  createRanchFencePiece(10, 17), createRanchFencePiece(14, 17),
-  createRanchFencePiece(10, 18), createRanchFencePiece(11, 18), createRanchFencePiece(12, 18, 'gate'), createRanchFencePiece(13, 18), createRanchFencePiece(14, 18),
+  createRanchFencePiece(5, 14), createRanchFencePiece(6, 14), createRanchFencePiece(7, 14), createRanchFencePiece(8, 14), createRanchFencePiece(9, 14),
+  createRanchFencePiece(5, 15), createRanchFencePiece(9, 15),
+  createRanchFencePiece(5, 16), createRanchFencePiece(9, 16),
+  createRanchFencePiece(5, 17), createRanchFencePiece(6, 17), createRanchFencePiece(7, 17, 'gate'), createRanchFencePiece(8, 17), createRanchFencePiece(9, 17),
 ];
+
+const LEGACY_V2_DEFAULT_RANCH_FENCE_SIGNATURE = new Set([
+  '10,15,fence', '11,15,fence', '12,15,fence', '13,15,fence', '14,15,fence',
+  '10,16,fence', '14,16,fence', '10,17,fence', '14,17,fence',
+  '10,18,fence', '11,18,fence', '12,18,gate', '13,18,fence', '14,18,fence',
+]);
 
 function cloneDefaultRanchFencePieces() {
   return DEFAULT_RANCH_FENCE_PIECES.map((piece) => ({ ...piece }));
@@ -148,33 +154,33 @@ export const PRODUCT_INFO: Record<RanchProduct, { label: string; description: st
 
 const NPC_POSITIONS: Record<LifeNpcId, Record<DayPhase, { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' }>> = {
   'farmer-hana': {
-    dawn: { x: 13, y: 11, facing: 'down' },
-    day: { x: 19, y: 11, facing: 'left' },
-    sunset: { x: 14, y: 16, facing: 'down' },
-    night: { x: 11, y: 10, facing: 'right' },
+    dawn: { x: 21, y: 12, facing: 'down' },
+    day: { x: 25, y: 12, facing: 'left' },
+    sunset: { x: 23, y: 17, facing: 'down' },
+    night: { x: 17, y: 6, facing: 'right' },
   },
   'rancher-jun': {
-    dawn: { x: 9, y: 16, facing: 'right' },
-    day: { x: 15, y: 19, facing: 'left' },
-    sunset: { x: 9, y: 19, facing: 'right' },
-    night: { x: 8, y: 16, facing: 'left' },
+    dawn: { x: 5, y: 13, facing: 'right' },
+    day: { x: 10, y: 16, facing: 'left' },
+    sunset: { x: 5, y: 19, facing: 'right' },
+    night: { x: 3, y: 14, facing: 'up' },
   },
 };
 
 const DAY_ANIMAL_POSITIONS: Record<AnimalId, { x: number; y: number }> = {
-  'chicken-1': { x: 11, y: 16 },
-  'chicken-2': { x: 12, y: 16 },
-  'chicken-3': { x: 13, y: 16 },
-  'cow-1': { x: 11.35, y: 16.85 },
-  'cow-2': { x: 12.65, y: 16.85 },
+  'chicken-1': { x: 6, y: 15 },
+  'chicken-2': { x: 7, y: 15 },
+  'chicken-3': { x: 8, y: 15 },
+  'cow-1': { x: 6.3, y: 16.25 },
+  'cow-2': { x: 7.8, y: 16.25 },
 };
 
 const NIGHT_ANIMAL_POSITIONS: Record<AnimalId, { x: number; y: number }> = {
-  'chicken-1': { x: 8.1, y: 18.1 },
-  'chicken-2': { x: 8.8, y: 18.1 },
-  'chicken-3': { x: 9.5, y: 18.1 },
-  'cow-1': { x: 8.3, y: 19.2 },
-  'cow-2': { x: 9.5, y: 19.2 },
+  'chicken-1': { x: 5.2, y: 16.1 },
+  'chicken-2': { x: 5.8, y: 16.1 },
+  'chicken-3': { x: 6.4, y: 16.1 },
+  'cow-1': { x: 5.3, y: 17.2 },
+  'cow-2': { x: 6.4, y: 17.2 },
 };
 
 function createQuest(day: number, role: 'farmer' | 'rancher'): DailyQuest {
@@ -247,11 +253,20 @@ function normalizeRanchFencePieces(value: unknown) {
   return pieces;
 }
 
+function migrateRanchFencePieces(version: number, value: unknown) {
+  if (version === 1) return cloneDefaultRanchFencePieces();
+  const pieces = normalizeRanchFencePieces(value);
+  const isLegacyDefault = version === 2
+    && pieces.length === LEGACY_V2_DEFAULT_RANCH_FENCE_SIGNATURE.size
+    && pieces.every((piece) => LEGACY_V2_DEFAULT_RANCH_FENCE_SIGNATURE.has(`${piece.x},${piece.y},${piece.kind}`));
+  return isLegacyDefault ? cloneDefaultRanchFencePieces() : pieces;
+}
+
 export function normalizeVillageLifeState(value: unknown): VillageLifeState {
   const initial = createInitialVillageLifeState();
   if (!value || typeof value !== 'object') return initial;
   const candidate = value as Partial<Omit<VillageLifeState, 'version'>> & { version?: number };
-  if (candidate.version !== 1 && candidate.version !== VILLAGE_LIFE_SAVE_VERSION) return initial;
+  if (![1, 2, VILLAGE_LIFE_SAVE_VERSION].includes(Number(candidate.version))) return initial;
   const day = Math.max(1, Math.floor(Number(candidate.day) || 1));
   const candidateAnimals = candidate.animals && typeof candidate.animals === 'object'
     ? candidate.animals as Partial<Record<AnimalId, Partial<AnimalRecord>>>
@@ -295,9 +310,7 @@ export function normalizeVillageLifeState(value: unknown): VillageLifeState {
     farmerQuest: normalizeQuest(candidate.farmerQuest, createQuest(day, 'farmer')),
     rancherQuest: normalizeQuest(candidate.rancherQuest, createQuest(day, 'rancher')),
     completedNpcQuests: Math.max(0, Math.floor(Number(candidate.completedNpcQuests) || 0)),
-    fencePieces: candidate.version === VILLAGE_LIFE_SAVE_VERSION
-      ? normalizeRanchFencePieces(candidate.fencePieces)
-      : cloneDefaultRanchFencePieces(),
+    fencePieces: migrateRanchFencePieces(Number(candidate.version), candidate.fencePieces),
   };
 }
 

@@ -1,5 +1,6 @@
 import type { CropType } from './farmLoop';
 import type { RegionId } from './openWorld';
+import { SEA_ROUTE_MAP_ASSET, SEA_ROUTE_REGION_ID } from './seaRoute';
 
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
 
@@ -164,6 +165,7 @@ export function getDemandPriceMultiplier(itemId: string, date: SeasonDate) {
 }
 
 export function getSeasonalMapAsset(region: RegionId, season: Season) {
+  if (region === SEA_ROUTE_REGION_ID) return SEA_ROUTE_MAP_ASSET;
   return `/assets/seasons-v1/maps/${region}-${season}.png`;
 }
 
