@@ -30,7 +30,7 @@ assert(game.includes('const DESKTOP_COLLAPSED_DIALOGUE_HEIGHT = 54;'), 'Desktop 
 assert(game.includes('const MOBILE_COLLAPSED_DIALOGUE_HEIGHT = 52;'), 'Mobile status bar must stay compact while dialogue is closed');
 assert(game.includes('const OPEN_DIALOGUE_HEIGHT = 128;'), 'Open dialogue must remain readable without shrinking the game canvas');
 assert(game.includes("data-dialogue-height-mode=\"overlay-dynamic\""), 'Runtime diagnostics must identify the overlay dialogue contract');
-assert(game.includes('data-camera-mode="dead-zone-cover"'), 'Runtime diagnostics must identify the game-first camera mode');
+assert(game.includes('data-camera-mode="fit-center"'), 'Runtime diagnostics must identify the fit-center camera mode that keeps the whole region visible');
 assert(!game.includes('fixed-overview'), 'Game-first layout must not restore the whole-map fixed overview');
 assert(game.includes('const DESKTOP_INVENTORY_CONTENT_WIDTH = 368;'), 'Desktop inventory content must remain capped at a readable 368px');
 assert(game.includes('const DESKTOP_INVENTORY_RAIL_MIN = 320;'), 'Desktop inventory rail must remain readable without becoming a second game panel');
@@ -39,7 +39,7 @@ assert(!game.includes('viewport.width - scaledWorldWidth'), 'Unused game width m
 assert(!game.includes('viewport.height - scaledWorldHeight'), 'Unused game height must not be absorbed by the dialogue bar');
 assert(game.includes('data-inventory-rail-width={inventoryRailWidth}'), 'Runtime diagnostics must expose the responsive inventory width');
 assert(game.includes('data-dialogue-bar-height={dialogueBarHeight}'), 'Runtime diagnostics must expose the responsive dialogue height');
-assert(game.includes('data-phaser-edge-fit="cover-dead-zone"'), 'Runtime diagnostics must identify cover rendering without letterboxing');
+assert(game.includes('data-phaser-edge-fit="fit-letterbox"'), 'Runtime diagnostics must identify fit rendering that letterboxes instead of cropping the region');
 assert(game.includes('data-inventory-layout="single-column"'), 'Desktop HUD must remain a single column at every width');
 assert(game.includes("data-inventory-mode={isMobileInventory ? 'overlay-drawer' : 'fixed-rail'}"), 'Runtime must expose mobile drawer and desktop rail modes');
 assert(game.includes('data-mobile-inventory-open={mobileInventoryOpen ? \'true\' : \'false\'}'), 'Mobile inventory state must be browser-testable');

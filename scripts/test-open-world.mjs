@@ -57,8 +57,8 @@ const source = readFileSync('src/game/openWorld.ts', 'utf8')
     `const SEA_ROUTE_COLLISION_RECTS = ${JSON.stringify(seaRoute.SEA_ROUTE_COLLISION_RECTS)};\nconst SEA_ROUTE_MAP_ASSET = ${JSON.stringify(seaRoute.SEA_ROUTE_MAP_ASSET)};\nconst SEA_ROUTE_REGION_ID = ${JSON.stringify(seaRoute.SEA_ROUTE_REGION_ID)};\nconst RIVER_COAST_DOCK_WALKABLE_CELLS = ${JSON.stringify(seaRoute.RIVER_COAST_DOCK_WALKABLE_CELLS)};\nconst isRiverCoastDockWalkable = ${seaRoute.isRiverCoastDockWalkable.toString()};\nconst isSeaRouteBlocked = ${seaRoute.isSeaRouteBlocked.toString()};\n`,
   )
   .replace(
-    /^import \{ isWorldWaterCell \} from '\.\/worldTerrain';\r?\n/m,
-    `const WORLD_WATER_ROWS = ${JSON.stringify(worldTerrain.WORLD_WATER_ROWS)};\nconst isWorldWaterCell = (region, x, y) => WORLD_WATER_ROWS[region]?.find((row) => row.y === y)?.ranges.some(([from, to]) => x >= from && x <= to) ?? false;\n`,
+    /^import \{ isTerrainMaskBlocked, isWorldWaterCell \} from '\.\/worldTerrain';\r?\n/m,
+    `const WORLD_WATER_ROWS = ${JSON.stringify(worldTerrain.WORLD_WATER_ROWS)};\nconst isWorldWaterCell = (region, x, y) => WORLD_WATER_ROWS[region]?.find((row) => row.y === y)?.ranges.some(([from, to]) => x >= from && x <= to) ?? false;\nconst REGION_TERRAIN_MASKS = ${JSON.stringify(worldTerrain.REGION_TERRAIN_MASKS)};\nconst isTerrainMaskBlocked = ${worldTerrain.isTerrainMaskBlocked.toString()};\n`,
   )
   .replace(
     /import \{\s*WORLD_EXIT_BLUEPRINTS,[\s\S]*?from '\.\/worldComposition';\r?\n/m,

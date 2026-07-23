@@ -34,16 +34,21 @@ function alignToPhysicalPixel(value: number, zoom: number) {
   return Math.round(value * zoom) / zoom;
 }
 
-export function getCoverCameraZoom(canvasWidth: number, canvasHeight: number, worldWidth: number, worldHeight: number) {
+export function getFitCameraZoom(canvasWidth: number, canvasHeight: number, worldWidth: number, worldHeight: number) {
+  // Fit (contain) the whole region inside the canvas so nothing is cropped.
+  // The looser dimension is centered by Phaser's bounds clamp, producing a
+  // neutral letterbox instead of cutting off edge buildings.
   return Math.max(
-    Math.max(1, canvasWidth) / Math.max(1, worldWidth),
-    Math.max(1, canvasHeight) / Math.max(1, worldHeight),
+    Math.min(
+      Math.max(1, canvasWidth) / Math.max(1, worldWidth),
+      Math.max(1, canvasHeight) / Math.max(1, worldHeight),
+    ),
     0.01,
   );
 }
 
 export function updateDeadZoneCamera(input: DeadZoneCameraInput): DeadZoneCameraResult {
-  const zoom = getCoverCameraZoom(input.canvasWidth, input.canvasHeight, input.worldWidth, input.worldHeight);
+  const zoom = getFitCameraZoom(input.canvasWidth, input.canvasHeight, input.worldWidth, input.worldHeight);
   const visibleWidth = Math.min(input.worldWidth, input.canvasWidth / zoom);
   const visibleHeight = Math.min(input.worldHeight, input.canvasHeight / zoom);
   const maxScrollX = Math.max(0, input.worldWidth - visibleWidth);

@@ -35,6 +35,50 @@ export const WORLD_WATER_ROWS: Partial<Record<WorldRegionId, readonly WorldWater
   ],
 };
 
+// Per-tile terrain masks derived from the baked 32x22 map art (16px tiles).
+// '#' = blocked terrain (trees/forest), '~' = water, '.' = walkable ground.
+// Buildings, fences and animals are sprites with their own collision, so a mask
+// only encodes what is painted into the terrain PNG. Authoring/verification
+// workflow: scripts/generate-region-collision-mask.py renders the mask over the
+// map image (scripts/_mask-debug.png) so every cell can be checked by eye.
+export const REGION_TERRAIN_MASKS: Partial<Record<WorldRegionId, readonly string[]>> = {
+  'farm-village': [
+    '#..........................#####',
+    '#...........................####',
+    '.............................###',
+    '..............................##',
+    '..............................##',
+    '...............................#',
+    '...............................#',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '................................',
+    '...............~~...............',
+    '.............~~~~...............',
+    '............~~~~~~..............',
+    '............~~~~~~..............',
+    '............~~~~~...............',
+    '##............~.................',
+    '###..........................###',
+    '################################',
+    '################################',
+  ],
+};
+
+for (const [region, rows] of Object.entries(REGION_TERRAIN_MASKS)) {
+  if (rows.length !== 22 || rows.some((row) => row.length !== 32)) {
+    throw new Error(`Terrain mask for ${region} must be exactly 32x22 cells.`);
+  }
+}
+
+export function isTerrainMaskBlocked(region: WorldRegionId, x: number, y: number) {
+  const cell = REGION_TERRAIN_MASKS[region]?.[y]?.[x];
+  return cell === '#' || cell === '~';
+}
+
 export function isWorldWaterCell(region: WorldRegionId, x: number, y: number) {
   return WORLD_WATER_ROWS[region]?.find((row) => row.y === y)?.ranges
     .some(([from, to]) => x >= from && x <= to) ?? false;

@@ -6,7 +6,7 @@ import {
   isRiverCoastDockWalkable,
   isSeaRouteBlocked,
 } from './seaRoute';
-import { isWorldWaterCell } from './worldTerrain';
+import { isTerrainMaskBlocked, isWorldWaterCell } from './worldTerrain';
 import {
   WORLD_EXIT_BLUEPRINTS,
   WORLD_MAP_REGION_ORDER,
@@ -338,9 +338,11 @@ export function fastTravelTo(state: OpenWorldState, region: RegionId): OpenWorld
 export function isRegionBlocked(region: RegionId, x: number, y: number) {
   if (region === SEA_ROUTE_REGION_ID) return isSeaRouteBlocked(x, y);
   if (region === 'river-coast' && isRiverCoastDockWalkable(x, y)) return false;
-  return isWorldWaterCell(region, x, y) || REGION_COLLISION_RECTS[region].some((rect) => (
-    x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
-  ));
+  return isWorldWaterCell(region, x, y)
+    || isTerrainMaskBlocked(region, x, y)
+    || REGION_COLLISION_RECTS[region].some((rect) => (
+      x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
+    ));
 }
 
 export function isFarmVillageTillableTerrain(x: number, y: number) {

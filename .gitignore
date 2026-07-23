@@ -12,3 +12,6 @@ yarn-error.log*
 .omx/
 __pycache__/
 *.pyc
+
+# regenerable mask/layout debug overlays (scripts/generate-region-collision-mask.py)
+scripts/_*.png

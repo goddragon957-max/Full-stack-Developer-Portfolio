@@ -11,10 +11,12 @@ export type VillageNpcId = 'villageKeeper' | 'farmer-hana' | 'rancher-jun';
 export type VillagePhase = 'dawn' | 'day' | 'sunset' | 'night';
 
 export const VILLAGE_BUILDING_LAYOUT = {
-  farmhouse: { x: 2, y: 1, w: 4, h: 4 },
-  workshop: { x: 6, y: 1, w: 5, h: 4 },
-  hanaCottage: { x: 16, y: 1, w: 4, h: 4 },
-  market: { x: 20, y: 1, w: 4, h: 4 },
+  // Northern main street: one shared baseline, doors opening straight onto the
+  // central avenue (y7-9) instead of floating near the top edge of the map.
+  farmhouse: { x: 2, y: 3, w: 4, h: 4 },
+  workshop: { x: 6, y: 3, w: 5, h: 4 },
+  hanaCottage: { x: 16, y: 3, w: 4, h: 4 },
+  market: { x: 20, y: 3, w: 4, h: 4 },
   barn: { x: 1, y: 16, w: 4, h: 4 },
   junCottage: { x: 1, y: 10, w: 4, h: 4 },
 } as const satisfies Record<string, VillageGridRect>;
@@ -24,7 +26,8 @@ export const VILLAGE_PROP_LAYOUT = {
   mailbox: { x: 5, y: 6, w: 1, h: 1 },
   oldBell: { x: 12, y: 5, w: 2, h: 2 },
   shippingBox: { x: 1, y: 14, w: 2, h: 2 },
-  cropPatch: { x: 21, y: 10, w: 5, h: 4 },
+  // Hana's starter crops sit on the painted tilled field east of the pond road.
+  cropPatch: { x: 19, y: 15, w: 5, h: 2 },
 } as const satisfies Record<string, VillageGridRect>;
 
 export const FARM_VILLAGE_BUILDING_RECTS: VillageGridRect[] = Object.values(VILLAGE_BUILDING_LAYOUT)
@@ -51,7 +54,7 @@ export const VILLAGE_NPC_PATROLS: Record<VillageNpcId, Record<VillagePhase, NpcP
     dawn: { start: { x: 21, y: 12 }, end: { x: 22, y: 12 }, idleFacing: 'down' },
     day: { start: { x: 25, y: 12 }, end: { x: 26, y: 12 }, idleFacing: 'down' },
     sunset: { start: { x: 23, y: 17 }, end: { x: 24, y: 17 }, idleFacing: 'up' },
-    night: { start: { x: 17, y: 6 }, end: { x: 18, y: 6 }, idleFacing: 'up' },
+    night: { start: { x: 17, y: 7 }, end: { x: 18, y: 7 }, idleFacing: 'up' },
   },
   'rancher-jun': {
     dawn: { start: { x: 5, y: 13 }, end: { x: 5, y: 14 }, idleFacing: 'right', tickOffset: 8 },

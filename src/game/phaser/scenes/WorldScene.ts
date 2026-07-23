@@ -8,10 +8,13 @@ import {
   type PhaserSpriteSnapshot,
   type PhaserWorldSnapshot,
 } from '../bridge';
-import { getCoverCameraZoom, updateDeadZoneCamera } from '../cameraController';
+import { getFitCameraZoom, updateDeadZoneCamera } from '../cameraController';
 
 const MOVE_INTERVAL_MS = 92;
-const MOTION_RESPONSE_MS = 38;
+const TILE_STEP_PX = 16;
+// One tile per move interval: walking reads as one steady speed instead of the
+// fast-then-slow rubber band an exponential ease produces on every hop.
+const BASE_SPRITE_SPEED_PX_PER_MS = TILE_STEP_PX / MOVE_INTERVAL_MS;
 const MAX_INTERPOLATED_DISTANCE = 40;
 const DIRECTION_BY_CODE: Record<string, PhaserDirection | undefined> = {
   ArrowUp: 'up',
@@ -241,7 +244,7 @@ export class WorldScene extends Phaser.Scene {
     const camera = this.cameras.main;
     const previousScrollX = this.cameraScrollX;
     const previousScrollY = this.cameraScrollY;
-    const coverZoom = getCoverCameraZoom(canvasWidth, canvasHeight, snapshot.worldWidth, snapshot.worldHeight);
+    const coverZoom = getFitCameraZoom(canvasWidth, canvasHeight, snapshot.worldWidth, snapshot.worldHeight);
     const nextCamera = updateDeadZoneCamera({
       canvasWidth,
       canvasHeight,
@@ -280,7 +283,7 @@ export class WorldScene extends Phaser.Scene {
     canvas.dataset.phaserCameraScrollY = String(camera.scrollY);
     canvas.dataset.phaserCameraPreviousScrollX = String(previousScrollX);
     canvas.dataset.phaserCameraPreviousScrollY = String(previousScrollY);
-    canvas.dataset.phaserCameraMode = 'dead-zone-cover';
+    canvas.dataset.phaserCameraMode = 'fit-center';
     canvas.dataset.phaserCameraTargetX = String(targetX);
     canvas.dataset.phaserCameraTargetY = String(targetY);
     canvas.dataset.phaserCameraDeadZoneWidth = String(nextCamera.deadZoneWidth);
@@ -373,19 +376,25 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private updateSpriteMotion(delta: number) {
-    const response = 1 - Math.exp(-Math.max(0, delta) / MOTION_RESPONSE_MS);
     const camera = this.cameras.main;
     this.spriteTargets.forEach((target, id) => {
       if (!target.smooth) return;
       const image = this.spriteObjects.get(id);
       if (!image) return;
       if (!Phaser.Geom.Intersects.RectangleToRectangle(camera.worldView, image.getBounds())) return;
-      const nextX = Phaser.Math.Linear(image.x, target.x, response);
-      const nextY = Phaser.Math.Linear(image.y, target.y, response);
-      image.setPosition(
-        Math.abs(target.x - nextX) < 0.05 ? target.x : nextX,
-        Math.abs(target.y - nextY) < 0.05 ? target.y : nextY,
-      );
+      const dx = target.x - image.x;
+      const dy = target.y - image.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance < 0.01) return;
+      // Constant walking speed; scale up smoothly when input jitter queues more
+      // than one tile of pending distance so the sprite catches up without snapping.
+      const speed = BASE_SPRITE_SPEED_PX_PER_MS * Math.max(1, distance / TILE_STEP_PX);
+      const step = speed * Math.max(0, delta);
+      if (step >= distance) {
+        image.setPosition(target.x, target.y);
+        return;
+      }
+      image.setPosition(image.x + (dx / distance) * step, image.y + (dy / distance) * step);
     });
   }
 

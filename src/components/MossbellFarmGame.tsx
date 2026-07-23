@@ -3884,7 +3884,7 @@ export function MossbellFarmGame() {
       data-phaser-ready={phaserReady ? 'true' : 'false'}
       data-phaser-runtime={phaserRenderer}
       data-phaser-fallback={phaserFallback ?? 'none'}
-      data-phaser-edge-fit="cover-dead-zone"
+      data-phaser-edge-fit="fit-letterbox"
       data-input-owner={usePhaserOutdoor ? 'phaser-bridge' : 'react-dom'}
       data-economy-system="v1"
       data-season-system="v1"
@@ -3941,10 +3941,10 @@ export function MossbellFarmGame() {
       data-walk-cycle="coherent-generated-frames"
       data-sprite-normalization="bottom-centered-transparent-canvas"
       data-movement-mode="pressed-key-raf-loop"
-      data-world-scale-mode="pixel-locked-cover"
+      data-world-scale-mode="pixel-locked-fit"
       data-map-grid="32x22"
       data-mobile-fit-mode="camera-fullscreen-safe-area"
-      data-camera-mode="dead-zone-cover"
+      data-camera-mode="fit-center"
       data-collision-mode="entity-and-water-bounds"
       data-depth-sorting="y-axis-feet"
       data-right-inventory-bar={isMobileInventory ? 'overlay-drawer' : 'persistent'}

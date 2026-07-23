@@ -22,7 +22,7 @@ const bootScene = readRequired('src/game/phaser/scenes/BootScene.ts');
 const villageScene = readRequired('src/game/phaser/scenes/WorldScene.ts');
 const cameraController = readRequired('src/game/phaser/cameraController.ts');
 const host = readRequired('src/components/game/PhaserGameHost.tsx');
-const { getCoverCameraZoom, updateDeadZoneCamera } = await import('../src/game/phaser/cameraController.ts');
+const { getFitCameraZoom, updateDeadZoneCamera } = await import('../src/game/phaser/cameraController.ts');
 
 assert(typeof dependencies.phaser === 'string', 'Phaser must be the only new rendering dependency');
 for (const dependency of ['three', '@types/three', '@react-three/fiber', '@babylonjs/core', 'babylonjs', 'pixi.js', '@pixi/core']) {
@@ -58,10 +58,10 @@ assert(villageScene.includes('updateSpriteMotion'), 'FarmVillageScene must inter
 assert(villageScene.includes('Phaser.Scale.Events.RESIZE'), 'FarmVillageScene must respond when the RESIZE scale mode changes the canvas');
 assert(villageScene.includes('syncCameraViewport'), 'FarmVillageScene must synchronize its camera viewport with the resized canvas');
 assert(villageScene.includes('setViewport(0, 0, canvasWidth, canvasHeight)'), 'Phaser camera viewport must fill the complete canvas without dark gutters');
-assert(villageScene.includes('camera.setOrigin(0.5, 0.5)'), 'Phaser camera must use its centered projection origin so bounded cover zoom does not offset the world inside the canvas');
-assert(villageScene.includes('getCoverCameraZoom'), 'FarmVillageScene must derive cover zoom from the canvas and world dimensions');
-assert(villageScene.includes('updateDeadZoneCamera'), 'FarmVillageScene must move only when the player exits the dead zone');
-assert(villageScene.includes('camera.setBounds(0, 0, snapshot.worldWidth, snapshot.worldHeight)'), 'Camera scroll must stay inside world bounds');
+assert(villageScene.includes('camera.setOrigin(0.5, 0.5)'), 'Phaser camera must use its centered projection origin so bounded fit zoom centers the region inside the canvas');
+assert(villageScene.includes('getFitCameraZoom'), 'WorldScene must derive fit zoom from the canvas and world dimensions so the whole region stays visible');
+assert(villageScene.includes('updateDeadZoneCamera'), 'WorldScene must resolve its camera through the shared controller');
+assert(villageScene.includes('camera.setBounds(0, 0, snapshot.worldWidth, snapshot.worldHeight)'), 'Bounds must let Phaser center a region smaller than the canvas into a neutral letterbox');
 assert(!villageScene.includes('snapshot.camera.zoom'), 'React snapshots must not dictate Phaser zoom');
 assert(!villageScene.includes('snapshot.camera.left'), 'React snapshots must not dictate Phaser horizontal scroll');
 assert(!villageScene.includes('snapshot.camera.top'), 'React snapshots must not dictate Phaser vertical scroll');
@@ -74,7 +74,7 @@ assert(villageScene.includes('phaserCameraDeadZoneWidth'), 'Browser diagnostics 
 assert(villageScene.includes('phaserCameraMoved'), 'Browser diagnostics must report whether the latest player step moved the camera');
 assert(villageScene.includes('if (cameraViewChanged)'), 'Camera telemetry must emit only when zoom or scroll actually changes');
 assert(villageScene.includes('private cameraScrollX = 0'), 'FarmVillageScene must own stable camera scroll instead of reading Phaser frame corrections back into domain state');
-assert(/export function getCoverCameraZoom/.test(cameraController), 'Camera controller must expose deterministic cover zoom');
+assert(/export function getFitCameraZoom/.test(cameraController), 'Camera controller must expose deterministic fit zoom');
 assert(/export function updateDeadZoneCamera/.test(cameraController), 'Camera controller must expose deterministic dead-zone updates');
 assert(cameraController.includes('Math.round(value * zoom) / zoom'), 'Camera scroll must align to physical pixels');
 assert(cameraController.includes('moved: false'), 'Camera controller must preserve a perfectly stable scroll inside the dead zone');
@@ -111,11 +111,12 @@ const cameraOutsideDeadZone = updateDeadZoneCamera({
   previousScrollY: cameraBase.scrollY,
   initialized: true,
 });
-assert(Math.abs(cameraBase.zoom - getCoverCameraZoom(1120, 900, 1024, 704)) < 1e-9, 'Camera controller must use cover zoom');
-assert(!cameraInsideDeadZone.moved, 'Player movement inside the dead zone must keep the camera perfectly still');
-assert(cameraInsideDeadZone.scrollX === cameraBase.scrollX && cameraInsideDeadZone.scrollY === cameraBase.scrollY, 'Dead-zone stability must preserve exact camera coordinates');
-assert(cameraOutsideDeadZone.moved && cameraOutsideDeadZone.scrollX > cameraBase.scrollX, 'Camera must move only after the player exits the dead zone');
-assert(cameraOutsideDeadZone.scrollX <= 1024 - cameraOutsideDeadZone.visibleWidth, 'Camera must stay inside the horizontal world bound');
+assert(Math.abs(cameraBase.zoom - getFitCameraZoom(1120, 900, 1024, 704)) < 1e-9, 'Camera controller must use fit zoom');
+assert(cameraBase.visibleWidth === 1024 && cameraBase.visibleHeight === 704, 'Fit zoom must keep the entire region inside the canvas');
+assert(!cameraInsideDeadZone.moved, 'Player movement must keep the fit-centered camera perfectly still');
+assert(cameraInsideDeadZone.scrollX === cameraBase.scrollX && cameraInsideDeadZone.scrollY === cameraBase.scrollY, 'Fit-center stability must preserve exact camera coordinates');
+assert(!cameraOutsideDeadZone.moved && cameraOutsideDeadZone.scrollX === cameraBase.scrollX, 'A region that fits the canvas must never scroll as the player crosses it');
+assert(cameraOutsideDeadZone.visibleWidth === 1024, 'The whole region width must stay visible so edge buildings are never cropped');
 assert(Math.abs(cameraOutsideDeadZone.scrollX * cameraOutsideDeadZone.zoom - Math.round(cameraOutsideDeadZone.scrollX * cameraOutsideDeadZone.zoom)) < 1e-9, 'Camera scroll must align to a physical pixel');
 assert(!bridge.includes('PhaserCameraSnapshot'), 'Camera ownership must stay inside Phaser instead of the React bridge');
 assert(villageScene.includes("this.scale.off(Phaser.Scale.Events.RESIZE"), 'FarmVillageScene must remove its scale resize listener during disposal');
