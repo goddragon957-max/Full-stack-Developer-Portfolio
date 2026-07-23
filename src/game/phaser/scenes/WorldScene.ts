@@ -10,7 +10,10 @@ import {
 } from '../bridge';
 import { getFitCameraZoom, updateDeadZoneCamera } from '../cameraController';
 
-const MOVE_INTERVAL_MS = 92;
+// Tile cadence (ms per tile). Must match MOVE_INTERVAL_MS in MossbellFarmGame.tsx
+// so the React move loop and the Phaser sprite interpolation stay in lockstep.
+// 140ms ≈ 7.1 tiles/s — a cozy farm-game walk instead of the previous 10.9/s dash.
+const MOVE_INTERVAL_MS = 140;
 const TILE_STEP_PX = 16;
 // One tile per move interval: walking reads as one steady speed instead of the
 // fast-then-slow rubber band an exponential ease produces on every hop.
