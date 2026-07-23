@@ -226,4 +226,21 @@ for (const exitId of ['village-west', 'forest-north', 'coast-east', 'mine-south'
 assert(state.currentRegion === 'farm-village', 'Four exits must complete the world loop back to the village');
 assert(state.discovered.length === 4, 'World loop must discover all four regions');
 
-console.log('open world test passed: visible gate approaches, safe arrivals, directional exits, full region loop');
+// Anti-trap guard: in every land region the initial spawn and all gate arrivals
+// must sit on one connected walkable component. This is the safety net for
+// terrain-mask work — a mask that severs a gate from the rest of the region
+// fails here instead of stranding the player in the browser.
+const initialPositions = world.createInitialOpenWorldState().positions;
+for (const region of world.LAND_REGION_IDS) {
+  const spawn = initialPositions[region];
+  assert(!world.isRegionBlocked(region, spawn.x, spawn.y), `${region} initial spawn must be walkable`);
+  const arrivals = world.REGION_EXITS
+    .filter((exit) => exit.to === region)
+    .map((exit) => ({ x: exit.arrival.x, y: exit.arrival.y, label: `${exit.id} arrival` }));
+  for (const cell of arrivals) {
+    assert(!world.isRegionBlocked(region, cell.x, cell.y), `${region} ${cell.label} must be walkable`);
+    assert(canReachRegionCell(region, spawn, cell), `${region} ${cell.label} must connect to the spawn through walkable terrain`);
+  }
+}
+
+console.log('open world test passed: visible gate approaches, safe arrivals, directional exits, full region loop, gate reachability');
