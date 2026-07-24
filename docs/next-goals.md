@@ -21,10 +21,10 @@ _Last updated: 2026-07-24. Stardew-inspired browser farm RPG (React + Phaser 4.2
 | # | Goal | Status |
 |---|------|--------|
 | P1 | Movement feel | **Speed committed** (`d9b4144`, 92→140ms, ~7.1 tiles/s, tunable). Final call — keep / retune / switch to continuous pixel movement — needs a **playtest decision**. |
-| P2 | Terrain masks for 3 regions | `farm-village` + `river-coast` masks committed. `whisper-forest` / `mine-foothill` left on existing rects (already adequately blocked; blind masking risks sealing paths). Optional polish = playtest-driven. |
+| P2 | Terrain masks for 3 regions | **Done for what needs it.** `farm-village` + `river-coast` (borders + standing trees, `7f19b08`) masked. `whisper-forest` / `mine-foothill` are dense, deliberately-tuned regions whose collision is locked by explicit walkable-route tests (e.g. mine `x15,y13`, forest bridge `x15,y8`); their "gaps" are intended-passable rocky/grassy ground, so blind masking is net-negative — left on existing rects. |
 | P3 | Tillable mask (restrict tilling to painted fields) | **Not started — design fork.** Conflicts with the shipped freeform-farming feature (`isFarmVillageTillableTerrain` currently lets you till any open grass). Needs a decision: freeform vs restricted. |
 | P4 | Letterbox centering | **Non-bug.** Phaser `clampX` centers on both axes symmetrically. No change. |
-| P5 | Walk-frame ↔ distance sync | **Not started.** Walk frame advances once per tile (`step % N`); sub-tile smoothing needs a typed-bridge change to send the walk-frame set to Phaser. Medium effort, playtest-dependent value. |
+| P5 | Walk-frame ↔ distance sync | **Done** (`ee2e818`). Player snapshot carries `frames[]`; `WorldScene.advanceWalkFrame` cycles 0-1-2-1 by `WALK_STRIDE_PX` travelled, so the gait animates smoothly between one-tile snapshots. |
 
 Long term: consider migrating to a Tiled tilemap + tileset (unlocks per-tile
 seasonal swaps, layered depth, tile animation).
