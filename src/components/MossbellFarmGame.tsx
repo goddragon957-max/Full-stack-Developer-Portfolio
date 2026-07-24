@@ -2113,6 +2113,9 @@ export function MossbellFarmGame() {
         width: playerWidth,
         height: playerHeight,
         depth: getPlayerDepth(player),
+        // Hand Phaser the directional walk cycle so it can animate the gait
+        // between one-tile snapshots. Omitted while sailing or mid-action.
+        frames: player.walking && !isSailing && !playerAction ? playerFrames : undefined,
       },
       hints,
     };
@@ -2140,6 +2143,7 @@ export function MossbellFarmGame() {
     phaserReady,
     player,
     playerAction,
+    playerFrames,
     playerSprite,
     ranchFenceTarget,
     regionTransition,

@@ -55,6 +55,9 @@ assert(!villageScene.includes('children.removeAll(true)'), 'FarmVillageScene mus
 assert(villageScene.includes('spriteObjects'), 'FarmVillageScene must keep stable sprite objects between React snapshots');
 assert(villageScene.includes('spriteTargets'), 'FarmVillageScene must retain smooth target positions for moving sprites');
 assert(villageScene.includes('updateSpriteMotion'), 'FarmVillageScene must interpolate moving sprites every Phaser frame');
+assert(villageScene.includes('advanceWalkFrame') && villageScene.includes('WALK_STRIDE_PX'), 'WorldScene must cycle walk frames by distance travelled, not once per tile');
+assert(bridge.includes('frames?: string[]'), 'Sprite snapshots must be able to carry a walk-cycle frame set');
+assert(component.includes('frames: player.walking'), 'The player snapshot must hand Phaser its directional walk frames while moving');
 assert(villageScene.includes('Phaser.Scale.Events.RESIZE'), 'FarmVillageScene must respond when the RESIZE scale mode changes the canvas');
 assert(villageScene.includes('syncCameraViewport'), 'FarmVillageScene must synchronize its camera viewport with the resized canvas');
 assert(villageScene.includes('setViewport(0, 0, canvasWidth, canvasHeight)'), 'Phaser camera viewport must fill the complete canvas without dark gutters');

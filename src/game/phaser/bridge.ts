@@ -44,6 +44,10 @@ export type PhaserSpriteSnapshot = {
   originX?: number;
   originY?: number;
   alpha?: number;
+  // Optional walk-cycle frames. When present and the sprite is moving, Phaser
+  // advances through them by distance travelled so the gait stays smooth between
+  // the discrete one-tile snapshots instead of flipping a single frame per tile.
+  frames?: string[];
 };
 
 export type PhaserPlotSnapshot = {
@@ -166,7 +170,9 @@ export function collectSnapshotAssets(snapshot: PhaserWorldSnapshot) {
   const assets = new Set<string>([snapshot.mapAsset, snapshot.player.asset]);
   const addSprite = (sprite?: PhaserSpriteSnapshot) => {
     if (sprite?.asset) assets.add(sprite.asset);
+    sprite?.frames?.forEach((frame) => assets.add(frame));
   };
+  snapshot.player.frames?.forEach((frame) => assets.add(frame));
 
   snapshot.entities.forEach(addSprite);
   snapshot.fences.forEach(addSprite);

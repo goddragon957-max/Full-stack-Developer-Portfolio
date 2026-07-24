@@ -19,6 +19,10 @@ const TILE_STEP_PX = 16;
 // fast-then-slow rubber band an exponential ease produces on every hop.
 const BASE_SPRITE_SPEED_PX_PER_MS = TILE_STEP_PX / MOVE_INTERVAL_MS;
 const MAX_INTERPOLATED_DISTANCE = 40;
+// Walk-cycle animation: advance one frame per STRIDE_PX travelled, looping
+// 0-1-2-1 so the passing pose is hit on both the out and return strides.
+const WALK_STRIDE_PX = 5;
+const WALK_CYCLE = [0, 1, 2, 1];
 const DIRECTION_BY_CODE: Record<string, PhaserDirection | undefined> = {
   ArrowUp: 'up',
   KeyW: 'up',
@@ -35,7 +39,8 @@ export class WorldScene extends Phaser.Scene {
   private unsubscribeSnapshot: (() => void) | null = null;
   private readonly pendingTextures = new Map<string, Promise<void>>();
   private readonly spriteObjects = new Map<string, Phaser.GameObjects.Image>();
-  private readonly spriteTargets = new Map<string, { x: number; y: number; smooth: boolean }>();
+  private readonly spriteTargets = new Map<string, { x: number; y: number; smooth: boolean; frames?: string[] }>();
+  private readonly strideDistance = new Map<string, number>();
   private readonly hintObjects = new Map<string, Phaser.GameObjects.GameObject[]>();
   private readonly hintSignatures = new Map<string, string>();
   private mapImage: Phaser.GameObjects.Image | null = null;
@@ -169,6 +174,7 @@ export class WorldScene extends Phaser.Scene {
     this.spriteObjects.forEach((image) => image.destroy());
     this.spriteObjects.clear();
     this.spriteTargets.clear();
+    this.strideDistance.clear();
     this.hintObjects.forEach((_objects, id) => this.destroyHint(id));
     this.cameraInitialized = false;
     this.cameraScrollX = 0;
@@ -363,7 +369,7 @@ export class WorldScene extends Phaser.Scene {
       if (!smooth || dimensionsChanged || distance > MAX_INTERPOLATED_DISTANCE) {
         image.setPosition(sprite.x, sprite.y);
       }
-      this.spriteTargets.set(sprite.id, { x: sprite.x, y: sprite.y, smooth });
+      this.spriteTargets.set(sprite.id, { x: sprite.x, y: sprite.y, smooth, frames: sprite.frames });
     });
 
     this.spriteObjects.forEach((image, id) => {
@@ -371,6 +377,7 @@ export class WorldScene extends Phaser.Scene {
       image.destroy();
       this.spriteObjects.delete(id);
       this.spriteTargets.delete(id);
+      this.strideDistance.delete(id);
     });
   }
 
@@ -388,17 +395,29 @@ export class WorldScene extends Phaser.Scene {
       const dx = target.x - image.x;
       const dy = target.y - image.y;
       const distance = Math.hypot(dx, dy);
-      if (distance < 0.01) return;
+      if (distance < 0.01) {
+        this.strideDistance.set(id, 0);
+        return;
+      }
       // Constant walking speed; scale up smoothly when input jitter queues more
       // than one tile of pending distance so the sprite catches up without snapping.
       const speed = BASE_SPRITE_SPEED_PX_PER_MS * Math.max(1, distance / TILE_STEP_PX);
-      const step = speed * Math.max(0, delta);
-      if (step >= distance) {
-        image.setPosition(target.x, target.y);
-        return;
-      }
+      const step = Math.min(distance, speed * Math.max(0, delta));
       image.setPosition(image.x + (dx / distance) * step, image.y + (dy / distance) * step);
+      this.advanceWalkFrame(id, image, target.frames, step);
     });
+  }
+
+  private advanceWalkFrame(id: string, image: Phaser.GameObjects.Image, frames: string[] | undefined, moved: number) {
+    if (!frames || frames.length < 2) return;
+    const travelled = (this.strideDistance.get(id) ?? 0) + moved;
+    this.strideDistance.set(id, travelled);
+    const cycleIndex = WALK_CYCLE[Math.floor(travelled / WALK_STRIDE_PX) % WALK_CYCLE.length];
+    const frameKey = getPhaserTextureKey(frames[cycleIndex % frames.length]);
+    if (image.texture.key !== frameKey && this.textures.exists(frameKey)) {
+      image.setTexture(frameKey);
+      image.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
   }
 
   private reconcileHints(hints: PhaserHintSnapshot[]) {
@@ -462,6 +481,7 @@ export class WorldScene extends Phaser.Scene {
     this.game.events.off(Phaser.Core.Events.BLUR, this.clearMovement, this);
     this.spriteObjects.clear();
     this.spriteTargets.clear();
+    this.strideDistance.clear();
     this.hintObjects.clear();
     this.hintSignatures.clear();
     this.mapImage = null;
