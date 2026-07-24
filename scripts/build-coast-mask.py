@@ -12,13 +12,20 @@ from PIL import Image, ImageDraw
 
 COLS, ROWS, T, S = 32, 22, 16, 2
 
-# (x, y, w, h) forest/tree blocks to ADD. Borders only for v1 (high confidence).
+# (x, y, w, h) forest/tree blocks to ADD. Union with existing rects + water rows.
 FOREST = [
     (0, 15, 4, 7),     # left-bottom pine wall (x0-3, y15-21)
     (4, 20, 8, 2),     # bottom-left forest up to the down-gate (x4-11, y20-21)
     (15, 20, 13, 2),   # bottom-right forest after the gate (x15-27, y20-21)
     (27, 11, 5, 3),    # right forest upper (x27-31, y11-13)
     (27, 15, 5, 7),    # right forest lower, skips y14 arrival row (x27-31, y15-21)
+    # scattered leafy trees standing on open grass (v2 polish, high-confidence only)
+    (11, 3, 2, 2),     # big oak upper-center
+    (15, 6, 2, 2),     # big oak center
+    (16, 13, 2, 2),    # oak center-lower
+    (24, 8, 2, 2),     # oak right
+    (24, 15, 2, 2),    # oak right-lower
+    (9, 16, 2, 2),     # pine left-bottom grass
 ]
 
 def build_rows():
