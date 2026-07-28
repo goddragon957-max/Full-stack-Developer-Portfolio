@@ -137,7 +137,10 @@ export const REGION_EXITS: RegionExit[] = WORLD_EXIT_BLUEPRINTS.map((exit) => ({
 export const FAST_TRAVEL_POSTS: Partial<Record<RegionId, { x: number; y: number }>> = {
   'farm-village': { x: 16, y: 8 },
   'whisper-forest': { x: 8, y: 8 },
-  'river-coast': { x: 15, y: 13 },
+  // One tile south of the old spot, which sat in the river itself: this puts the
+  // post on the grass beside the road descending from the bridge, and keeps its
+  // derived arrival (14,14) on that road.
+  'river-coast': { x: 15, y: 14 },
   'mine-foothill': { x: 15, y: 14 },
 };
 

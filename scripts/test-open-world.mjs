@@ -234,9 +234,19 @@ const initialPositions = world.createInitialOpenWorldState().positions;
 for (const region of world.LAND_REGION_IDS) {
   const spawn = initialPositions[region];
   assert(!world.isRegionBlocked(region, spawn.x, spawn.y), `${region} initial spawn must be walkable`);
-  const arrivals = world.REGION_EXITS
-    .filter((exit) => exit.to === region)
-    .map((exit) => ({ x: exit.arrival.x, y: exit.arrival.y, label: `${exit.id} arrival` }));
+  // The fast-travel post is a signpost standing in the world, so it must be on
+  // solid ground (one sat in the river), and its derived arrival must be walkable.
+  const post = world.FAST_TRAVEL_POSTS[region];
+  assert(post && !world.isRegionBlocked(region, post.x, post.y), `${region} fast-travel post must stand on walkable ground, not water`);
+  const postArrival = world.FAST_TRAVEL_ARRIVALS[region];
+  assert(!world.isRegionBlocked(region, postArrival.x, postArrival.y), `${region} fast-travel arrival must be walkable`);
+  const arrivals = [
+    { x: post.x, y: post.y, label: 'fast-travel post' },
+    { x: postArrival.x, y: postArrival.y, label: 'fast-travel arrival' },
+    ...world.REGION_EXITS
+      .filter((exit) => exit.to === region)
+      .map((exit) => ({ x: exit.arrival.x, y: exit.arrival.y, label: `${exit.id} arrival` })),
+  ];
   for (const cell of arrivals) {
     assert(!world.isRegionBlocked(region, cell.x, cell.y), `${region} ${cell.label} must be walkable`);
     assert(canReachRegionCell(region, spawn, cell), `${region} ${cell.label} must connect to the spawn through walkable terrain`);
