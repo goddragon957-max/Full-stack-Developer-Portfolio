@@ -50,8 +50,31 @@ seasonal swaps, layered depth, tile animation).
 - Commit author auto-selects via remote-alias includeIf (`goddragon957-max`).
   Don't use `gh auth switch`.
 
+## Placement audit (guards now in `test-open-world.mjs`)
+
+Terrain masks and building moves both add blocked cells, so anything placed on the
+grid can get swallowed. Covered by assertions, each verified meaningful by
+temporarily blocking the cell and watching the suite fail:
+
+- gate arrivals + spawn, connected by BFS (`de62cbe`)
+- fast-travel post and its derived arrival (`3cc4125`)
+- forage nodes in **every** region, not just the mine (`212fad7`)
+- village prop anchors and NPC patrol waypoints (`e83f910`)
+
+Bugs this audit found and fixed:
+
+- `river-coast` fast-travel post stood in the river at `(15,13)` → `(15,14)`.
+- The mailbox at `(5,6)` ended up inside the farmhouse after the buildings moved
+  to y3 → `(1,6)`.
+
 ## Known follow-ups noticed in passing
 
-- `river-coast` fast-travel post `(15,13)` sits on a water cell (marker triggers
-  from adjacent land, so not a trap — left as-is; see `de62cbe`).
-- After masks mature, review removing the now-redundant `*_BLOCKED_RECTS`.
+- The notice board at `(16,12)` is 2x2 and its bottom-left cell `(16,13)` overlaps
+  the pond edge. Pre-existing and cosmetic; a 1-tile shift to `(16,11)` clears it
+  and still avoids the road rects.
+- Consolidating collision into masks alone was **considered and dropped**:
+  `REGION_COLLISION_RECTS` is exported and surfaced in the Phaser region
+  descriptor (`worldRegions.ts` `collisionRects`), while real collision runs
+  through `isRegionBlocked`. Generating duplicate masks for forest/mine from the
+  existing rects would add data to keep in sync with no player-visible gain, so
+  the rects stay as the authoring surface for those two dense regions.
