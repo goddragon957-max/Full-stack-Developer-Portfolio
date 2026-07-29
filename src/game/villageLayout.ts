@@ -23,7 +23,10 @@ export const VILLAGE_BUILDING_LAYOUT = {
 
 export const VILLAGE_PROP_LAYOUT = {
   board: { x: 16, y: 12, w: 2, h: 2 },
-  mailbox: { x: 5, y: 6, w: 1, h: 1 },
+  // Moved off (5,6): once the farmhouse shifted down to y3-6 that cell fell
+  // inside its footprint. (1,6) keeps the mailbox at the plot corner, beside the
+  // farmhouse and just above the avenue without standing on the road.
+  mailbox: { x: 1, y: 6, w: 1, h: 1 },
   oldBell: { x: 12, y: 5, w: 2, h: 2 },
   shippingBox: { x: 1, y: 14, w: 2, h: 2 },
   // Hana's starter crops sit on the painted tilled field east of the pond road.

@@ -179,6 +179,26 @@ const compiledForaging = ts.transpileModule(
   { compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 }, fileName: 'foragingLoop.ts' },
 ).outputText;
 const foraging = await import(`data:text/javascript;base64,${Buffer.from(compiledForaging).toString('base64')}`);
+
+// Village props and NPC patrols live on the same grid as the buildings, so moving
+// a building (or masking terrain) can swallow them. Anchors must stay clear and
+// patrol waypoints must stay walkable — a mailbox once ended up inside a farmhouse.
+for (const [propId, prop] of Object.entries(villageLayout.VILLAGE_PROP_LAYOUT)) {
+  assert(
+    !world.isRegionBlocked('farm-village', prop.x, prop.y),
+    `${propId} anchor cell must not sit inside a building or blocked terrain`,
+  );
+}
+for (const [npcId, phases] of Object.entries(villageLayout.VILLAGE_NPC_PATROLS)) {
+  for (const [phase, patrol] of Object.entries(phases)) {
+    for (const [label, point] of [['start', patrol.start], ['end', patrol.end]]) {
+      assert(
+        !world.isRegionBlocked('farm-village', point.x, point.y),
+        `${npcId} ${phase} patrol ${label} must stay on walkable village ground`,
+      );
+    }
+  }
+}
 // Every region's forage nodes, not just the mine: terrain masks add blocked
 // cells, so a new mask must never bury a gatherable under a tree or in water.
 for (const node of foraging.FORAGE_NODES) {
