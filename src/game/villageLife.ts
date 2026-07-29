@@ -152,21 +152,6 @@ export const PRODUCT_INFO: Record<RanchProduct, { label: string; description: st
   },
 };
 
-const NPC_POSITIONS: Record<LifeNpcId, Record<DayPhase, { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' }>> = {
-  'farmer-hana': {
-    dawn: { x: 21, y: 12, facing: 'down' },
-    day: { x: 25, y: 12, facing: 'left' },
-    sunset: { x: 23, y: 17, facing: 'down' },
-    night: { x: 17, y: 6, facing: 'right' },
-  },
-  'rancher-jun': {
-    dawn: { x: 5, y: 13, facing: 'right' },
-    day: { x: 10, y: 16, facing: 'left' },
-    sunset: { x: 5, y: 19, facing: 'right' },
-    night: { x: 3, y: 14, facing: 'up' },
-  },
-};
-
 const DAY_ANIMAL_POSITIONS: Record<AnimalId, { x: number; y: number }> = {
   'chicken-1': { x: 6, y: 15 },
   'chicken-2': { x: 7, y: 15 },
@@ -346,10 +331,6 @@ export function clearRanchState(state: VillageLifeState): VillageLifeState {
     rancherQuest: createQuest(state.day, 'rancher'),
     fencePieces: cloneDefaultRanchFencePieces(),
   };
-}
-
-export function getLifeNpcPosition(id: LifeNpcId, phase: DayPhase) {
-  return NPC_POSITIONS[id][phase];
 }
 
 export function getAnimalPosition(id: AnimalId, phase: DayPhase, frame = 0) {

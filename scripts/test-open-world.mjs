@@ -199,6 +199,26 @@ for (const [npcId, phases] of Object.entries(villageLayout.VILLAGE_NPC_PATROLS))
     }
   }
 }
+
+const festivalSource = readFileSync('src/game/festivalSystem.ts', 'utf8').replace(/^import type .*;\r?\n/gm, '');
+const compiledFestival = ts.transpileModule(festivalSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.ES2022,
+    target: ts.ScriptTarget.ES2022,
+  },
+  fileName: 'festivalSystem.ts',
+}).outputText;
+const festival = await import(`data:text/javascript;base64,${Buffer.from(compiledFestival).toString('base64')}`);
+for (const [index, spot] of festival.FESTIVAL_NPC_POSITIONS.entries()) {
+  assert(
+    !world.isRegionBlocked('farm-village', spot.x, spot.y),
+    `Festival NPC slot ${index} must stand on walkable village ground`,
+  );
+}
+assert(
+  !world.isRegionBlocked('farm-village', festival.FESTIVAL_INTERACTION_POSITION.x, festival.FESTIVAL_INTERACTION_POSITION.y),
+  'The festival interaction spot must stay reachable',
+);
 // Every region's forage nodes, not just the mine: terrain masks add blocked
 // cells, so a new mask must never bury a gatherable under a tree or in water.
 for (const node of foraging.FORAGE_NODES) {
