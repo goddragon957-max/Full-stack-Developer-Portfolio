@@ -179,8 +179,10 @@ const compiledForaging = ts.transpileModule(
   { compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 }, fileName: 'foragingLoop.ts' },
 ).outputText;
 const foraging = await import(`data:text/javascript;base64,${Buffer.from(compiledForaging).toString('base64')}`);
-for (const node of foraging.FORAGE_NODES.filter((candidate) => candidate.region === 'mine-foothill')) {
-  assert(!world.isRegionBlocked('mine-foothill', node.x, node.y), `${node.id} must stay on reachable mining ground`);
+// Every region's forage nodes, not just the mine: terrain masks add blocked
+// cells, so a new mask must never bury a gatherable under a tree or in water.
+for (const node of foraging.FORAGE_NODES) {
+  assert(!world.isRegionBlocked(node.region, node.x, node.y), `${node.id} must stay on reachable ground in ${node.region}`);
 }
 for (const phase of ['dawn', 'day', 'sunset', 'night']) {
   const position = foraging.getOpenWorldNpcPosition('mine-keeper', phase);
