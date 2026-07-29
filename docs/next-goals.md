@@ -60,12 +60,23 @@ temporarily blocking the cell and watching the suite fail:
 - fast-travel post and its derived arrival (`3cc4125`)
 - forage nodes in **every** region, not just the mine (`212fad7`)
 - village prop anchors and NPC patrol waypoints (`e83f910`)
+- festival NPC slots and the festival interaction spot (`9053086`)
+
+Checked and clean, no guard added (static data, all inside the fenced ranch):
+ranch animal day/night positions in `villageLife.ts`.
 
 Bugs this audit found and fixed:
 
 - `river-coast` fast-travel post stood in the river at `(15,13)` → `(15,14)`.
 - The mailbox at `(5,6)` ended up inside the farmhouse after the buildings moved
   to y3 → `(1,6)`.
+- `villageLife.ts` held a dead duplicate of the NPC position table (reachable
+  only via the uncalled `getLifeNpcPosition`) that had drifted to the swallowed
+  `(17,6)`. Deleted rather than repaired — `VILLAGE_NPC_PATROLS` is authoritative.
+
+**Lesson for future layout edits:** moving a building grows/moves its footprint
+and can swallow props, NPC waypoints, and festival spots that were fine before.
+The guards above now fail loudly instead of letting it ship.
 
 ## Known follow-ups noticed in passing
 
