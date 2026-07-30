@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import ts from 'typescript';
 
 function assert(condition, message) {
@@ -299,4 +300,31 @@ for (const region of world.LAND_REGION_IDS) {
   }
 }
 
-console.log('open world test passed: visible gate approaches, safe arrivals, directional exits, full region loop, gate reachability');
+// Golden fingerprint of every collision decision (all regions x 32x22, plus the
+// farm-village tillable set). Terrain collision moved from per-region rects into
+// REGION_TERRAIN_MASKS; this hash is what proved that refactor byte-identical and
+// now pins the result, so any later change to masks, water rows, building
+// footprints or the tillable rule has to be deliberate.
+// To update: confirm the new blocked set is intended, then paste the hash the
+// failure prints.
+const COLLISION_FINGERPRINT = '1bfbf60b3c200aa53b8518eaf1251afd197c724f6ac7b2362c4e6e0ec34bfe0e';
+const fingerprintLines = [];
+for (const region of world.REGION_IDS) {
+  for (let y = 0; y < world.WORLD_HEIGHT; y += 1) {
+    let row = '';
+    for (let x = 0; x < world.WORLD_WIDTH; x += 1) row += world.isRegionBlocked(region, x, y) ? '#' : '.';
+    fingerprintLines.push(`${region} ${String(y).padStart(2)} ${row}`);
+  }
+}
+let tillableRow = '';
+for (let y = 0; y < world.WORLD_HEIGHT; y += 1) {
+  for (let x = 0; x < world.WORLD_WIDTH; x += 1) tillableRow += world.isFarmVillageTillableTerrain(x, y) ? 't' : '.';
+}
+fingerprintLines.push(`tillable ${tillableRow}`);
+const collisionFingerprint = createHash('sha256').update(fingerprintLines.join('\n')).digest('hex');
+assert(
+  collisionFingerprint === COLLISION_FINGERPRINT,
+  `Collision changed. If intended, update COLLISION_FINGERPRINT to ${collisionFingerprint}`,
+);
+
+console.log('open world test passed: visible gate approaches, safe arrivals, directional exits, full region loop, gate reachability, collision fingerprint');

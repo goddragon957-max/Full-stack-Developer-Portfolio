@@ -151,47 +151,15 @@ export const FAST_TRAVEL_ARRIVALS: Record<WorldRegionId, WorldPosition> = Object
   }),
 ) as Record<WorldRegionId, WorldPosition>;
 
-const FOREST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 12, h: 7 }, { x: 15, y: 0, w: 17, h: 7 },
-  { x: 0, y: 21, w: 32, h: 1 }, { x: 0, y: 7, w: 1, h: 14 },
-  { x: 31, y: 0, w: 1, h: 7 }, { x: 31, y: 10, w: 1, h: 11 },
-  { x: 6, y: 10, w: 7, h: 5 }, { x: 16, y: 9, w: 8, h: 5 },
-  { x: 15, y: 14, w: 17, h: 8 }, { x: 5, y: 17, w: 10, h: 5 },
-];
-
-const COAST_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 32, h: 1 }, { x: 0, y: 21, w: 12, h: 1 }, { x: 15, y: 21, w: 17, h: 1 },
-  { x: 0, y: 1, w: 1, h: 20 }, { x: 31, y: 1, w: 1, h: 12 }, { x: 31, y: 16, w: 1, h: 5 },
-  { x: 23, y: 0, w: 9, h: 11 },
-];
-
-const MINE_BLOCKED_RECTS = [
-  { x: 0, y: 0, w: 32, h: 2 }, { x: 0, y: 21, w: 11, h: 1 }, { x: 14, y: 21, w: 18, h: 1 },
-  { x: 0, y: 2, w: 1, h: 11 }, { x: 0, y: 16, w: 1, h: 5 }, { x: 31, y: 2, w: 1, h: 19 },
-  { x: 1, y: 2, w: 13, h: 10 }, { x: 24, y: 2, w: 7, h: 8 },
-  { x: 19, y: 8, w: 12, h: 5 },
-  { x: 1, y: 16, w: 10, h: 5 }, { x: 14, y: 16, w: 17, h: 5 },
-];
-
-const FARM_VILLAGE_SCENERY_RECTS = [
-  { x: 0, y: 0, w: 11, h: 1 },
-  { x: 14, y: 0, w: 18, h: 1 },
-  { x: 0, y: 21, w: 32, h: 1 },
-  { x: 0, y: 0, w: 1, h: 7 },
-  { x: 0, y: 10, w: 1, h: 12 },
-  { x: 31, y: 0, w: 1, h: 22 },
-];
-
-const FARM_BLOCKED_RECTS = [
-  ...FARM_VILLAGE_SCENERY_RECTS,
-  ...FARM_VILLAGE_BUILDING_RECTS,
-];
-
+// Terrain collision now lives entirely in REGION_TERRAIN_MASKS (regenerate with
+// scripts/build-terrain-masks.mjs). What stays here is collision that is *not*
+// terrain: building footprints, which derive from villageLayout so buildings can
+// be moved, and the sea route's reef rects.
 export const REGION_COLLISION_RECTS: Record<RegionId, Array<{ x: number; y: number; w: number; h: number }>> = {
-  'farm-village': FARM_BLOCKED_RECTS,
-  'whisper-forest': FOREST_BLOCKED_RECTS,
-  'river-coast': COAST_BLOCKED_RECTS,
-  'mine-foothill': MINE_BLOCKED_RECTS,
+  'farm-village': [...FARM_VILLAGE_BUILDING_RECTS],
+  'whisper-forest': [],
+  'river-coast': [],
+  'mine-foothill': [],
   'mossbell-sea': [...SEA_ROUTE_COLLISION_RECTS],
 };
 
@@ -350,8 +318,10 @@ export function isRegionBlocked(region: RegionId, x: number, y: number) {
 
 export function isFarmVillageTillableTerrain(x: number, y: number) {
   if (!Number.isInteger(x) || !Number.isInteger(y)) return false;
+  // The old scenery rects (map borders) were also listed here, but every one of
+  // their cells is blocked terrain, so the guard above already rejects them.
   if (isRegionBlocked('farm-village', x, y)) return false;
-  return ![...FARM_VILLAGE_PATH_RECTS, ...FARM_VILLAGE_SCENERY_RECTS].some((rect) => (
+  return !FARM_VILLAGE_PATH_RECTS.some((rect) => (
     x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h
   ));
 }
