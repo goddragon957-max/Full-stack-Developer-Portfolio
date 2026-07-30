@@ -184,10 +184,14 @@ const foraging = await import(`data:text/javascript;base64,${Buffer.from(compile
 // a building (or masking terrain) can swallow them. Anchors must stay clear and
 // patrol waypoints must stay walkable — a mailbox once ended up inside a farmhouse.
 for (const [propId, prop] of Object.entries(villageLayout.VILLAGE_PROP_LAYOUT)) {
-  assert(
-    !world.isRegionBlocked('farm-village', prop.x, prop.y),
-    `${propId} anchor cell must not sit inside a building or blocked terrain`,
-  );
+  for (let offsetY = 0; offsetY < prop.h; offsetY += 1) {
+    for (let offsetX = 0; offsetX < prop.w; offsetX += 1) {
+      assert(
+        !world.isRegionBlocked('farm-village', prop.x + offsetX, prop.y + offsetY),
+        `${propId} must stand entirely on clear ground — cell (${prop.x + offsetX},${prop.y + offsetY}) is blocked`,
+      );
+    }
+  }
 }
 for (const [npcId, phases] of Object.entries(villageLayout.VILLAGE_NPC_PATROLS)) {
   for (const [phase, patrol] of Object.entries(phases)) {

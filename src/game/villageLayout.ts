@@ -22,7 +22,10 @@ export const VILLAGE_BUILDING_LAYOUT = {
 } as const satisfies Record<string, VillageGridRect>;
 
 export const VILLAGE_PROP_LAYOUT = {
-  board: { x: 16, y: 12, w: 2, h: 2 },
+  // Moved off (16,12): its bottom-left cell (16,13) was a pond water tile, so the
+  // board stood in the shallows. (13,12) is the nearest 2x2 patch with all four
+  // cells on solid ground that still clears the road rects.
+  board: { x: 13, y: 12, w: 2, h: 2 },
   // Moved off (5,6): once the farmhouse shifted down to y3-6 that cell fell
   // inside its footprint. (1,6) keeps the mailbox at the plot corner, beside the
   // farmhouse and just above the avenue without standing on the road.
