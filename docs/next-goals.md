@@ -68,6 +68,8 @@ temporarily blocking the cell and watching the suite fail:
 - festival NPC slots and the festival interaction spot (`9053086`)
 - boat-route anchors: sea entry, sea return approach, and both boarding triggers
   being approachable from an open cell
+- ranch animals at every day phase (they sit on sub-tile coordinates right beside
+  the barn, so sliding that building would park a cow in a wall)
 
 Deliberately **not** asserted, because the assertion could never fail:
 

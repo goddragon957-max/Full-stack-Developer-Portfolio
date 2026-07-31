@@ -330,6 +330,27 @@ for (const region of world.LAND_REGION_IDS) {
   }
 }
 
+// Ranch animals wander on sub-tile coordinates inside the fence, right beside the
+// barn, so growing or sliding that building would quietly park a cow in a wall.
+const villageLifeSource = readFileSync('src/game/villageLife.ts', 'utf8')
+  .replace(/^import type .*;\r?\n/gm, '')
+  .replace(/import \{ NPC_WALK_SPRITES, PRODUCT_SPRITES, getAnimalRemasterSprite \} from '\.\/animationCatalog';\r?\n/, '');
+const compiledVillageLife = ts.transpileModule(
+  `const spriteProxy = new Proxy({}, { get: () => '' });\nconst NPC_WALK_SPRITES = new Proxy({}, { get: () => ({ down: ['', ''] }) });\nconst PRODUCT_SPRITES = spriteProxy;\nconst getAnimalRemasterSprite = () => '';\n${villageLifeSource}`,
+  { compilerOptions: { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 }, fileName: 'villageLife.ts' },
+).outputText;
+const villageLife = await import(`data:text/javascript;base64,${Buffer.from(compiledVillageLife).toString('base64')}`);
+for (const animalId of villageLife.ANIMAL_IDS) {
+  for (const phase of ['dawn', 'day', 'sunset', 'night']) {
+    const spot = villageLife.getAnimalPosition(animalId, phase);
+    const cell = { x: Math.floor(spot.x), y: Math.floor(spot.y) };
+    assert(
+      !world.isRegionBlocked('farm-village', cell.x, cell.y),
+      `${animalId} must stand on clear ranch ground at ${phase} — (${cell.x},${cell.y}) is blocked`,
+    );
+  }
+}
+
 // Golden fingerprint of every collision decision (all regions x 32x22, plus the
 // farm-village tillable set). Terrain collision moved from per-region rects into
 // REGION_TERRAIN_MASKS; this hash is what proved that refactor byte-identical and
