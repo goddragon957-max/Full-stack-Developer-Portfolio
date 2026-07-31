@@ -12,7 +12,11 @@ _Last updated: 2026-07-24. Stardew-inspired browser farm RPG (React + Phaser 4.2
   `MOVE_INTERVAL_MS = 140` (kept in sync in **both** files), sprites use
   constant-velocity interpolation (`BASE_SPRITE_SPEED_PX_PER_MS`).
 - Collision = water (`WORLD_WATER_ROWS`) ∪ terrain mask (`REGION_TERRAIN_MASKS`)
-  ∪ building rects, via `openWorld.isRegionBlocked`.
+  ∪ building rects, via `openWorld.isRegionBlocked`. All four outdoor regions now
+  have a mask; `REGION_COLLISION_RECTS` holds only non-terrain collision
+  (building footprints, sea reefs). Regenerate masks with
+  `node scripts/build-terrain-masks.mjs` — it owns the rect terrain and the
+  hand-checked organic cells and unions them into the rows.
 - Camera = fit-center (whole region always on screen, letterbox).
   `cameraController.getFitCameraZoom`.
 
@@ -59,8 +63,19 @@ temporarily blocking the cell and watching the suite fail:
 - gate arrivals + spawn, connected by BFS (`de62cbe`)
 - fast-travel post and its derived arrival (`3cc4125`)
 - forage nodes in **every** region, not just the mine (`212fad7`)
-- village prop anchors and NPC patrol waypoints (`e83f910`)
+- village prop **footprints** (every cell of w*h, not just the anchor) and NPC
+  patrol waypoints (`e83f910`, widened in `2f2c48f`)
 - festival NPC slots and the festival interaction spot (`9053086`)
+- boat-route anchors: sea entry, sea return approach, and both boarding triggers
+  being approachable from an open cell
+
+Deliberately **not** asserted, because the assertion could never fail:
+
+- the dock deck cells' walkability — an early return in `isRegionBlocked` forces
+  it, and reaching them is already implied by the ferry reachability assert
+- the coast-side landing `(6,8)` being clear — same ferry assert implies it
+- the whole-collision golden fingerprint doubles as a catch-all: any change to
+  masks, water, buildings or the tillable rule fails it until updated on purpose
 
 Checked and clean, no guard added (static data, all inside the fenced ranch):
 ranch animal day/night positions in `villageLife.ts`.
@@ -80,12 +95,21 @@ The guards above now fail loudly instead of letting it ship.
 
 ## Known follow-ups noticed in passing
 
-- The notice board at `(16,12)` is 2x2 and its bottom-left cell `(16,13)` overlaps
-  the pond edge. Pre-existing and cosmetic; a 1-tile shift to `(16,11)` clears it
-  and still avoids the road rects.
-- Consolidating collision into masks alone was **considered and dropped**:
-  `REGION_COLLISION_RECTS` is exported and surfaced in the Phaser region
-  descriptor (`worldRegions.ts` `collisionRects`), while real collision runs
-  through `isRegionBlocked`. Generating duplicate masks for forest/mine from the
-  existing rects would add data to keep in sync with no player-visible gain, so
-  the rects stay as the authoring surface for those two dense regions.
+- Collision consolidation was dropped once and then **done** (`bc60610`). The
+  earlier objection assumed masks and rects would both stay live; removing the
+  terrain rects instead means there is nothing to keep in sync. `collisionRects`
+  on the Phaser region descriptor turned out to be assigned and never read.
+  Proof of no behaviour change: a fingerprint of `isRegionBlocked` over every
+  region x 32x22 cell plus the tillable set hashed identically before and after,
+  and that hash is now a test.
+
+## Gotchas worth remembering
+
+- `git checkout -- <file>` restores with **CRLF** here, so a follow-up string
+  patch written with `\n` silently stops matching. Patch line-by-line instead.
+- Reverting a file with `git checkout` also throws away *uncommitted* work in it
+  — that discarded the whole mask refactor once mid-verification. Commit first,
+  or regenerate (the generator script made that recovery free).
+- An assertion that passes is not necessarily meaningful. Two written this
+  session could never fail (forced-walkable dock cells, a landing already implied
+  by a reachability assert). Always inject a break and watch it fail.

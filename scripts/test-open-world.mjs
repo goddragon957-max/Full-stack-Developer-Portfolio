@@ -128,6 +128,36 @@ assert(
   'River Coast arrival must connect to the ferry dock approach through walkable deck cells',
 );
 
+// The boat route's fixed anchors. These sit on water and reef-free sea, which no
+// terrain mask covers, so nothing else would notice if a reef rect or the coast
+// mask grew over the dock and stranded the ferry.
+// The coast-side landing is deliberately absent: the ferry reachability assert
+// above already implies it is walkable, so repeating it here could never fire.
+const seaAnchors = [
+  ['sea route entry', seaRoute.SEA_ROUTE_REGION_ID, seaRoute.SEA_ROUTE_ENTRY.position],
+  ['sea route return approach', seaRoute.SEA_ROUTE_REGION_ID, seaRoute.SEA_ROUTE_RETURN_APPROACH],
+];
+for (const [label, region, position] of seaAnchors) {
+  assert(!world.isRegionBlocked(region, position.x, position.y), `${label} must stay clear at (${position.x},${position.y})`);
+}
+// Deliberately not asserted here: the deck cells are forced walkable by an early
+// return in isRegionBlocked (vacuous), and reaching them is already covered — the
+// landing at (6,8) sits in a pocket whose only route is through both deck cells,
+// so the ferry-dock reachability assert above fails first if either is cut off.
+for (const [label, region, trigger] of [
+  ['dock boarding trigger', 'river-coast', seaRoute.RIVER_COAST_DOCK_TRIGGER],
+  ['sea route return trigger', seaRoute.SEA_ROUTE_REGION_ID, seaRoute.SEA_ROUTE_RETURN_TRIGGER],
+]) {
+  let approachable = false;
+  for (let y = trigger.y - 1; y <= trigger.y + trigger.h; y += 1) {
+    for (let x = trigger.x - 1; x <= trigger.x + trigger.w; x += 1) {
+      if (x < 0 || y < 0 || x >= world.WORLD_WIDTH || y >= world.WORLD_HEIGHT) continue;
+      if (!world.isRegionBlocked(region, x, y)) approachable = true;
+    }
+  }
+  assert(approachable, `${label} must be approachable from at least one open cell`);
+}
+
 const blockedMineTerraces = [
   { x: 5, y: 9, label: 'upper-left cliff pocket' },
   { x: 5, y: 18, label: 'lower-left closed terrace' },
