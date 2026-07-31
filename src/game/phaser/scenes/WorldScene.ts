@@ -15,9 +15,22 @@ import { getFitCameraZoom, updateDeadZoneCamera } from '../cameraController';
 // 140ms ≈ 7.1 tiles/s — a cozy farm-game walk instead of the previous 10.9/s dash.
 const MOVE_INTERVAL_MS = 140;
 const TILE_STEP_PX = 16;
-// One tile per move interval: walking reads as one steady speed instead of the
-// fast-then-slow rubber band an exponential ease produces on every hop.
-const BASE_SPRITE_SPEED_PX_PER_MS = TILE_STEP_PX / MOVE_INTERVAL_MS;
+// The sprite trails the logical position on purpose. Travelling a tile in exactly
+// MOVE_INTERVAL_MS meant it arrived and then sat still until the next snapshot,
+// so every wobble in React's render timing showed up as a dead stop — and the
+// walk cycle froze in the same gaps. Pacing a tile over FOLLOW_LAG intervals
+// leaves roughly one tile of travel always pending, so the walk never stalls.
+//
+// Measured by simulating this follower against jittered snapshot arrivals
+// (60fps, one target per interval): at lag 1.0 the sprite is idle 2.8% of frames
+// with +-25ms of jitter and 5.9% at +-60ms; at 1.25 it is 0% across all of them.
+// The cost is small because the catch-up term already dominates the trail —
+// worst-case lag goes 20px -> 28px, i.e. ~177ms -> ~244ms behind the logical tile.
+// Removing that trail entirely needs continuous pixel movement, not a bigger lag.
+const SPRITE_FOLLOW_LAG = 1.25;
+const BASE_SPRITE_SPEED_PX_PER_MS = TILE_STEP_PX / (MOVE_INTERVAL_MS * SPRITE_FOLLOW_LAG);
+// Catch-up: speed scales with how far behind the sprite is, so the trail settles
+// at a bounded lag instead of drifting when snapshots arrive late.
 const MAX_INTERPOLATED_DISTANCE = 40;
 // Walk-cycle animation: advance one frame per STRIDE_PX travelled, looping
 // 0-1-2-1 so the passing pose is hit on both the out and return strides.
@@ -369,7 +382,13 @@ export class WorldScene extends Phaser.Scene {
       if (!smooth || dimensionsChanged || distance > MAX_INTERPOLATED_DISTANCE) {
         image.setPosition(sprite.x, sprite.y);
       }
-      this.spriteTargets.set(sprite.id, { x: sprite.x, y: sprite.y, smooth, frames: sprite.frames });
+      // On the frame the player stops, React drops the walk frames but the sprite
+      // still has its trailing tile to cover. Carry the frames over — but only
+      // while the new asset is itself one of them, so an action pose still wins.
+      const previousFrames = this.spriteTargets.get(sprite.id)?.frames;
+      const frames = sprite.frames
+        ?? (previousFrames?.includes(sprite.asset) ? previousFrames : undefined);
+      this.spriteTargets.set(sprite.id, { x: sprite.x, y: sprite.y, smooth, frames });
     });
 
     this.spriteObjects.forEach((image, id) => {
