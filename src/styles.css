@@ -119,7 +119,11 @@ main[data-app="mossbell-farm"] {
   overflow: hidden;
   transform: scale(var(--world-scale));
   transform-origin: left top;
-  transition: left .09s linear, top .09s linear;
+  /* Camera scroll shares the player's glide duration; a shorter one parked the
+     whole scene between tiles alongside the sprite. */
+  transition:
+    left var(--player-step-duration, 175ms) linear,
+    top var(--player-step-duration, 175ms) linear;
 }
 .world-map-image {
   position: absolute;
@@ -628,7 +632,11 @@ main[data-app="mossbell-farm"] {
   overflow: visible;
   transform: scale(var(--world-scale));
   transform-origin: left top;
-  transition: left .09s linear, top .09s linear;
+  /* Camera scroll shares the player's glide duration; a shorter one parked the
+     whole scene between tiles alongside the sprite. */
+  transition:
+    left var(--player-step-duration, 175ms) linear,
+    top var(--player-step-duration, 175ms) linear;
   pointer-events: none;
 }
 .forage-action-hint {
@@ -852,7 +860,12 @@ main[data-app="mossbell-farm"] {
   image-rendering: pixelated;
   user-select: none;
   -webkit-user-drag: none;
-  transition: left .085s linear, top .085s linear;
+  /* Duration comes from the move cadence (--player-step-duration, set on the
+     root). A fixed 85ms glide against a 140ms step left the sprite parked for
+     55ms between every tile. */
+  transition:
+    left var(--player-step-duration, 175ms) linear,
+    top var(--player-step-duration, 175ms) linear;
 }
 .interior-actor {
   background: transparent;
@@ -885,7 +898,9 @@ main[data-app="mossbell-farm"] {
   height: 80px;
   translate: -24px -24px;
   object-position: center;
-  transition: left .11s linear, top .11s linear;
+  transition:
+    left var(--player-step-duration, 175ms) linear,
+    top var(--player-step-duration, 175ms) linear;
 }
 .interior-world .player-sprite {
   width: 48px;

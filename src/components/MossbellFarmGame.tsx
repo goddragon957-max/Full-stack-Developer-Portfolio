@@ -443,6 +443,11 @@ const OUTSIDE_WORLD_H = 22;
 const INTRO_TITLE = 'MOSSBELL FARM';
 // Tile cadence (ms per tile). Must match MOVE_INTERVAL_MS in WorldScene.ts.
 const MOVE_INTERVAL_MS = 140;
+// The DOM renderer glides the player with a CSS transition. It must never be
+// shorter than the cadence: at 85ms against a 140ms step the sprite arrived and
+// then stood still for 55ms every single tile, which reads as constant stutter.
+// Mirrors SPRITE_FOLLOW_LAG in WorldScene.ts so both renderers move alike.
+const PLAYER_STEP_GLIDE_LAG = 1.25;
 const MOBILE_CAMERA_BREAKPOINT = 620;
 const TABLET_CAMERA_BREAKPOINT = 980;
 const DESKTOP_COLLAPSED_DIALOGUE_HEIGHT = 54;
@@ -3880,6 +3885,10 @@ export function MossbellFarmGame() {
       style={{
         '--dialogue-bar-height': `${dialogueBarHeight.toFixed(2)}px`,
         '--inventory-rail-width': `${inventoryRailWidth.toFixed(2)}px`,
+        // Drives the DOM renderer's player glide. Derived from the move cadence
+        // (never shorter, or the sprite lands early and stands still between
+        // tiles) and matched to the Phaser follower's lag so both feel the same.
+        '--player-step-duration': `${(MOVE_INTERVAL_MS * PLAYER_STEP_GLIDE_LAG).toFixed(0)}ms`,
         '--inventory-content-width': `${inventoryContentWidth.toFixed(2)}px`,
       } as CSSProperties}
       data-ui-pass="mossbell-farm-game"
